@@ -1,11 +1,21 @@
 // Debug Log Helper
-function debugLog(message) {
+// Error Codes:
+// F1: songs.json Ladefehler
+// F2: Keine Genres gefunden
+// F3: iTunes API Fehler (DE)
+// F4: iTunes API Fehler (US)
+// F5: Keine Preview-URL verfügbar
+// F6: Keine abspielbaren Songs
+// F7: Playback-Fehler
+// F8: Kein Song geladen
+function debugLog(message, errorCode = null) {
     const logBox = document.getElementById('debugLog');
     const logContent = document.getElementById('debugLogContent');
     if (logBox && logContent) {
         logBox.style.display = 'block';
         const timestamp = new Date().toLocaleTimeString();
-        logContent.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+        const codePrefix = errorCode ? `[${errorCode}] ` : '';
+        logContent.innerHTML += `<div>${codePrefix}[${timestamp}] ${message}</div>`;
         logBox.scrollTop = logBox.scrollHeight;
     }
     console.log(message);
@@ -80,8 +90,7 @@ async function loadAvailableGenres() {
         
         console.log(`✅ ${genres.length} Genres erfolgreich geladen!`);
     } catch (error) {
-        console.error('❌ Fehler beim Laden der Genres:', error);
-    }
+        console.error('❌ Fehler beim Laden der Genres:', error);        debugLog(`❌ Fehler beim Laden der Genres: ${error.message}`, 'F1');    }
 }
 
 // Lade Version
@@ -235,6 +244,8 @@ async function fetchItunes(searchTerm, { limit = 10, country = 'DE' } = {}) {
     debugLog(`🔍 iTunes ${country}: "${searchTerm}"`);
     const response = await fetch(url, { cache: 'no-store', mode: 'cors' });
     if (!response.ok) {
+        const errCode = country === 'DE' ? 'F3' : 'F4';
+        debugLog(`❌ iTunes API Fehler ${country}: ${response.status}`, errCode);
         throw new Error(`iTunes API Anfrage fehlgeschlagen (${response.status})`);
     }
     const data = await response.json();
@@ -264,7 +275,7 @@ async function loadSongDataLive(artist, track) {
         );
         
         if (songsWithPreview.length === 0) {
-            debugLog(`❌ Keine Preview für "${artist} - ${track}"`);
+            debugLog(`❌ Keine Preview für "${artist} - ${track}"`, 'F5');
             throw new Error(`Keine Preview-URL für "${artist} - ${track}" verfügbar (DE/US)`);
         }
         
@@ -294,7 +305,8 @@ async function loadSongDataLive(artist, track) {
     } catch (error) {
         console.error(`Fehler beim Laden von "${artist} - ${track}":`, error);
         gameState.lastError = error.message || String(error);
-        debugLog(`⚠️ Fehler: ${gameState.lastError}`);
+        const errCode = error.message.includes('Preview-URL') ? 'F5' : (error.message.includes('API') ? 'F3/F4' : 'F?');
+        debugLog(`⚠️ Fehler: ${gameState.lastError}`, errCode);
         showError(`iTunes-Fehler: ${gameState.lastError}`);
         throw error;
     }
@@ -386,7 +398,8 @@ async function nextQuestion() {
     }
 
     if (!gameState.currentSong || !gameState.currentSong.previewUrl) {
-        showError('Keine abspielbaren Songs gefunden. Bitte anderes Genre oder Suchbegriff versuchen.');
+        debugLog('❌ Keine abspielbaren Songs gefunden', 'F6');
+        showError('[F6] Keine abspielbaren Songs gefunden. Bitte anderes Genre oder Suchbegriff versuchen.');
         endGame();
         return;
     }
@@ -551,7 +564,8 @@ function showSongInfo() {
 // Spiele Preview ab (iOS-kompatibel)
 function playPreview() {
     if (!gameState.currentSong) {
-        alert(`Kein Song geladen. ${gameState.lastError ? 'Letzter Fehler: ' + gameState.lastError : ''} Lade nächste Frage...`);
+        debugLog('❌ Kein Song geladen', 'F8');
+        alert(`[F8] Kein Song geladen. ${gameState.lastError ? 'Letzter Fehler: ' + gameState.lastError : ''} Lade nächste Frage...`);
         nextQuestion();
         return;
     }
@@ -616,7 +630,8 @@ function playPreview() {
         updateProgress();
     }).catch(error => {
         console.error('Playback error:', error);
-        alert('Fehler beim Abspielen. Bitte tippe erneut auf Play oder überspringe den Song.');
+        debugLog(`❌ Playback-Fehler: ${error.message}`, 'F7');
+        alert('[F7] Fehler beim Abspielen. Bitte tippe erneut auf Play oder überspringe den Song.');
         stopPreview();
     });
 }
