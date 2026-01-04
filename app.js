@@ -517,9 +517,16 @@ function playPreview() {
     const playBtn = document.getElementById('playBtn');
     const stopBtn = document.getElementById('stopBtn');
 
+    // iOS-Sicherheit: Stelle sicher, dass das Element korrekt vorbereitet ist
+    audio.setAttribute('playsinline', 'true');
+    audio.setAttribute('webkit-playsinline', 'true');
+    audio.setAttribute('preload', 'none');
+    audio.crossOrigin = 'anonymous';
+
     // Setze Audio-Quelle
     audio.src = gameState.currentSong.previewUrl;
     audio.currentTime = 0;
+    audio.load();
     
     console.log('Versuche Preview abzuspielen:', gameState.currentSong.previewUrl);
     
