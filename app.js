@@ -147,12 +147,6 @@ async function startGame() {
                 showError('Bitte geben Sie einen Künstler oder Titel ein!');
                 document.getElementById('setupScreen').style.display = 'block';
                 document.getElementById('quizScreen').style.display = 'none';
-                return;
-            }
-            await loadSongsFromItunes(searchQuery, songCount);
-        }
-        hideLoadingState();
-                document.getElementById('quizScreen').style.display = 'none';
                 hideLoadingState();
                 return;
             }
@@ -176,6 +170,7 @@ async function startGame() {
         showError('Fehler beim Laden der Songs. Bitte versuchen Sie es erneut!');
         document.getElementById('setupScreen').style.display = 'block';
         document.getElementById('quizScreen').style.display = 'none';
+        hideLoadingState();
     }
 }
 
