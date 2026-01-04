@@ -1,4 +1,4 @@
-const APP_VERSION = 'v37';
+const APP_VERSION = 'v38';
 window.APP_VERSION = APP_VERSION;
 
 // Debug Log Helper
@@ -335,8 +335,22 @@ async function fetchItunesWithFallback(searchTerm, countries = ['DE', 'US', 'GB'
 }
 
 // Lade Song-Daten live von iTunes API basierend auf Suchbegriffen (mit Länder-Fallback DE -> US)
-async function loadSongDataLive(artist, track) {
+async function loadSongDataLive(artist, track, cachedPreview = null) {
     try {
+        // Falls Preview-URL bereits in songs.json vorhanden ist, nutze sie direkt
+        if (cachedPreview) {
+            debugLog(`✅ Song aus Cache: "${track}"`);
+            return {
+                id: Date.now(),
+                track: track,
+                artist: artist,
+                album: 'Unbekannt',
+                previewUrl: cachedPreview.replace(/^http:/, 'https:'),
+                image: '',
+                genre: 'Unbekannt'
+            };
+        }
+
         const searchTerm = `${artist} ${track}`;
 
         const { results, country: usedCountry } = await fetchItunesWithFallback(searchTerm, ['DE', 'US', 'GB', 'CA'], 10);
@@ -454,10 +468,11 @@ async function nextQuestion() {
         const candidate = gameState.songs[idx];
         let loadingShown = false;
         try {
-            if (candidate.artist && candidate.track && !candidate.previewUrl) {
+            if (candidate.artist && candidate.track) {
                 loadingShown = true;
                 showLoadingState();
-                const fullSongData = await loadSongDataLive(candidate.artist, candidate.track);
+                const cachedUrl = candidate.previewUrl || null;
+                const fullSongData = await loadSongDataLive(candidate.artist, candidate.track, cachedUrl);
                 gameState.currentSong = fullSongData;
             } else {
                 gameState.currentSong = candidate;
