@@ -251,21 +251,28 @@
         }
 
         .answers {
-            display: grid;
+            display: grid !important;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin-bottom: 20px;
+            min-height: 100px;
         }
 
         .answer-btn {
-            padding: 15px;
-            background: white;
-            border: 2px solid #ddd;
+            padding: 15px !important;
+            background: white !important;
+            border: 2px solid #333 !important;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 1em !important;
+            font-weight: 600 !important;
+            color: #333 !important;
             transition: all 0.3s;
             text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .answer-btn:hover {
@@ -514,6 +521,10 @@
 
             <div class="questions-section">
                 <div class="question-title">🎯 Welches Lied ist das?</div>
+                <div id="loadingIndicator" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Songs werden geladen...</p>
+                </div>
                 <div class="answers" id="answersContainer"></div>
                 <div class="result-message" id="resultMessage"></div>
                 <div class="song-info" id="songInfo">

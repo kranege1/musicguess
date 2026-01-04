@@ -47,6 +47,9 @@ async function startGame() {
         // Lade Songs von iTunes API
         await loadSongsFromItunes(searchQuery, songCount);
 
+        // Verstecke Loading-Indicator
+        hideLoadingState();
+
         if (gameState.songs.length === 0) {
             showError('Keine Songs gefunden. Bitte versuchen Sie einen anderen Suchbegriff!');
             document.getElementById('setupScreen').style.display = 'block';
@@ -145,26 +148,50 @@ function displayAlbumCover() {
 
 // Zeige Antworten an
 function displayAnswers() {
-    const song = gameState.currentSong;
-    let answers = [song.track];
+    try {
+        const song = gameState.currentSong;
+        
+        if (!song || !song.track) {
+            console.error('Song oder song.track ist undefined:', song);
+            document.getElementById('answersContainer').innerHTML = '<p style="color: red;">Fehler: Song-Daten nicht vorhanden</p>';
+            return;
+        }
 
-    if (gameState.multipleChoice) {
-        // Generiere 3 falsche Antworten
-        const wrongAnswers = getRandomWrongAnswers(3);
-        answers = answers.concat(wrongAnswers);
-        answers = shuffleArray(answers);
+        let answers = [song.track];
+
+        if (gameState.multipleChoice && gameState.songs && gameState.songs.length > 1) {
+            // Generiere 3 falsche Antworten
+            const wrongAnswers = getRandomWrongAnswers(3);
+            if (wrongAnswers.length > 0) {
+                answers = answers.concat(wrongAnswers);
+                answers = shuffleArray(answers);
+            }
+        }
+
+        const answersContainer = document.getElementById('answersContainer');
+        if (!answersContainer) {
+            console.error('answersContainer nicht gefunden');
+            return;
+        }
+
+        // Leere den Container komplett
+        answersContainer.innerHTML = '';
+
+        // Erstelle die Buttons
+        answers.forEach((answer, index) => {
+            if (answer && answer.trim()) {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = answer;
+                btn.onclick = () => selectAnswer(answer, index);
+                answersContainer.appendChild(btn);
+            }
+        });
+
+    } catch (error) {
+        console.error('Fehler in displayAnswers:', error);
+        document.getElementById('answersContainer').innerHTML = '<p style="color: red;">Fehler bei der Anzeige der Antworten</p>';
     }
-
-    const answersContainer = document.getElementById('answersContainer');
-    answersContainer.innerHTML = '';
-
-    answers.forEach((answer, index) => {
-        const btn = document.createElement('button');
-        btn.className = 'answer-btn';
-        btn.textContent = answer;
-        btn.onclick = () => selectAnswer(answer, index);
-        answersContainer.appendChild(btn);
-    });
 }
 
 // Generiere zufällige falsche Antworten
@@ -172,14 +199,18 @@ function getRandomWrongAnswers(count) {
     const wrongAnswers = [];
     const usedTracks = new Set([gameState.currentSong.track]);
 
-    for (let i = 0; i < count && gameState.songs.length - 1 > i; i++) {
-        let randomSong;
-        do {
-            randomSong = gameState.songs[Math.floor(Math.random() * gameState.songs.length)];
-        } while (usedTracks.has(randomSong.track));
+    let attempts = 0;
+    const maxAttempts = gameState.songs.length * 2;
 
-        usedTracks.add(randomSong.track);
-        wrongAnswers.push(randomSong.track);
+    while (wrongAnswers.length < count && attempts < maxAttempts) {
+        const randomSong = gameState.songs[Math.floor(Math.random() * gameState.songs.length)];
+        
+        if (!usedTracks.has(randomSong.track)) {
+            usedTracks.add(randomSong.track);
+            wrongAnswers.push(randomSong.track);
+        }
+        
+        attempts++;
     }
 
     return wrongAnswers.slice(0, count);
@@ -408,8 +439,18 @@ function shuffleArray(array) {
 }
 
 function showLoadingState() {
-    document.getElementById('answersContainer').innerHTML = 
-        '<div class="loading"><div class="spinner"></div><p>Songs werden geladen...</p></div>';
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'block';
+    }
+    document.getElementById('answersContainer').innerHTML = '';
+}
+
+function hideLoadingState() {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) {
+        loadingIndicator.style.display = 'none';
+    }
 }
 
 function showError(message) {
