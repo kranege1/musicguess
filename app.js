@@ -17,16 +17,21 @@ let gameState = {
 
 // Lade verfügbare Genres beim Seitenstart
 async function loadAvailableGenres() {
+    console.log('loadAvailableGenres() wird aufgerufen...');
     try {
         const response = await fetch('songs.json');
+        console.log('songs.json Response:', response.status);
+        
         if (!response.ok) {
             throw new Error('Fehler beim Laden von songs.json');
         }
 
         const songs = await response.json();
+        console.log(`${songs.length} Songs geladen`);
         
         // Extrahiere einzigartige Genres
         const genres = [...new Set(songs.map(song => song.genre))].sort();
+        console.log('Gefundene Genres:', genres);
         
         // Fülle die Genre-Dropdown
         const genreSelect = document.getElementById('genreSelect');
@@ -35,6 +40,8 @@ async function loadAvailableGenres() {
             console.error('genreSelect Element nicht gefunden!');
             return;
         }
+        
+        console.log('genreSelect Element gefunden, füge Genres hinzu...');
         
         // Lösche alle Optionen und füge "Alle Genres" wieder hinzu
         genreSelect.innerHTML = '';
@@ -50,11 +57,12 @@ async function loadAvailableGenres() {
             option.value = genre;
             option.textContent = genre;
             genreSelect.appendChild(option);
+            console.log(`Genre hinzugefügt: ${genre}`);
         });
         
-        console.log(`${genres.length} Genres geladen:`, genres);
+        console.log(`✅ ${genres.length} Genres erfolgreich geladen!`);
     } catch (error) {
-        console.error('Fehler beim Laden der Genres:', error);
+        console.error('❌ Fehler beim Laden der Genres:', error);
     }
 }
 
