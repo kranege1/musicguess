@@ -13,6 +13,7 @@ let gameState = {
     audioSource: null,
     audioContext: null,
     progressInterval: null,
+    lastError: ''
 };
 
 // Lade verfügbare Genres beim Seitenstart
@@ -264,6 +265,7 @@ async function loadSongDataLive(artist, track) {
         };
     } catch (error) {
         console.error(`Fehler beim Laden von "${artist} - ${track}":`, error);
+        gameState.lastError = error.message || String(error);
         throw error;
     }
 }
@@ -322,6 +324,8 @@ async function nextQuestion() {
     gameState.isAnswered = false;
     const baseSong = gameState.songs[gameState.currentQuestion];
 
+    console.log('nextQuestion start, index:', gameState.currentQuestion, 'song:', baseSong);
+
     // Prüfe ob wir im Genre-Modus sind und nur Basis-Daten haben
     if (baseSong.artist && baseSong.track && !baseSong.previewUrl) {
         // Genre-Modus: Lade echte Song-Daten von iTunes API
@@ -332,6 +336,7 @@ async function nextQuestion() {
             hideLoadingState();
         } catch (error) {
             console.error('Fehler beim Laden der Song-Daten:', error);
+            gameState.lastError = error.message || String(error);
             hideLoadingState();
             showError(`Fehler beim Laden von "${baseSong.artist} - ${baseSong.track}". Überspringe Song...`);
             gameState.currentQuestion++;
@@ -502,7 +507,7 @@ function showSongInfo() {
 // Spiele Preview ab (iOS-kompatibel)
 function playPreview() {
     if (!gameState.currentSong) {
-        alert('Kein Song geladen. Lade nächste Frage...');
+        alert(`Kein Song geladen. ${gameState.lastError ? 'Letzter Fehler: ' + gameState.lastError : ''} Lade nächste Frage...`);
         nextQuestion();
         return;
     }
