@@ -209,7 +209,8 @@ async function startGame() {
 async function loadSongsFromGenre(genre, limit) {
     try {
         // Lade songs.json
-        const response = await fetch('songs.json');
+        const cacheBuster = Date.now();
+        const response = await fetch(`songs.json?v=${cacheBuster}`, { cache: 'no-store' });
         if (!response.ok) {
             throw new Error('Fehler beim Laden von songs.json');
         }
@@ -246,7 +247,14 @@ async function fetchItunes(searchTerm, { limit = 10, country = 'DE' } = {}) {
     const encodedQuery = encodeURIComponent(searchTerm);
     const url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=${limit}&media=music&country=${country}&lang=de_DE`;
     debugLog(`🔍 iTunes ${country}: "${searchTerm}"`);
-    const response = await fetch(url, { cache: 'no-store', mode: 'cors' });
+    let response;
+    try {
+        response = await fetch(url, { cache: 'no-store', mode: 'cors' });
+    } catch (networkError) {
+        const errCode = country === 'DE' ? 'F3' : 'F4';
+        debugLog(`❌ iTunes Fetch ${country} fehlgeschlagen: ${networkError.message}`, errCode);
+        throw new Error(`iTunes Fetch ${country} failed: ${networkError.message}`);
+    }
     if (!response.ok) {
         const errCode = country === 'DE' ? 'F3' : 'F4';
         debugLog(`❌ iTunes API Fehler ${country}: ${response.status}`, errCode);
@@ -308,9 +316,16 @@ async function loadSongDataLive(artist, track) {
         };
     } catch (error) {
         console.error(`Fehler beim Laden von "${artist} - ${track}":`, error);
-        gameState.lastError = error.message || String(error);
-        const errCode = error.message.includes('Preview-URL') ? 'F5' : (error.message.includes('API') ? 'F3/F4' : 'F?');
-        debugLog(`⚠️ Fehler: ${gameState.lastError}`, errCode);
+        const errMsg = error.message || String(error);
+        gameState.lastError = errMsg;
+        const lower = errMsg.toLowerCase();
+        const errCode = errMsg.includes('Preview-URL')
+            ? 'F5'
+            : (errMsg.includes('API') || lower.includes('fetch') || lower.includes('network'))
+                ? 'F3/F4'
+                : 'F?';
+        const icon = errCode === 'F?' ? '❓' : '⚠️';
+        debugLog(`${icon} Fehler bei "${artist} - ${track}": ${errMsg}`, errCode);
         showError(`iTunes-Fehler: ${gameState.lastError}`);
         throw error;
     }
