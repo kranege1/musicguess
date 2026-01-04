@@ -12,18 +12,28 @@ let gameState = {
     previewDuration: 5,
 };
 
+// Toggle zwischen Genre- und Suchmodus
+function toggleGameMode() {
+    const mode = document.getElementById('gameMode').value;
+    const genreSelection = document.getElementById('genreSelection');
+    const searchSelection = document.getElementById('searchSelection');
+
+    if (mode === 'genre') {
+        genreSelection.style.display = 'flex';
+        searchSelection.style.display = 'none';
+    } else {
+        genreSelection.style.display = 'none';
+        searchSelection.style.display = 'flex';
+    }
+}
+
 // Starte das Spiel
 async function startGame() {
-    const searchQuery = document.getElementById('searchQuery').value.trim();
+    const gameMode = document.getElementById('gameMode').value;
     const songCount = parseInt(document.getElementById('songCount').value);
     const multipleChoice = document.getElementById('multipleChoice').checked;
     const showGenre = document.getElementById('genreMode').checked;
     const previewDuration = parseInt(document.getElementById('previewDuration').value);
-
-    if (!searchQuery) {
-        showError('Bitte geben Sie einen Künstler oder Titel ein!');
-        return;
-    }
 
     // State speichern
     gameState.multipleChoice = multipleChoice;
@@ -44,8 +54,22 @@ async function startGame() {
     showLoadingState();
 
     try {
-        // Lade Songs von iTunes API
-        await loadSongsFromItunes(searchQuery, songCount);
+        if (gameMode === 'genre') {
+            // Lade Songs aus songs.json
+            const selectedGenre = document.getElementById('genreSelect').value;
+            await loadSongsFromGenre(selectedGenre, songCount);
+        } else {
+            // Lade Songs von iTunes API
+            const searchQuery = document.getElementById('searchQuery').value.trim();
+            if (!searchQuery) {
+                showError('Bitte geben Sie einen Künstler oder Titel ein!');
+                document.getElementById('setupScreen').style.display = 'block';
+                document.getElementById('quizScreen').style.display = 'none';
+                hideLoadingState();
+                return;
+            }
+            await loadSongsFromItunes(searchQuery, songCount);
+        }
 
         // Verstecke Loading-Indicator
         hideLoadingState();
@@ -64,6 +88,40 @@ async function startGame() {
         showError('Fehler beim Laden der Songs. Bitte versuchen Sie es erneut!');
         document.getElementById('setupScreen').style.display = 'block';
         document.getElementById('quizScreen').style.display = 'none';
+    }
+}
+
+// Lade Songs aus songs.json basierend auf Genre
+async function loadSongsFromGenre(genre, limit) {
+    try {
+        const response = await fetch('songs.json');
+        if (!response.ok) {
+            throw new Error('Fehler beim Laden von songs.json');
+        }
+
+        const data = await response.json();
+        let allSongs = [];
+
+        if (genre === 'Alle') {
+            // Kombiniere alle Genres
+            for (const genreName in data.genres) {
+                allSongs = allSongs.concat(data.genres[genreName]);
+            }
+        } else {
+            // Nur ausgewähltes Genre
+            allSongs = data.genres[genre] || [];
+        }
+
+        if (allSongs.length === 0) {
+            throw new Error('Keine Songs für dieses Genre gefunden');
+        }
+
+        // Mische und begrenze die Anzahl
+        gameState.songs = shuffleArray(allSongs).slice(0, Math.min(limit, allSongs.length));
+        console.log(`${gameState.songs.length} Songs aus Genre "${genre}" geladen`);
+    } catch (error) {
+        console.error('Fehler beim Laden der Songs aus JSON:', error);
+        throw error;
     }
 }
 
