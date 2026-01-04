@@ -315,16 +315,6 @@ async function nextQuestion() {
         return;
     }
 
-// Nächste Frage laden
-async function nextQuestion() {
-    // Stoppe vorherige Audio
-    stopPreview();
-
-    if (gameState.currentQuestion >= gameState.songs.length) {
-        endGame();
-        return;
-    }
-
     // Setze State zurück
     gameState.isAnswered = false;
     const baseSong = gameState.songs[gameState.currentQuestion];
