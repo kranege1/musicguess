@@ -1,4 +1,4 @@
-const APP_VERSION = 'v42_force_reload';
+const APP_VERSION = 'v44';
 window.APP_VERSION = APP_VERSION;
 
 // Detect if running on server or static hosting
