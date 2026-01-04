@@ -327,38 +327,39 @@ async function nextQuestion() {
 
     // Setze State zurück
     gameState.isAnswered = false;
-    const baseSong = gameState.songs[gameState.currentQuestion];
+    let idx = gameState.currentQuestion;
 
-    console.log('nextQuestion start, index:', gameState.currentQuestion, 'song:', baseSong);
+    console.log('nextQuestion start, index:', idx, 'song:', gameState.songs[idx]);
 
     let attempts = 0;
     const maxAttempts = Math.min(8, gameState.songs.length);
 
-    // Prüfe ob wir im Genre-Modus sind und nur Basis-Daten haben
-    while (attempts < maxAttempts) {
+    while (attempts < maxAttempts && idx < gameState.songs.length) {
+        const candidate = gameState.songs[idx];
+        let loadingShown = false;
         try {
-            if (baseSong.artist && baseSong.track && !baseSong.previewUrl) {
+            if (candidate.artist && candidate.track && !candidate.previewUrl) {
+                loadingShown = true;
                 showLoadingState();
-                const fullSongData = await loadSongDataLive(baseSong.artist, baseSong.track);
+                const fullSongData = await loadSongDataLive(candidate.artist, candidate.track);
                 gameState.currentSong = fullSongData;
-                hideLoadingState();
             } else {
-                gameState.currentSong = baseSong;
+                gameState.currentSong = candidate;
             }
 
             if (gameState.currentSong && gameState.currentSong.previewUrl) {
+                gameState.currentQuestion = idx;
                 break;
             }
         } catch (error) {
             console.error('Fehler beim Laden der Song-Daten, versuche nächsten:', error);
             gameState.lastError = error.message || String(error);
+        } finally {
+            if (loadingShown) hideLoadingState();
         }
 
         attempts++;
-        gameState.currentQuestion++;
-        if (gameState.currentQuestion >= gameState.songs.length) {
-            break;
-        }
+        idx++;
     }
 
     if (!gameState.currentSong || !gameState.currentSong.previewUrl) {
