@@ -1,3 +1,5 @@
+const APP_VERSION = 'v35';
+
 // Debug Log Helper
 // Error Codes:
 // F1: songs.json Ladefehler
@@ -20,6 +22,8 @@ function debugLog(message, errorCode = null) {
     }
     console.log(message);
 }
+
+debugLog(`🚀 App JS ${APP_VERSION} geladen`);
 
 // Globale Variablen
 let gameState = {
