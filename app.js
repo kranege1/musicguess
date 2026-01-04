@@ -109,15 +109,21 @@ async function startGame() {
 
     try {
         if (gameMode === 'genre') {
-            // Lade Songs aus songs.json
+            // Genre-Modus: Lade Songs aus songs.json
             const selectedGenre = document.getElementById('genreSelect').value;
             await loadSongsFromGenre(selectedGenre, songCount);
         } else {
-            // Lade Songs von iTunes API
+            // iTunes Suchmodus
             const searchQuery = document.getElementById('searchQuery').value.trim();
             if (!searchQuery) {
                 showError('Bitte geben Sie einen Künstler oder Titel ein!');
                 document.getElementById('setupScreen').style.display = 'block';
+                document.getElementById('quizScreen').style.display = 'none';
+                return;
+            }
+            await loadSongsFromItunes(searchQuery, songCount);
+        }
+        hideLoadingState();
                 document.getElementById('quizScreen').style.display = 'none';
                 hideLoadingState();
                 return;
@@ -275,6 +281,16 @@ async function loadSongsFromItunes(searchQuery, limit) {
         throw error;
     }
 }
+
+// Nächste Frage laden
+async function nextQuestion() {
+    // Stoppe vorherige Audio
+    stopPreview();
+
+    if (gameState.currentQuestion >= gameState.songs.length) {
+        endGame();
+        return;
+    }
 
 // Nächste Frage laden
 async function nextQuestion() {

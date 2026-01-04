@@ -450,12 +450,12 @@
             <div class="input-group">
                 <label for="gameMode">🎮 Spielmodus:</label>
                 <select id="gameMode" onchange="toggleGameMode()">
-                    <option value="search">iTunes Suche (empfohlen)</option>
-                    <option value="genre">Genre auswählen (Demo - begrenzte Previews)</option>
+                    <option value="genre">Genre auswählen (validierte Songs mit Previews)</option>
+                    <option value="search">iTunes Suche</option>
                 </select>
             </div>
 
-            <div class="input-group" id="genreSelection" style="display: none;">
+            <div class="input-group" id="genreSelection">
                 <label for="genreSelect">🎸 Genre wählen:</label>
                 <select id="genreSelect">
                     <option value="Alle">Alle Genres</option>
@@ -463,9 +463,9 @@
                 </select>
             </div>
 
-            <div class="input-group" id="searchSelection">
+            <div class="input-group" id="searchSelection" style="display: none;">
                 <label for="searchQuery">🎤 Künstler oder Titel durchsuchen:</label>
-                <input type="text" id="searchQuery" placeholder="z.B. 'The Beatles' oder 'Bohemian Rhapsody'">
+                <input type="text" id="searchQuery" placeholder="z.B. 'Taylor Swift' oder 'Bohemian Rhapsody'">
             </div>
 
             <div class="input-group">
