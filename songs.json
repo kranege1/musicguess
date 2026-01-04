@@ -1,832 +1,152 @@
 [
-  {
-    "artist": "The Beatles",
-    "track": "Hey Jude",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Beatles",
-    "track": "I Want to Hold Your Hand",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Beatles",
-    "track": "She Loves You",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Beatles",
-    "track": "Can't Buy Me Love",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Beatles",
-    "track": "A Hard Day's Night",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Beatles",
-    "track": "Let It Be",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Beatles",
-    "track": "Yesterday",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Rolling Stones",
-    "track": "(I Can't Get No) Satisfaction",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Rolling Stones",
-    "track": "Paint It Black",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Beach Boys",
-    "track": "I Get Around",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Beach Boys",
-    "track": "Good Vibrations",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Beach Boys",
-    "track": "Surfin' U.S.A.",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Supremes",
-    "track": "Baby Love",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Supremes",
-    "track": "Where Did Our Love Go",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Supremes",
-    "track": "Stop! In the Name of Love",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Supremes",
-    "track": "You Can't Hurry Love",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Supremes",
-    "track": "Come See About Me",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Four Seasons",
-    "track": "Sherry",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Four Seasons",
-    "track": "Big Girls Don't Cry",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Four Seasons",
-    "track": "Rag Doll",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Roy Orbison",
-    "track": "Oh, Pretty Woman",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Monkees",
-    "track": "I'm a Believer",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Monkees",
-    "track": "Last Train to Clarksville",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Monkees",
-    "track": "Daydream Believer",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Aretha Franklin",
-    "track": "Respect",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Louis Armstrong",
-    "track": "What a Wonderful World",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Nancy Sinatra",
-    "track": "These Boots Are Made for Walkin'",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Doors",
-    "track": "Light My Fire",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Temptations",
-    "track": "My Girl",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Temptations",
-    "track": "Ain't Too Proud to Beg",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Marvin Gaye",
-    "track": "I Heard It Through the Grapevine",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Simon & Garfunkel",
-    "track": "Mrs. Robinson",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Simon & Garfunkel",
-    "track": "The Sound of Silence",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Archies",
-    "track": "Sugar, Sugar",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Jackson 5",
-    "track": "I Want You Back",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Jackson 5",
-    "track": "ABC",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Elvis Presley",
-    "track": "Suspicious Minds",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Tommy James & The Shondells",
-    "track": "Crimson and Clover",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Fifth Dimension",
-    "track": "Aquarius/Let the Sunshine In",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Creedence Clearwater Revival",
-    "track": "Proud Mary",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Creedence Clearwater Revival",
-    "track": "Bad Moon Rising",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Mamas & The Papas",
-    "track": "California Dreamin'",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Otis Redding",
-    "track": "(Sittin' On) The Dock of the Bay",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Ray Charles",
-    "track": "Georgia on My Mind",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Chubby Checker",
-    "track": "The Twist",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Jimmy Gilmer & The Fireballs",
-    "track": "Sugar Shack",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Bobby Lewis",
-    "track": "Tossin' and Turnin'",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Petula Clark",
-    "track": "Downtown",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Animals",
-    "track": "House of the Rising Sun",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Beatles",
-    "track": "We Can Work It Out",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Beatles",
-    "track": "Help!",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Lovin' Spoonful",
-    "track": "Summer in the City",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Association",
-    "track": "Cherish",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Box Tops",
-    "track": "The Letter",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Turtles",
-    "track": "Happy Together",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Foundations",
-    "track": "Build Me Up Buttercup",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Delfonics",
-    "track": "La-La Means I Love You",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Dionne Warwick",
-    "track": "Do You Know the Way to San Jose",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Beatles",
-    "track": "Hello, Goodbye",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Beatles",
-    "track": "Penny Lane",
-    "genre": "1960er"
-  },
-  {
-    "artist": "The Doors",
-    "track": "Hello, I Love You",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Gary Puckett & The Union Gap",
-    "track": "Young Girl",
-    "genre": "1960er"
-  },
-  {
-    "artist": "Three Dog Night",
-    "track": "Joy to the World",
-    "genre": "1970er"
-  },
-  {
-    "artist": "Eagles",
-    "track": "Hotel California",
-    "genre": "1970er"
-  },
-  {
-    "artist": "Fleetwood Mac",
-    "track": "Dreams",
-    "genre": "1970er"
-  },
-  {
-    "artist": "Rod Stewart",
-    "track": "Da Ya Think I'm Sexy?",
-    "genre": "1970er"
-  },
-  {
-    "artist": "ABBA",
-    "track": "Dancing Queen",
-    "genre": "1970er"
-  },
-  {
-    "artist": "ABBA",
-    "track": "Take a Chance on Me",
-    "genre": "1970er"
-  },
-  {
-    "artist": "Debby Boone",
-    "track": "You Light Up My Life",
-    "genre": "1970er"
-  },
-  {
-    "artist": "Andy Gibb",
-    "track": "Shadow Dancing",
-    "genre": "1970er"
-  },
-  {
-    "artist": "The Emotions",
-    "track": "Best of My Love",
-    "genre": "1970er"
-  },
-  {
-    "artist": "Commodores",
-    "track": "Brick House",
-    "genre": "1970er"
-  },
-  {
-    "artist": "Chic",
-    "track": "Le Freak",
-    "genre": "1970er"
-  },
-  {
-    "artist": "Exile",
-    "track": "Kiss You All Over",
-    "genre": "1970er"
-  },
-  {
-    "artist": "Michael Jackson",
-    "track": "Billie Jean",
-    "genre": "1980er"
-  },
-  {
-    "artist": "Madonna",
-    "track": "Material Girl",
-    "genre": "1980er"
-  },
-  {
-    "artist": "Lionel Richie",
-    "track": "Hello",
-    "genre": "1980er"
-  },
-  {
-    "artist": "Duran Duran",
-    "track": "The Reflex",
-    "genre": "1980er"
-  },
-  {
-    "artist": "Wham!",
-    "track": "Wake Me Up Before You Go-Go",
-    "genre": "1980er"
-  },
-  {
-    "artist": "The Police",
-    "track": "Every Breath You Take",
-    "genre": "1980er"
-  },
-  {
-    "artist": "Falco",
-    "track": "Rock Me Amadeus",
-    "genre": "1980er"
-  },
-  {
-    "artist": "Cyndi Lauper",
-    "track": "True Colors",
-    "genre": "1980er"
-  },
-  {
-    "artist": "Rick Astley",
-    "track": "Never Gonna Give You Up",
-    "genre": "1980er"
-  },
-  {
-    "artist": "Nirvana",
-    "track": "Smells Like Teen Spirit",
-    "genre": "1990er"
-  },
-  {
-    "artist": "TLC",
-    "track": "Waterfalls",
-    "genre": "1990er"
-  },
-  {
-    "artist": "Toni Braxton",
-    "track": "Un-Break My Heart",
-    "genre": "1990er"
-  },
-  {
-    "artist": "Ricky Martin",
-    "track": "Livin' la Vida Loca",
-    "genre": "1990er"
-  },
-  {
-    "artist": "Blur",
-    "track": "Song 2",
-    "genre": "1990er"
-  },
-  {
-    "artist": "Katy Perry",
-    "track": "Firework",
-    "genre": "2000er"
-  },
-  {
-    "artist": "Bruno Mars",
-    "track": "Just the Way You Are",
-    "genre": "2000er"
-  },
-  {
-    "artist": "Bruno Mars",
-    "track": "Grenade",
-    "genre": "2000er"
-  },
-  {
-    "artist": "Train",
-    "track": "Hey, Soul Sister",
-    "genre": "2000er"
-  },
-  {
-    "artist": "Justin Timberlake",
-    "track": "SexyBack",
-    "genre": "2000er"
-  },
-  {
-    "artist": "Mariah Carey",
-    "track": "We Belong Together",
-    "genre": "2000er"
-  },
-  {
-    "artist": "Jason Mraz",
-    "track": "I'm Yours",
-    "genre": "2000er"
-  },
-  {
-    "artist": "The Beatles",
-    "track": "Hey Jude",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Michael Jackson",
-    "track": "Billie Jean",
-    "genre": "Pop"
-  },
-  {
-    "artist": "ABBA",
-    "track": "Dancing Queen",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Elton John",
-    "track": "Your Song",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Taylor Swift",
-    "track": "Shake It Off",
-    "genre": "Pop"
-  },
-  {
-    "artist": "The Jackson 5",
-    "track": "I Want You Back",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Britney Spears",
-    "track": "...Baby One More Time",
-    "genre": "Pop"
-  },
-  {
-    "artist": "The Police",
-    "track": "Every Breath You Take",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Carly Rae Jepsen",
-    "track": "Call Me Maybe",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Katy Perry",
-    "track": "Firework",
-    "genre": "Pop"
-  },
-  {
-    "artist": "The Weeknd",
-    "track": "Blinding Lights",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Dua Lipa",
-    "track": "Levitating",
-    "genre": "Pop"
-  },
-  {
-    "artist": "ABBA",
-    "track": "Mamma Mia",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Spice Girls",
-    "track": "Wannabe",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Mariah Carey",
-    "track": "We Belong Together",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Lionel Richie",
-    "track": "Hello",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Simon & Garfunkel",
-    "track": "The Sound of Silence",
-    "genre": "Pop"
-  },
-  {
-    "artist": "The Beatles",
-    "track": "Yesterday",
-    "genre": "Pop"
-  },
-  {
-    "artist": "The Supremes",
-    "track": "You Can't Hurry Love",
-    "genre": "Pop"
-  },
-  {
-    "artist": "The Ronettes",
-    "track": "Be My Baby",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Roy Orbison",
-    "track": "Oh, Pretty Woman",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Fleetwood Mac",
-    "track": "Dreams",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Rick Astley",
-    "track": "Never Gonna Give You Up",
-    "genre": "Pop"
-  },
-  {
-    "artist": "The Bangles",
-    "track": "Walk Like an Egyptian",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Survivor",
-    "track": "Eye of the Tiger",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Europe",
-    "track": "The Final Countdown",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Miley Cyrus",
-    "track": "Flowers",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Lizzo",
-    "track": "About Damn Time",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Shawn Mendes",
-    "track": "Señorita",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Camila Cabello",
-    "track": "Havana",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Sam Smith",
-    "track": "Stay With Me",
-    "genre": "Pop"
-  },
-  {
-    "artist": "Nirvana",
-    "track": "Smells Like Teen Spirit",
-    "genre": "Rock"
-  },
-  {
-    "artist": "The Beatles",
-    "track": "Hey Jude",
-    "genre": "Rock"
-  },
-  {
-    "artist": "The Rolling Stones",
-    "track": "Paint It Black",
-    "genre": "Rock"
-  },
-  {
-    "artist": "The Doors",
-    "track": "Light My Fire",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Metallica",
-    "track": "Enter Sandman",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Aerosmith",
-    "track": "Dream On",
-    "genre": "Rock"
-  },
-  {
-    "artist": "The Police",
-    "track": "Every Breath You Take",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Van Halen",
-    "track": "Jump",
-    "genre": "Rock"
-  },
-  {
-    "artist": "AC/DC",
-    "track": "Highway to Hell",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Guns N' Roses",
-    "track": "November Rain",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Nirvana",
-    "track": "Come As You Are",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Pearl Jam",
-    "track": "Alive",
-    "genre": "Rock"
-  },
-  {
-    "artist": "The White Stripes",
-    "track": "Seven Nation Army",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Foo Fighters",
-    "track": "Everlong",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Linkin Park",
-    "track": "In the End",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Green Day",
-    "track": "Basket Case",
-    "genre": "Rock"
-  },
-  {
-    "artist": "The Kinks",
-    "track": "You Really Got Me",
-    "genre": "Rock"
-  },
-  {
-    "artist": "The Who",
-    "track": "My Generation",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Lynyrd Skynyrd",
-    "track": "Sweet Home Alabama",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Aerosmith",
-    "track": "Walk This Way",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Ozzy Osbourne",
-    "track": "Crazy Train",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Slayer",
-    "track": "Raining Blood",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Stone Temple Pilots",
-    "track": "Plush",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Queens of the Stone Age",
-    "track": "No One Knows",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Audioslave",
-    "track": "Like a Stone",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Paramore",
-    "track": "Misery Business",
-    "genre": "Rock"
-  },
-  {
-    "artist": "Aretha Franklin",
-    "track": "Respect",
-    "genre": "R&B"
-  },
-  {
-    "artist": "The Weeknd",
-    "track": "Blinding Lights",
-    "genre": "R&B"
-  },
-  {
-    "artist": "Otis Redding",
-    "track": "(Sittin' On) The Dock of the Bay",
-    "genre": "R&B"
-  },
-  {
-    "artist": "Dolly Parton",
-    "track": "Jolene",
-    "genre": "Country"
-  },
-  {
-    "artist": "Patsy Cline",
-    "track": "Crazy",
-    "genre": "Country"
-  },
-  {
-    "artist": "Major Lazer",
-    "track": "Lean On",
-    "genre": "EDM"
-  },
-  {
-    "artist": "Shakira",
-    "track": "Hips Don't Lie",
-    "genre": "Latin"
-  },
-  {
-    "artist": "Ricky Martin",
-    "track": "Livin' la Vida Loca",
-    "genre": "Latin"
-  },
-  {
-    "artist": "Desmond Dekker",
-    "track": "Israelites",
-    "genre": "Reggae"
-  },
-  {
-    "artist": "Louis Armstrong",
-    "track": "What a Wonderful World",
-    "genre": "Jazz"
-  },
-  {
-    "artist": "Judas Priest",
-    "track": "Painkiller",
-    "genre": "Metal"
-  },
-  {
-    "artist": "Slayer",
-    "track": "Raining Blood",
-    "genre": "Metal"
-  },
-  {
-    "artist": "Ozzy Osbourne",
-    "track": "Crazy Train",
-    "genre": "Metal"
-  },
-  {
-    "artist": "Dio",
-    "track": "Holy Diver",
-    "genre": "Metal"
-  }
+  {"artist": "Taylor Swift", "track": "Shake It Off", "genre": "Pop"},
+  {"artist": "Taylor Swift", "track": "Blank Space", "genre": "Pop"},
+  {"artist": "Taylor Swift", "track": "Bad Blood", "genre": "Pop"},
+  {"artist": "Taylor Swift", "track": "Anti-Hero", "genre": "Pop"},
+  {"artist": "Taylor Swift", "track": "Cruel Summer", "genre": "Pop"},
+  {"artist": "Ed Sheeran", "track": "Shape of You", "genre": "Pop"},
+  {"artist": "Ed Sheeran", "track": "Perfect", "genre": "Pop"},
+  {"artist": "Ed Sheeran", "track": "Thinking Out Loud", "genre": "Pop"},
+  {"artist": "Ed Sheeran", "track": "Photograph", "genre": "Pop"},
+  {"artist": "Ed Sheeran", "track": "Castle on the Hill", "genre": "Pop"},
+  {"artist": "Billie Eilish", "track": "Bad Guy", "genre": "Pop"},
+  {"artist": "Billie Eilish", "track": "Happier Than Ever", "genre": "Pop"},
+  {"artist": "Billie Eilish", "track": "Lovely", "genre": "Pop"},
+  {"artist": "Billie Eilish", "track": "When the Party's Over", "genre": "Pop"},
+  {"artist": "Ariana Grande", "track": "Thank U, Next", "genre": "Pop"},
+  {"artist": "Ariana Grande", "track": "7 Rings", "genre": "Pop"},
+  {"artist": "Ariana Grande", "track": "No Tears Left to Cry", "genre": "Pop"},
+  {"artist": "Ariana Grande", "track": "Positions", "genre": "Pop"},
+  {"artist": "Dua Lipa", "track": "Levitating", "genre": "Pop"},
+  {"artist": "Dua Lipa", "track": "Don't Start Now", "genre": "Pop"},
+  {"artist": "Dua Lipa", "track": "New Rules", "genre": "Pop"},
+  {"artist": "The Weeknd", "track": "Blinding Lights", "genre": "Pop"},
+  {"artist": "The Weeknd", "track": "Starboy", "genre": "Pop"},
+  {"artist": "The Weeknd", "track": "Can't Feel My Face", "genre": "Pop"},
+  {"artist": "The Weeknd", "track": "Save Your Tears", "genre": "Pop"},
+  {"artist": "Bruno Mars", "track": "Uptown Funk", "genre": "Pop"},
+  {"artist": "Bruno Mars", "track": "Just the Way You Are", "genre": "Pop"},
+  {"artist": "Bruno Mars", "track": "24K Magic", "genre": "Pop"},
+  {"artist": "Bruno Mars", "track": "Locked Out of Heaven", "genre": "Pop"},
+  {"artist": "Justin Bieber", "track": "Sorry", "genre": "Pop"},
+  {"artist": "Justin Bieber", "track": "Love Yourself", "genre": "Pop"},
+  {"artist": "Justin Bieber", "track": "What Do You Mean", "genre": "Pop"},
+  {"artist": "Justin Bieber", "track": "Peaches", "genre": "Pop"},
+  {"artist": "Lady Gaga", "track": "Shallow", "genre": "Pop"},
+  {"artist": "Lady Gaga", "track": "Bad Romance", "genre": "Pop"},
+  {"artist": "Lady Gaga", "track": "Poker Face", "genre": "Pop"},
+  {"artist": "Katy Perry", "track": "Roar", "genre": "Pop"},
+  {"artist": "Katy Perry", "track": "Firework", "genre": "Pop"},
+  {"artist": "Katy Perry", "track": "Dark Horse", "genre": "Pop"},
+  {"artist": "Adele", "track": "Hello", "genre": "Pop"},
+  {"artist": "Adele", "track": "Rolling in the Deep", "genre": "Pop"},
+  {"artist": "Adele", "track": "Someone Like You", "genre": "Pop"},
+  {"artist": "Adele", "track": "Easy on Me", "genre": "Pop"},
+  {"artist": "Harry Styles", "track": "As It Was", "genre": "Pop"},
+  {"artist": "Harry Styles", "track": "Watermelon Sugar", "genre": "Pop"},
+  {"artist": "Harry Styles", "track": "Sign of the Times", "genre": "Pop"},
+  {"artist": "Sam Smith", "track": "Stay With Me", "genre": "Pop"},
+  {"artist": "Sam Smith", "track": "Unholy", "genre": "Pop"},
+  {"artist": "Shawn Mendes", "track": "Stitches", "genre": "Pop"},
+  {"artist": "Shawn Mendes", "track": "Señorita", "genre": "Pop"},
+  {"artist": "Camila Cabello", "track": "Havana", "genre": "Pop"},
+  {"artist": "Olivia Rodrigo", "track": "drivers license", "genre": "Pop"},
+  {"artist": "Olivia Rodrigo", "track": "good 4 u", "genre": "Pop"},
+  {"artist": "Miley Cyrus", "track": "Flowers", "genre": "Pop"},
+  {"artist": "Miley Cyrus", "track": "Wrecking Ball", "genre": "Pop"},
+  {"artist": "Sia", "track": "Chandelier", "genre": "Pop"},
+  {"artist": "Sia", "track": "Cheap Thrills", "genre": "Pop"},
+  {"artist": "Pharrell Williams", "track": "Happy", "genre": "Pop"},
+  {"artist": "Maroon 5", "track": "Sugar", "genre": "Pop"},
+  {"artist": "Maroon 5", "track": "Moves Like Jagger", "genre": "Pop"},
+  {"artist": "Maroon 5", "track": "Girls Like You", "genre": "Pop"},
+  {"artist": "Rihanna", "track": "We Found Love", "genre": "Pop"},
+  {"artist": "Rihanna", "track": "Diamonds", "genre": "Pop"},
+  {"artist": "Rihanna", "track": "Work", "genre": "Pop"},
+  {"artist": "Beyoncé", "track": "Crazy in Love", "genre": "Pop"},
+  {"artist": "Beyoncé", "track": "Single Ladies", "genre": "Pop"},
+  {"artist": "Beyoncé", "track": "Halo", "genre": "Pop"},
+  {"artist": "Selena Gomez", "track": "Lose You to Love Me", "genre": "Pop"},
+  {"artist": "Selena Gomez", "track": "Good for You", "genre": "Pop"},
+  {"artist": "Coldplay", "track": "Viva la Vida", "genre": "Rock"},
+  {"artist": "Coldplay", "track": "The Scientist", "genre": "Rock"},
+  {"artist": "Coldplay", "track": "Fix You", "genre": "Rock"},
+  {"artist": "Coldplay", "track": "Adventure of a Lifetime", "genre": "Rock"},
+  {"artist": "Imagine Dragons", "track": "Radioactive", "genre": "Rock"},
+  {"artist": "Imagine Dragons", "track": "Believer", "genre": "Rock"},
+  {"artist": "Imagine Dragons", "track": "Thunder", "genre": "Rock"},
+  {"artist": "Imagine Dragons", "track": "Demons", "genre": "Rock"},
+  {"artist": "OneRepublic", "track": "Counting Stars", "genre": "Rock"},
+  {"artist": "OneRepublic", "track": "Apologize", "genre": "Rock"},
+  {"artist": "OneRepublic", "track": "Good Life", "genre": "Rock"},
+  {"artist": "The Killers", "track": "Mr. Brightside", "genre": "Rock"},
+  {"artist": "The Killers", "track": "Human", "genre": "Rock"},
+  {"artist": "The Killers", "track": "Somebody Told Me", "genre": "Rock"},
+  {"artist": "Foo Fighters", "track": "Everlong", "genre": "Rock"},
+  {"artist": "Foo Fighters", "track": "Learn to Fly", "genre": "Rock"},
+  {"artist": "Foo Fighters", "track": "The Pretender", "genre": "Rock"},
+  {"artist": "Green Day", "track": "Boulevard of Broken Dreams", "genre": "Rock"},
+  {"artist": "Green Day", "track": "American Idiot", "genre": "Rock"},
+  {"artist": "Green Day", "track": "21 Guns", "genre": "Rock"},
+  {"artist": "Linkin Park", "track": "In the End", "genre": "Rock"},
+  {"artist": "Linkin Park", "track": "Numb", "genre": "Rock"},
+  {"artist": "Linkin Park", "track": "What I've Done", "genre": "Rock"},
+  {"artist": "Red Hot Chili Peppers", "track": "Californication", "genre": "Rock"},
+  {"artist": "Red Hot Chili Peppers", "track": "Under the Bridge", "genre": "Rock"},
+  {"artist": "Red Hot Chili Peppers", "track": "Give It Away", "genre": "Rock"},
+  {"artist": "Muse", "track": "Starlight", "genre": "Rock"},
+  {"artist": "Muse", "track": "Uprising", "genre": "Rock"},
+  {"artist": "Muse", "track": "Supermassive Black Hole", "genre": "Rock"},
+  {"artist": "Arctic Monkeys", "track": "Do I Wanna Know", "genre": "Rock"},
+  {"artist": "Arctic Monkeys", "track": "505", "genre": "Rock"},
+  {"artist": "Arctic Monkeys", "track": "I Bet You Look Good on the Dancefloor", "genre": "Rock"},
+  {"artist": "Drake", "track": "God's Plan", "genre": "Hip-Hop"},
+  {"artist": "Drake", "track": "Hotline Bling", "genre": "Hip-Hop"},
+  {"artist": "Drake", "track": "One Dance", "genre": "Hip-Hop"},
+  {"artist": "Drake", "track": "In My Feelings", "genre": "Hip-Hop"},
+  {"artist": "Post Malone", "track": "Circles", "genre": "Hip-Hop"},
+  {"artist": "Post Malone", "track": "Rockstar", "genre": "Hip-Hop"},
+  {"artist": "Post Malone", "track": "Sunflower", "genre": "Hip-Hop"},
+  {"artist": "Travis Scott", "track": "SICKO MODE", "genre": "Hip-Hop"},
+  {"artist": "Travis Scott", "track": "Goosebumps", "genre": "Hip-Hop"},
+  {"artist": "Kendrick Lamar", "track": "HUMBLE.", "genre": "Hip-Hop"},
+  {"artist": "Kendrick Lamar", "track": "DNA.", "genre": "Hip-Hop"},
+  {"artist": "Kendrick Lamar", "track": "Alright", "genre": "Hip-Hop"},
+  {"artist": "Eminem", "track": "Lose Yourself", "genre": "Hip-Hop"},
+  {"artist": "Eminem", "track": "Without Me", "genre": "Hip-Hop"},
+  {"artist": "Eminem", "track": "The Real Slim Shady", "genre": "Hip-Hop"},
+  {"artist": "Kanye West", "track": "Stronger", "genre": "Hip-Hop"},
+  {"artist": "Kanye West", "track": "Gold Digger", "genre": "Hip-Hop"},
+  {"artist": "Kanye West", "track": "Heartless", "genre": "Hip-Hop"},
+  {"artist": "Cardi B", "track": "Bodak Yellow", "genre": "Hip-Hop"},
+  {"artist": "Cardi B", "track": "I Like It", "genre": "Hip-Hop"},
+  {"artist": "Lizzo", "track": "Truth Hurts", "genre": "Hip-Hop"},
+  {"artist": "Lizzo", "track": "Good as Hell", "genre": "Hip-Hop"},
+  {"artist": "SZA", "track": "Kill Bill", "genre": "R&B"},
+  {"artist": "SZA", "track": "All the Stars", "genre": "R&B"},
+  {"artist": "The Weeknd", "track": "Die For You", "genre": "R&B"},
+  {"artist": "Calvin Harris", "track": "Summer", "genre": "EDM"},
+  {"artist": "Calvin Harris", "track": "This Is What You Came For", "genre": "EDM"},
+  {"artist": "David Guetta", "track": "When Love Takes Over", "genre": "EDM"},
+  {"artist": "Avicii", "track": "Wake Me Up", "genre": "EDM"},
+  {"artist": "Avicii", "track": "The Nights", "genre": "EDM"},
+  {"artist": "Avicii", "track": "Hey Brother", "genre": "EDM"},
+  {"artist": "Martin Garrix", "track": "Scared to Be Lonely", "genre": "EDM"},
+  {"artist": "The Chainsmokers", "track": "Don't Let Me Down", "genre": "EDM"},
+  {"artist": "The Chainsmokers", "track": "Something Just Like This", "genre": "EDM"},
+  {"artist": "Marshmello", "track": "Happier", "genre": "EDM"},
+  {"artist": "Marshmello", "track": "Alone", "genre": "EDM"},
+  {"artist": "Zedd", "track": "Clarity", "genre": "EDM"},
+  {"artist": "Zedd", "track": "Stay", "genre": "EDM"},
+  {"artist": "Daft Punk", "track": "Get Lucky", "genre": "EDM"},
+  {"artist": "Shakira", "track": "Waka Waka", "genre": "Latin"},
+  {"artist": "Shakira", "track": "Hips Don't Lie", "genre": "Latin"},
+  {"artist": "Ricky Martin", "track": "Livin' la Vida Loca", "genre": "Latin"},
+  {"artist": "Luis Fonsi", "track": "Despacito", "genre": "Latin"},
+  {"artist": "Bad Bunny", "track": "Tití Me Preguntó", "genre": "Latin"},
+  {"artist": "Bad Bunny", "track": "Moscow Mule", "genre": "Latin"},
+  {"artist": "Karol G", "track": "TQG", "genre": "Latin"},
+  {"artist": "J Balvin", "track": "Mi Gente", "genre": "Latin"},
+  {"artist": "Daddy Yankee", "track": "Gasolina", "genre": "Latin"},
+  {"artist": "Ozuna", "track": "Taki Taki", "genre": "Latin"}
 ]
