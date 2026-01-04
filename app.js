@@ -19,7 +19,7 @@ let gameState = {
 async function loadAvailableGenres() {
     console.log('loadAvailableGenres() wird aufgerufen...');
     try {
-        const response = await fetch('songs.json');
+        const response = await fetch('songs.json', { cache: 'no-store' });
         console.log('songs.json Response:', response.status);
         
         if (!response.ok) {
@@ -217,7 +217,8 @@ async function loadSongDataLive(artist, track) {
         const searchTerm = `${artist} ${track}`;
         const encodedQuery = encodeURIComponent(searchTerm);
         const response = await fetch(
-            `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=10&media=music`
+            `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=10&media=music`,
+            { cache: 'no-store' }
         );
 
         if (!response.ok) {
@@ -272,7 +273,8 @@ async function loadSongsFromItunes(searchQuery, limit) {
     try {
         const encodedQuery = encodeURIComponent(searchQuery);
         const response = await fetch(
-            `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=50&media=music`
+            `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=50&media=music`,
+            { cache: 'no-store' }
         );
 
         if (!response.ok) {
@@ -500,7 +502,8 @@ function showSongInfo() {
 // Spiele Preview ab (iOS-kompatibel)
 function playPreview() {
     if (!gameState.currentSong) {
-        alert('Kein Song geladen');
+        alert('Kein Song geladen. Lade nächste Frage...');
+        nextQuestion();
         return;
     }
     
