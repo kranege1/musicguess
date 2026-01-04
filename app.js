@@ -257,8 +257,8 @@ async function fetchItunes(searchTerm, { limit = 10, country = 'DE' } = {}) {
     }
     if (!response.ok) {
         const errCode = country === 'DE' ? 'F3' : 'F4';
-        debugLog(`❌ iTunes API Fehler ${country}: ${response.status}`, errCode);
-        throw new Error(`iTunes API Anfrage fehlgeschlagen (${response.status})`);
+        debugLog(`❌ iTunes API Fehler ${country}: ${response.status} ${response.statusText || ''}`.trim(), errCode);
+        throw new Error(`iTunes API Anfrage fehlgeschlagen ${country} (${response.status} ${response.statusText || ''})`);
     }
     const data = await response.json();
     console.log(`iTunes Suche ${country} für "${searchTerm}": ${data.results.length} Ergebnisse`);
@@ -266,18 +266,28 @@ async function fetchItunes(searchTerm, { limit = 10, country = 'DE' } = {}) {
     return data.results;
 }
 
+// Versucht mehrere Länder in Reihe, um F3/F4 zu reduzieren
+async function fetchItunesWithFallback(searchTerm, countries = ['DE', 'US', 'GB', 'CA'], limit = 10) {
+    let lastError = null;
+    for (const country of countries) {
+        try {
+            const results = await fetchItunes(searchTerm, { limit, country });
+            return { results, country };
+        } catch (err) {
+            lastError = err;
+            const errCode = country === 'DE' ? 'F3' : 'F4';
+            debugLog(`⚠️ ${country} fehlgeschlagen: ${err.message}`, errCode);
+        }
+    }
+    throw lastError || new Error('iTunes Suche fehlgeschlagen');
+}
+
 // Lade Song-Daten live von iTunes API basierend auf Suchbegriffen (mit Länder-Fallback DE -> US)
 async function loadSongDataLive(artist, track) {
     try {
         const searchTerm = `${artist} ${track}`;
 
-        let results = [];
-        try {
-            results = await fetchItunes(searchTerm, { limit: 10, country: 'DE' });
-        } catch (errDe) {
-            console.warn('DE-Suche fehlgeschlagen, versuche US:', errDe);
-            results = await fetchItunes(searchTerm, { limit: 10, country: 'US' });
-        }
+        const { results, country: usedCountry } = await fetchItunesWithFallback(searchTerm, ['DE', 'US', 'GB', 'CA'], 10);
 
         // Finde Songs mit Preview
         const songsWithPreview = results.filter(result => 
@@ -304,7 +314,7 @@ async function loadSongDataLive(artist, track) {
         }
 
         const safePreview = (song.previewUrl || '').replace(/^http:/, 'https:');
-        debugLog(`✅ Song geladen: "${song.trackName}"`);
+        debugLog(`✅ Song geladen: "${song.trackName}" (${usedCountry})`);
         return {
             id: song.trackId,
             track: song.trackName,
