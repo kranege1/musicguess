@@ -1,244 +1,3 @@
-// Song-Datenbank (mit echten iTunes Preview-URLs)
-const SONG_DATABASE = {
-  "genres": {
-    "Rock": [
-      {
-        "id": 1440650428,
-        "track": "Bohemian Rhapsody",
-        "artist": "Queen",
-        "album": "A Night At the Opera",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/62/0c/e8/620ce8c7-773f-9f4b-dca1-b64d7e6b7728/mzaf_13341178261601793605.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/3c/1b/a9/3c1ba9e1-15b1-03b3-3bfd-5d794d144bfc/16UMGIM04543.rgb.jpg/100x100bb.jpg",
-        "genre": "Rock"
-      },
-      {
-        "id": 1440879651,
-        "track": "We Will Rock You",
-        "artist": "Queen",
-        "album": "News Of The World",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/b5/5d/c4/b55dc44e-1d9c-9d2d-a9f1-5a6f5a6f5a6f/mzaf_2841178261601793606.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/9a/22/e3/9a22e3f5-8d5d-8d5d-8d5d-8d5d8d5d8d5d/16UMGIM04544.rgb.jpg/100x100bb.jpg",
-        "genre": "Rock"
-      },
-      {
-        "id": 1440879099,
-        "track": "Imagine",
-        "artist": "John Lennon",
-        "album": "Imagine",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/9d/70/8e/9d708e77-6f82-6e3e-0b7d-7e0e7e0e7e0e/mzaf_7512178261601793607.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/74/db/8a/74db8ae3-598a-d4d6-8c6d-cfc6a5aa0e9e/00602547954893.rgb.jpg/100x100bb.jpg",
-        "genre": "Rock"
-      },
-      {
-        "id": 1440831180,
-        "track": "Back in Black",
-        "artist": "AC/DC",
-        "album": "Back In Black",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/3e/4c/d9/3e4cd9e0-a1b2-c3d4-e5f6-a1b2c3d4e5f6/mzaf_9123178261601793608.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/a4/68/ab/a468ab95-679e-6b29-5b6d-7e6e7e6e7e6e/00720642442753.rgb.jpg/100x100bb.jpg",
-        "genre": "Rock"
-      },
-      {
-        "id": 1440831181,
-        "track": "Hotel California",
-        "artist": "Eagles",
-        "album": "Hotel California",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/5f/5f/5f/5f5f5f5f-a2b3-c4d5-e6f7-a1b2c3d4e5f6/mzaf_4567178261601793609.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/8b/8b/8b/8b8b8b8b-8b8b-8b8b-8b8b-8b8b8b8b8b8b/00081227971984.rgb.jpg/100x100bb.jpg",
-        "genre": "Rock"
-      }
-    ],
-    "Pop": [
-      {
-        "id": 1440901021,
-        "track": "Billie Jean",
-        "artist": "Michael Jackson",
-        "album": "Thriller",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/1a/1a/1a/1a1a1a1a-b2c3-d4e5-f6a1-b2c3d4e5f6a1/mzaf_8901178261601793610.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/2c/2c/2c/2c2c2c2c-2c2c-2c2c-2c2c-2c2c2c2c2c2c/00194690265365.rgb.jpg/100x100bb.jpg",
-        "genre": "Pop"
-      },
-      {
-        "id": 1440901022,
-        "track": "Beat It",
-        "artist": "Michael Jackson",
-        "album": "Thriller",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/3d/3d/3d/3d3d3d3d-c4d5-e6f7-a1b2-c3d4e5f6a1b2/mzaf_2345178261601793611.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/4e/4e/4e/4e4e4e4e-4e4e-4e4e-4e4e-4e4e4e4e4e4e/00093624932949.rgb.jpg/100x100bb.jpg",
-        "genre": "Pop"
-      },
-      {
-        "id": 1440901023,
-        "track": "Shake It Off",
-        "artist": "Taylor Swift",
-        "album": "1989",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/5a/5a/5a/5a5a5a5a-d5e6-f7a1-b2c3-d4e5f6a1b2c3/mzaf_6789178261601793612.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music3/v4/6b/6b/6b/6b6b6b6b-6b6b-6b6b-6b6b-6b6b6b6b6b6b/886445635850.jpg/100x100bb.jpg",
-        "genre": "Pop"
-      },
-      {
-        "id": 1440901024,
-        "track": "Shape of You",
-        "artist": "Ed Sheeran",
-        "album": "÷ (Deluxe)",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/7c/7c/7c/7c7c7c7c-e6f7-a1b2-c3d4-e5f6a1b2c3d4/mzaf_1234178261601793613.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/8d/8d/8d/8d8d8d8d-8d8d-8d8d-8d8d-8d8d8d8d8d8d/00190295859572.rgb.jpg/100x100bb.jpg",
-        "genre": "Pop"
-      },
-      {
-        "id": 1440901025,
-        "track": "Rolling in the Deep",
-        "artist": "Adele",
-        "album": "21",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/9e/9e/9e/9e9e9e9e-f7a1-b2c3-d4e5-f6a1b2c3d4e5/mzaf_5678178261601793614.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/af/af/af/afafafaf-afaf-afaf-afaf-afafafafafaf/00634904023515.rgb.jpg/100x100bb.jpg",
-        "genre": "Pop"
-      }
-    ],
-    "Hip-Hop": [
-      {
-        "id": 1440920001,
-        "track": "Lose Yourself",
-        "artist": "Eminem",
-        "album": "8 Mile",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/b1/b1/b1/b1b1b1b1-a1b2-c3d4-e5f6-a1b2c3d4e5f6/mzaf_9012178261601793615.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/c2/c2/c2/c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2/00606949335458.rgb.jpg/100x100bb.jpg",
-        "genre": "Hip-Hop"
-      },
-      {
-        "id": 1440920002,
-        "track": "In Da Club",
-        "artist": "50 Cent",
-        "album": "Get Rich or Die Tryin'",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/d3/d3/d3/d3d3d3d3-b2c3-d4e5-f6a1-b2c3d4e5f6a1/mzaf_3456178261601793616.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music117/v4/e4/e4/e4/e4e4e4e4-e4e4-e4e4-e4e4-e4e4e4e4e4e4/00602557650686.rgb.jpg/100x100bb.jpg",
-        "genre": "Hip-Hop"
-      },
-      {
-        "id": 1440920003,
-        "track": "Old Town Road",
-        "artist": "Lil Nas X",
-        "album": "7",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/f5/f5/f5/f5f5f5f5-c3d4-e5f6-a1b2-c3d4e5f6a1b2/mzaf_7890178261601793617.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/06/06/06/06060606-0606-0606-0606-060606060606/00888072086784.rgb.jpg/100x100bb.jpg",
-        "genre": "Hip-Hop"
-      },
-      {
-        "id": 1440920004,
-        "track": "Hotline Bling",
-        "artist": "Drake",
-        "album": "Views",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/17/17/17/17171717-d4e5-f6a1-b2c3-d4e5f6a1b2c3/mzaf_2109178261601793618.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/28/28/28/28282828-2828-2828-2828-282828282828/00602567696629.rgb.jpg/100x100bb.jpg",
-        "genre": "Hip-Hop"
-      },
-      {
-        "id": 1440920005,
-        "track": "Rap God",
-        "artist": "Eminem",
-        "album": "The Marshall Mathers LP 2",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/39/39/39/39393939-e5f6-a1b2-c3d4-e5f6a1b2c3d4/mzaf_6543178261601793619.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/4a/4a/4a/4a4a4a4a-4a4a-4a4a-4a4a-4a4a4a4a4a4a/886447945810.jpg/100x100bb.jpg",
-        "genre": "Hip-Hop"
-      }
-    ],
-    "Jazz": [
-      {
-        "id": 1440930001,
-        "track": "What a Wonderful World",
-        "artist": "Louis Armstrong",
-        "album": "What a Wonderful World",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/4b/4b/4b/4b4b4b4b-f6a1-b2c3-d4e5-f6a1b2c3d4e5/mzaf_0987178261601793620.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5c/5c/5c/5c5c5c5c-5c5c-5c5c-5c5c-5c5c5c5c5c5c/00888072022577.rgb.jpg/100x100bb.jpg",
-        "genre": "Jazz"
-      },
-      {
-        "id": 1440930002,
-        "track": "Take Five",
-        "artist": "Dave Brubeck",
-        "album": "Time Out",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/6d/6d/6d/6d6d6d6d-a1b2-c3d4-e5f6-a1b2c3d4e5f6/mzaf_4321178261601793621.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/7e/7e/7e/7e7e7e7e-7e7e-7e7e-7e7e-7e7e7e7e7e7e/00886976451110.rgb.jpg/100x100bb.jpg",
-        "genre": "Jazz"
-      },
-      {
-        "id": 1440930003,
-        "track": "Fly Me to the Moon",
-        "artist": "Frank Sinatra",
-        "album": "It Might as Well Be Swing",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/8f/8f/8f/8f8f8f8f-b2c3-d4e5-f6a1-b2c3d4e5f6a1/mzaf_8765178261601793622.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/90/90/90/90909090-9090-9090-9090-909090909090/00602557385694.rgb.jpg/100x100bb.jpg",
-        "genre": "Jazz"
-      },
-      {
-        "id": 1440930004,
-        "track": "So What",
-        "artist": "Miles Davis",
-        "album": "Kind of Blue",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/a1/a1/a1/a1a1a1a1-c3d4-e5f6-a1b2-c3d4e5f6a1b2/mzaf_3210178261601793623.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/b2/b2/b2/b2b2b2b2-b2b2-b2b2-b2b2-b2b2b2b2b2b2/00886977920721.rgb.jpg/100x100bb.jpg",
-        "genre": "Jazz"
-      },
-      {
-        "id": 1440930005,
-        "track": "Summertime",
-        "artist": "Ella Fitzgerald",
-        "album": "Porgy and Bess",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/c3/c3/c3/c3c3c3c3-d4e5-f6a1-b2c3-d4e5f6a1b2c3/mzaf_7654178261601793624.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/d4/d4/d4/d4d4d4d4-d4d4-d4d4-d4d4-d4d4d4d4d4d4/00600753465684.rgb.jpg/100x100bb.jpg",
-        "genre": "Jazz"
-      }
-    ],
-    "Electronic": [
-      {
-        "id": 1440940001,
-        "track": "One More Time",
-        "artist": "Daft Punk",
-        "album": "Discovery",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/e5/e5/e5/e5e5e5e5-e5f6-a1b2-c3d4-e5f6a1b2c3d4/mzaf_2098178261601793625.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/f6/f6/f6/f6f6f6f6-f6f6-f6f6-f6f6-f6f6f6f6f6f6/00724384260538.rgb.jpg/100x100bb.jpg",
-        "genre": "Electronic"
-      },
-      {
-        "id": 1440940002,
-        "track": "Wake Me Up",
-        "artist": "Avicii",
-        "album": "True",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/07/07/07/07070707-f6a1-b2c3-d4e5-f6a1b2c3d4e5/mzaf_6543178261601793626.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/18/18/18/18181818-1818-1818-1818-181818181818/00602527834764.rgb.jpg/100x100bb.jpg",
-        "genre": "Electronic"
-      },
-      {
-        "id": 1440940003,
-        "track": "Titanium",
-        "artist": "David Guetta",
-        "album": "Nothing but the Beat",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/29/29/29/29292929-a1b2-c3d4-e5f6-a1b2c3d4e5f6/mzaf_1098178261601793627.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/3a/3a/3a/3a3a3a3a-3a3a-3a3a-3a3a-3a3a3a3a3a3a/00724383117031.rgb.jpg/100x100bb.jpg",
-        "genre": "Electronic"
-      },
-      {
-        "id": 1440940004,
-        "track": "Animals",
-        "artist": "Martin Garrix",
-        "album": "Animals - Single",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/4b/4b/4b/4b4b4b4b-b2c3-d4e5-f6a1-b2c3d4e5f6a1/mzaf_5432178261601793628.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/5c/5c/5c/5c5c5c5c-5c5c-5c5c-5c5c-5c5c5c5c5c5c/00602537518241.rgb.jpg/100x100bb.jpg",
-        "genre": "Electronic"
-      },
-      {
-        "id": 1440940005,
-        "track": "Strobe",
-        "artist": "Deadmau5",
-        "album": "For Lack of a Better Name",
-        "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/6d/6d/6d/6d6d6d6d-c3d4-e5f6-a1b2-c3d4e5f6a1b2/mzaf_9876178261601793629.plus.aac.p.m4a",
-        "image": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/7e/7e/7e/7e7e7e7e-7e7e-7e7e-7e7e-7e7e7e7e7e7e/00602527241319.rgb.jpg/100x100bb.jpg",
-        "genre": "Electronic"
-      }
-    ]
-  }
-};
-
 // Globale Variablen
 let gameState = {
     songs: [],
@@ -251,7 +10,61 @@ let gameState = {
     multipleChoice: true,
     showGenre: false,
     previewDuration: 5,
+    audioSource: null,
+    audioContext: null,
+    progressInterval: null,
 };
+
+// Lade verfügbare Genres beim Seitenstart
+async function loadAvailableGenres() {
+    try {
+        const response = await fetch('songs.json');
+        if (!response.ok) {
+            throw new Error('Fehler beim Laden von songs.json');
+        }
+
+        const songs = await response.json();
+        
+        // Extrahiere einzigartige Genres
+        const genres = [...new Set(songs.map(song => song.genre))].sort();
+        
+        // Fülle die Genre-Dropdown
+        const genreSelect = document.getElementById('genreSelect');
+        
+        if (!genreSelect) {
+            console.error('genreSelect Element nicht gefunden!');
+            return;
+        }
+        
+        // Lösche alle Optionen und füge "Alle Genres" wieder hinzu
+        genreSelect.innerHTML = '';
+        
+        const alleOption = document.createElement('option');
+        alleOption.value = 'Alle';
+        alleOption.textContent = 'Alle Genres';
+        genreSelect.appendChild(alleOption);
+        
+        // Füge alle gefundenen Genres hinzu
+        genres.forEach(genre => {
+            const option = document.createElement('option');
+            option.value = genre;
+            option.textContent = genre;
+            genreSelect.appendChild(option);
+        });
+        
+        console.log(`${genres.length} Genres geladen:`, genres);
+    } catch (error) {
+        console.error('Fehler beim Laden der Genres:', error);
+    }
+}
+
+// Initialisierung beim Laden der Seite
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadAvailableGenres);
+} else {
+    // DOM ist bereits geladen
+    loadAvailableGenres();
+}
 
 // Toggle zwischen Genre- und Suchmodus
 function toggleGameMode() {
@@ -335,29 +148,79 @@ async function startGame() {
 // Lade Songs aus songs.json basierend auf Genre
 async function loadSongsFromGenre(genre, limit) {
     try {
-        // Nutze die eingebettete Datenbank (kein fetch nötig)
-        const data = SONG_DATABASE;
-        let allSongs = [];
-
-        if (genre === 'Alle') {
-            // Kombiniere alle Genres
-            for (const genreName in data.genres) {
-                allSongs = allSongs.concat(data.genres[genreName]);
-            }
-        } else {
-            // Nur ausgewähltes Genre
-            allSongs = data.genres[genre] || [];
+        // Lade songs.json
+        const response = await fetch('songs.json');
+        if (!response.ok) {
+            throw new Error('Fehler beim Laden von songs.json');
         }
 
-        if (allSongs.length === 0) {
+        const allSongs = await response.json();
+        let filteredSongs = [];
+
+        if (genre === 'Alle') {
+            // Alle Songs
+            filteredSongs = allSongs;
+        } else {
+            // Filtere nach Genre
+            filteredSongs = allSongs.filter(song => song.genre === genre);
+        }
+
+        if (filteredSongs.length === 0) {
             throw new Error('Keine Songs für dieses Genre gefunden');
         }
 
         // Mische und begrenze die Anzahl
-        gameState.songs = shuffleArray(allSongs).slice(0, Math.min(limit, allSongs.length));
+        const selectedSongs = shuffleArray(filteredSongs).slice(0, Math.min(limit, filteredSongs.length));
+        
+        // Speichere nur die Suchbegriffe - die echten Daten werden später geladen
+        gameState.songs = selectedSongs;
+        
         console.log(`${gameState.songs.length} Songs aus Genre "${genre}" geladen`);
     } catch (error) {
         console.error('Fehler beim Laden der Songs:', error);
+        throw error;
+    }
+}
+
+// Lade Song-Daten live von iTunes API basierend auf Suchbegriffen
+async function loadSongDataLive(artist, track) {
+    try {
+        const searchTerm = `${artist} ${track}`;
+        const encodedQuery = encodeURIComponent(searchTerm);
+        const response = await fetch(
+            `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=5&media=music`
+        );
+
+        if (!response.ok) {
+            throw new Error('iTunes API Anfrage fehlgeschlagen');
+        }
+
+        const data = await response.json();
+        
+        // Finde den besten Match
+        const song = data.results.find(result => 
+            result.previewUrl && 
+            result.trackName && 
+            result.artistName &&
+            result.trackName.toLowerCase().includes(track.toLowerCase()) &&
+            result.artistName.toLowerCase().includes(artist.toLowerCase())
+        ) || data.results[0]; // Fallback zum ersten Ergebnis
+
+        if (!song || !song.previewUrl) {
+            throw new Error(`Keine Preview-URL für "${artist} - ${track}" gefunden`);
+        }
+
+        return {
+            id: song.trackId,
+            track: song.trackName,
+            artist: song.artistName,
+            album: song.collectionName,
+            previewUrl: song.previewUrl,
+            image: song.artworkUrl100 || song.artworkUrl60,
+            genre: song.primaryGenreName || 'Unbekannt'
+        };
+    } catch (error) {
+        console.error(`Fehler beim Laden von "${artist} - ${track}":`, error);
         throw error;
     }
 }
@@ -402,7 +265,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
 }
 
 // Nächste Frage laden
-function nextQuestion() {
+async function nextQuestion() {
     // Stoppe vorherige Audio
     stopPreview();
 
@@ -413,7 +276,28 @@ function nextQuestion() {
 
     // Setze State zurück
     gameState.isAnswered = false;
-    gameState.currentSong = gameState.songs[gameState.currentQuestion];
+    const baseSong = gameState.songs[gameState.currentQuestion];
+
+    // Prüfe ob wir im Genre-Modus sind und nur Basis-Daten haben
+    if (baseSong.artist && baseSong.track && !baseSong.previewUrl) {
+        // Genre-Modus: Lade echte Song-Daten von iTunes API
+        try {
+            showLoadingState();
+            const fullSongData = await loadSongDataLive(baseSong.artist, baseSong.track);
+            gameState.currentSong = fullSongData;
+            hideLoadingState();
+        } catch (error) {
+            console.error('Fehler beim Laden der Song-Daten:', error);
+            hideLoadingState();
+            showError(`Fehler beim Laden von "${baseSong.artist} - ${baseSong.track}". Überspringe Song...`);
+            gameState.currentQuestion++;
+            setTimeout(() => nextQuestion(), 2000);
+            return;
+        }
+    } else {
+        // iTunes-Suchmodus: Song hat bereits alle Daten
+        gameState.currentSong = baseSong;
+    }
 
     // UI aktualisieren
     updateStats();
@@ -596,10 +480,14 @@ function playPreview() {
 
         xhr.onload = function() {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            gameState.audioContext = audioContext;
+            
             audioContext.decodeAudioData(xhr.response, function(buffer) {
                 const source = audioContext.createBufferSource();
                 source.buffer = buffer;
                 source.connect(audioContext.destination);
+                
+                gameState.audioSource = source;
 
                 const startTime = audioContext.currentTime;
                 source.start(0);
@@ -610,8 +498,14 @@ function playPreview() {
                 // Stoppiere nach Preview-Duration
                 const duration = gameState.previewDuration * 1000;
                 setTimeout(() => {
-                    source.stop();
-                    stopPreview();
+                    if (gameState.audioSource === source) {
+                        try {
+                            source.stop();
+                        } catch (e) {
+                            // Source bereits gestoppt
+                        }
+                        stopPreview();
+                    }
                 }, duration);
 
                 // Update Progress
@@ -625,6 +519,8 @@ function playPreview() {
                         clearInterval(interval);
                     }
                 }, 50);
+                
+                gameState.progressInterval = interval;
             }, function(error) {
                 console.error('Audio decode error:', error);
                 playSimplePreview();
@@ -686,8 +582,35 @@ function stopPreview() {
     const playBtn = document.getElementById('playBtn');
     const stopBtn = document.getElementById('stopBtn');
 
+    // Stoppe Audio Element
     audio.pause();
     audio.currentTime = 0;
+    
+    // Stoppe Web Audio API wenn aktiv
+    if (gameState.audioSource) {
+        try {
+            gameState.audioSource.stop();
+        } catch (e) {
+            // Source bereits gestoppt
+        }
+        gameState.audioSource = null;
+    }
+    
+    if (gameState.audioContext) {
+        try {
+            gameState.audioContext.close();
+        } catch (e) {
+            // Context bereits geschlossen
+        }
+        gameState.audioContext = null;
+    }
+    
+    // Stoppe Progress Interval
+    if (gameState.progressInterval) {
+        clearInterval(gameState.progressInterval);
+        gameState.progressInterval = null;
+    }
+
     playBtn.disabled = false;
     stopBtn.classList.remove('active');
     document.getElementById('progressFill').style.width = '0%';

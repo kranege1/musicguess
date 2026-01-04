@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Genre Test</title>
+</head>
+<body>
+    <h1>Genre Dropdown Test</h1>
+    <select id="genreSelect">
+        <option value="Alle">Alle Genres</option>
+    </select>
+    
+    <script>
+        async function loadGenres() {
+            try {
+                console.log('Starte Laden der Genres...');
+                const response = await fetch('songs.json');
+                console.log('Response:', response);
+                
+                const songs = await response.json();
+                console.log('Songs geladen:', songs.length);
+                
+                const genres = [...new Set(songs.map(song => song.genre))].sort();
+                console.log('Genres gefunden:', genres);
+                
+                const genreSelect = document.getElementById('genreSelect');
+                genreSelect.innerHTML = '';
+                
+                const alleOption = document.createElement('option');
+                alleOption.value = 'Alle';
+                alleOption.textContent = 'Alle Genres';
+                genreSelect.appendChild(alleOption);
+                
+                genres.forEach(genre => {
+                    const option = document.createElement('option');
+                    option.value = genre;
+                    option.textContent = genre;
+                    genreSelect.appendChild(option);
+                });
+                
+                console.log('Dropdown gefüllt!');
+            } catch (error) {
+                console.error('FEHLER:', error);
+            }
+        }
+        
+        window.addEventListener('DOMContentLoaded', loadGenres);
+    </script>
+</body>
+</html>
