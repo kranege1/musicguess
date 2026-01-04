@@ -1,4 +1,4 @@
-const APP_VERSION = 'v36';
+const APP_VERSION = 'v37';
 window.APP_VERSION = APP_VERSION;
 
 // Debug Log Helper
@@ -248,6 +248,46 @@ async function loadSongsFromGenre(genre, limit) {
     }
 }
 
+function fetchItunesJsonp(searchTerm, { limit = 10, country = 'DE' } = {}) {
+    return new Promise((resolve, reject) => {
+        const encodedQuery = encodeURIComponent(searchTerm);
+        const callbackName = `itunesJsonp_${country}_${Date.now()}_${Math.floor(Math.random()*10000)}`;
+        const url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=${limit}&media=music&country=${country}&lang=de_DE&callback=${callbackName}`;
+
+        const timeout = setTimeout(() => {
+            cleanup();
+            reject(new Error('JSONP Timeout'));
+        }, 6000);
+
+        function cleanup() {
+            clearTimeout(timeout);
+            if (window[callbackName]) {
+                try { delete window[callbackName]; } catch (_) {}
+            }
+            if (script && script.parentNode) {
+                script.parentNode.removeChild(script);
+            }
+        }
+
+        window[callbackName] = (data) => {
+            cleanup();
+            if (!data || !data.results) {
+                reject(new Error('JSONP: Keine Ergebnisse'));
+            } else {
+                resolve(data.results);
+            }
+        };
+
+        const script = document.createElement('script');
+        script.src = url;
+        script.onerror = () => {
+            cleanup();
+            reject(new Error('JSONP Script Error'));
+        };
+        document.body.appendChild(script);
+    });
+}
+
 async function fetchItunes(searchTerm, { limit = 10, country = 'DE' } = {}) {
     const encodedQuery = encodeURIComponent(searchTerm);
     const url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=${limit}&media=music&country=${country}&lang=de_DE`;
@@ -258,12 +298,18 @@ async function fetchItunes(searchTerm, { limit = 10, country = 'DE' } = {}) {
     } catch (networkError) {
         const errCode = country === 'DE' ? 'F3' : 'F4';
         debugLog(`❌ iTunes Fetch ${country} fehlgeschlagen: ${networkError.message}`, errCode);
-        throw new Error(`iTunes Fetch ${country} failed: ${networkError.message}`);
+        debugLog(`↩️ Versuche JSONP ${country}`, errCode);
+        const jsonpResults = await fetchItunesJsonp(searchTerm, { limit, country });
+        debugLog(`📦 ${jsonpResults.length} Ergebnisse (JSONP ${country})`);
+        return jsonpResults;
     }
     if (!response.ok) {
         const errCode = country === 'DE' ? 'F3' : 'F4';
         debugLog(`❌ iTunes API Fehler ${country}: ${response.status} ${response.statusText || ''}`.trim(), errCode);
-        throw new Error(`iTunes API Anfrage fehlgeschlagen ${country} (${response.status} ${response.statusText || ''})`);
+        debugLog(`↩️ Versuche JSONP ${country}`, errCode);
+        const jsonpResults = await fetchItunesJsonp(searchTerm, { limit, country });
+        debugLog(`📦 ${jsonpResults.length} Ergebnisse (JSONP ${country})`);
+        return jsonpResults;
     }
     const data = await response.json();
     console.log(`iTunes Suche ${country} für "${searchTerm}": ${data.results.length} Ergebnisse`);
