@@ -455,7 +455,7 @@ function showSongInfo() {
     document.getElementById('songInfo').classList.add('show');
 }
 
-// Spiele Preview ab
+// Spiele Preview ab (iOS-kompatibel)
 function playPreview() {
     if (!gameState.currentSong || !gameState.currentSong.previewUrl) {
         alert('Preview nicht verfügbar');
@@ -466,83 +466,11 @@ function playPreview() {
     const playBtn = document.getElementById('playBtn');
     const stopBtn = document.getElementById('stopBtn');
 
-    // Erstelle neuen Audio wenn nötig
-    if (!gameState.currentAudio) {
-        gameState.currentAudio = new Audio(gameState.currentSong.previewUrl);
-        gameState.currentAudio.crossOrigin = 'anonymous';
-    }
-
-    if (audio.paused) {
-        // Starte Playback
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', gameState.currentSong.previewUrl, true);
-        xhr.responseType = 'arraybuffer';
-
-        xhr.onload = function() {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            gameState.audioContext = audioContext;
-            
-            audioContext.decodeAudioData(xhr.response, function(buffer) {
-                const source = audioContext.createBufferSource();
-                source.buffer = buffer;
-                source.connect(audioContext.destination);
-                
-                gameState.audioSource = source;
-
-                const startTime = audioContext.currentTime;
-                source.start(0);
-
-                playBtn.disabled = true;
-                stopBtn.classList.add('active');
-
-                // Stoppiere nach Preview-Duration
-                const duration = gameState.previewDuration * 1000;
-                setTimeout(() => {
-                    if (gameState.audioSource === source) {
-                        try {
-                            source.stop();
-                        } catch (e) {
-                            // Source bereits gestoppt
-                        }
-                        stopPreview();
-                    }
-                }, duration);
-
-                // Update Progress
-                const interval = setInterval(() => {
-                    const elapsed = (audioContext.currentTime - startTime) * 1000;
-                    const progress = Math.min((elapsed / duration) * 100, 100);
-                    document.getElementById('progressFill').style.width = progress + '%';
-                    updateTimeDisplay(elapsed / 1000);
-
-                    if (elapsed >= duration) {
-                        clearInterval(interval);
-                    }
-                }, 50);
-                
-                gameState.progressInterval = interval;
-            }, function(error) {
-                console.error('Audio decode error:', error);
-                playSimplePreview();
-            });
-        };
-
-        xhr.onerror = function() {
-            playSimplePreview();
-        };
-
-        xhr.send();
-    }
-}
-
-// Einfache Preview (Fallback)
-function playSimplePreview() {
-    const audio = document.getElementById('audioPlayer');
-    const playBtn = document.getElementById('playBtn');
-    const stopBtn = document.getElementById('stopBtn');
-
+    // Setze Audio-Quelle
     audio.src = gameState.currentSong.previewUrl;
     audio.currentTime = 0;
+    
+    // Starte Playback
     audio.play().then(() => {
         playBtn.disabled = true;
         stopBtn.classList.add('active');
@@ -555,15 +483,15 @@ function playSimplePreview() {
             updateTimeDisplay(audio.currentTime);
 
             if (audio.currentTime < duration && !audio.paused) {
-                requestAnimationFrame(updateProgress);
-            } else {
+                gameState.progressInterval = requestAnimationFrame(updateProgress);
+            } else if (audio.currentTime >= duration) {
                 audio.pause();
                 stopPreview();
             }
         };
 
         // Stoppe nach Preview-Duration
-        setTimeout(() => {
+        gameState.stopTimeout = setTimeout(() => {
             audio.pause();
             stopPreview();
         }, gameState.previewDuration * 1000);
@@ -571,12 +499,12 @@ function playSimplePreview() {
         updateProgress();
     }).catch(error => {
         console.error('Playback error:', error);
-        alert('Fehler beim Abspielen des Previews');
+        alert('Fehler beim Abspielen des Previews. Bitte tippe erneut auf Play.');
         stopPreview();
     });
 }
 
-// Stoppe Preview
+// Stoppe Preview (iOS-kompatibel)
 function stopPreview() {
     const audio = document.getElementById('audioPlayer');
     const playBtn = document.getElementById('playBtn');
@@ -586,29 +514,16 @@ function stopPreview() {
     audio.pause();
     audio.currentTime = 0;
     
-    // Stoppe Web Audio API wenn aktiv
-    if (gameState.audioSource) {
-        try {
-            gameState.audioSource.stop();
-        } catch (e) {
-            // Source bereits gestoppt
-        }
-        gameState.audioSource = null;
-    }
-    
-    if (gameState.audioContext) {
-        try {
-            gameState.audioContext.close();
-        } catch (e) {
-            // Context bereits geschlossen
-        }
-        gameState.audioContext = null;
-    }
-    
-    // Stoppe Progress Interval
+    // Stoppe Progress Animation
     if (gameState.progressInterval) {
-        clearInterval(gameState.progressInterval);
+        cancelAnimationFrame(gameState.progressInterval);
         gameState.progressInterval = null;
+    }
+    
+    // Stoppe Timeout
+    if (gameState.stopTimeout) {
+        clearTimeout(gameState.stopTimeout);
+        gameState.stopTimeout = null;
     }
 
     playBtn.disabled = false;
