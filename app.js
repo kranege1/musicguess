@@ -218,8 +218,8 @@ async function loadSongDataLive(artist, track) {
         const searchTerm = `${artist} ${track}`;
         const encodedQuery = encodeURIComponent(searchTerm);
         const response = await fetch(
-            `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=10&media=music`,
-            { cache: 'no-store' }
+            `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=10&media=music&country=DE&lang=de_DE`,
+            { cache: 'no-store', mode: 'cors' }
         );
 
         if (!response.ok) {
@@ -266,6 +266,7 @@ async function loadSongDataLive(artist, track) {
     } catch (error) {
         console.error(`Fehler beim Laden von "${artist} - ${track}":`, error);
         gameState.lastError = error.message || String(error);
+        showError(`iTunes-Fehler: ${gameState.lastError}`);
         throw error;
     }
 }
@@ -275,8 +276,8 @@ async function loadSongsFromItunes(searchQuery, limit) {
     try {
         const encodedQuery = encodeURIComponent(searchQuery);
         const response = await fetch(
-            `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=50&media=music`,
-            { cache: 'no-store' }
+            `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=50&media=music&country=DE&lang=de_DE`,
+            { cache: 'no-store', mode: 'cors' }
         );
 
         if (!response.ok) {
@@ -604,7 +605,8 @@ function stopPreview() {
 }
 
 // Update Zeit-Anzeige
-function updateTimeDisplay(seconds) {
+            document.getElementById('resultMessage').textContent = '';
+            document.getElementById('errorMessage').classList.remove('show');
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     const duration = gameState.previewDuration;
