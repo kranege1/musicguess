@@ -188,7 +188,7 @@ async function loadSongDataLive(artist, track) {
         const searchTerm = `${artist} ${track}`;
         const encodedQuery = encodeURIComponent(searchTerm);
         const response = await fetch(
-            `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=5&media=music`
+            `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=10&media=music`
         );
 
         if (!response.ok) {
@@ -197,24 +197,36 @@ async function loadSongDataLive(artist, track) {
 
         const data = await response.json();
         
-        // Finde den besten Match
-        const song = data.results.find(result => 
+        console.log(`iTunes Suche für "${searchTerm}": ${data.results.length} Ergebnisse`);
+        
+        // Finde Songs mit Preview
+        const songsWithPreview = data.results.filter(result => 
             result.previewUrl && 
             result.trackName && 
-            result.artistName &&
+            result.artistName
+        );
+        
+        if (songsWithPreview.length === 0) {
+            throw new Error(`Keine Preview-URL für "${artist} - ${track}" verfügbar`);
+        }
+        
+        // Versuche besten Match zu finden
+        let song = songsWithPreview.find(result => 
             result.trackName.toLowerCase().includes(track.toLowerCase()) &&
             result.artistName.toLowerCase().includes(artist.toLowerCase())
-        ) || data.results[0]; // Fallback zum ersten Ergebnis
-
-        if (!song || !song.previewUrl) {
-            throw new Error(`Keine Preview-URL für "${artist} - ${track}" gefunden`);
+        );
+        
+        // Fallback: Nimm ersten Song mit Preview
+        if (!song) {
+            song = songsWithPreview[0];
+            console.log(`Verwende Fallback: "${song.artistName} - ${song.trackName}"`);
         }
 
         return {
             id: song.trackId,
             track: song.trackName,
             artist: song.artistName,
-            album: song.collectionName,
+            album: song.collectionName || 'Unbekannt',
             previewUrl: song.previewUrl,
             image: song.artworkUrl100 || song.artworkUrl60,
             genre: song.primaryGenreName || 'Unbekannt'
@@ -457,8 +469,18 @@ function showSongInfo() {
 
 // Spiele Preview ab (iOS-kompatibel)
 function playPreview() {
-    if (!gameState.currentSong || !gameState.currentSong.previewUrl) {
-        alert('Preview nicht verfügbar');
+    if (!gameState.currentSong) {
+        alert('Kein Song geladen');
+        return;
+    }
+    
+    if (!gameState.currentSong.previewUrl) {
+        alert('Für diesen Song ist leider keine Preview verfügbar. Überspringe...');
+        // Automatisch nächsten Song laden
+        setTimeout(() => {
+            gameState.currentQuestion++;
+            nextQuestion();
+        }, 1500);
         return;
     }
 
@@ -470,8 +492,11 @@ function playPreview() {
     audio.src = gameState.currentSong.previewUrl;
     audio.currentTime = 0;
     
+    console.log('Versuche Preview abzuspielen:', gameState.currentSong.previewUrl);
+    
     // Starte Playback
     audio.play().then(() => {
+        console.log('Playback gestartet');
         playBtn.disabled = true;
         stopBtn.classList.add('active');
 
@@ -499,7 +524,7 @@ function playPreview() {
         updateProgress();
     }).catch(error => {
         console.error('Playback error:', error);
-        alert('Fehler beim Abspielen des Previews. Bitte tippe erneut auf Play.');
+        alert('Fehler beim Abspielen. Bitte tippe erneut auf Play oder überspringe den Song.');
         stopPreview();
     });
 }
