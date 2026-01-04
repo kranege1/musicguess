@@ -1,0 +1,33 @@
+{
+  "description": "Diese Datei zeigt die Struktur der Songs, die aus der iTunes Search API geladen werden",
+  "exampleSong": {
+    "id": "trackId",
+    "track": "Liedtitel",
+    "artist": "Künstlername",
+    "album": "Albumname",
+    "previewUrl": "https://audio-ssl.itunes.apple.com/...",
+    "image": "https://is1-ssl.mzstatic.com/...",
+    "genre": "Pop"
+  },
+  "notes": "Die Songs werden automatisch aus der iTunes Search API geladen, wenn der Benutzer einen Suchbegriff eingibt.",
+  "savedSongs": [
+    {
+      "id": 143488950,
+      "track": "Bohemian Rhapsody",
+      "artist": "Queen",
+      "album": "A Night at the Opera",
+      "previewUrl": "https://audio-ssl.itunes.apple.com/...",
+      "image": "https://is1-ssl.mzstatic.com/...",
+      "genre": "Rock"
+    },
+    {
+      "id": 143488951,
+      "track": "Imagine",
+      "artist": "John Lennon",
+      "album": "Imagine",
+      "previewUrl": "https://audio-ssl.itunes.apple.com/...",
+      "image": "https://is1-ssl.mzstatic.com/...",
+      "genre": "Rock"
+    }
+  ]
+}
