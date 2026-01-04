@@ -580,66 +580,6 @@
         </div>
     </div>
 
-    <div id="debugLog" onclick="copyDebugLog(event)" style="position: fixed; bottom: 10px; right: 10px; width: 320px; max-height: 220px; background: rgba(0,0,0,0.85); color: #0f0; font-family: monospace; font-size: 10px; padding: 8px; border-radius: 6px; overflow-y: auto; z-index: 9999; display: none; cursor: pointer;" title="Klicken zum Kopieren">
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 4px;">
-            <button onclick="event.stopPropagation(); emailDebugLog();" style="background: #2196F3; color: white; border: none; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 10px;">✉️ Mail</button>
-            <button onclick="event.stopPropagation(); document.getElementById('debugLog').style.display='none'" style="background: #f44336; color: white; border: none; padding: 2px 6px; border-radius: 3px; cursor: pointer; font-size: 10px;">✕</button>
-        </div>
-        <div id="debugLogContent"></div>
-        <div id="copyFeedback" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #4CAF50; color: white; padding: 8px 16px; border-radius: 4px; display: none; font-size: 12px; font-weight: bold;">✓ Kopiert!</div>
-    </div>
-
-    <script>
-    function copyDebugLog(event) {
-        const content = document.getElementById('debugLogContent');
-        const text = content.innerText || content.textContent;
-        
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(text).then(() => {
-                showCopyFeedback();
-            }).catch(err => {
-                console.error('Clipboard-Fehler:', err);
-                fallbackCopy(text);
-            });
-        } else {
-            fallbackCopy(text);
-        }
-    }
-    
-    function fallbackCopy(text) {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.select();
-        try {
-            document.execCommand('copy');
-            showCopyFeedback();
-        } catch (err) {
-            console.error('Fallback-Copy-Fehler:', err);
-        }
-        document.body.removeChild(textarea);
-    }
-    
-    function showCopyFeedback() {
-        const feedback = document.getElementById('copyFeedback');
-        feedback.style.display = 'block';
-        setTimeout(() => {
-            feedback.style.display = 'none';
-        }, 1000);
-    }
-
-    function emailDebugLog() {
-        const content = document.getElementById('debugLogContent');
-        const text = content.innerText || content.textContent || '';
-        const subject = `MusicGuess Logs ${window.APP_VERSION || ''}`.trim();
-        const body = encodeURIComponent(text || '');
-        const mailto = `mailto:?subject=${encodeURIComponent(subject)}&body=${body}`;
-        window.location.href = mailto;
-    }
-    </script>
-
     <audio id="audioPlayer" preload="none" playsinline webkit-playsinline crossOrigin="anonymous"></audio>
     <script src="app.js?v=39"></script>
 </body>

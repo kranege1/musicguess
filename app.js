@@ -8,30 +8,14 @@ const USE_SERVER_API = () => {
     return typeof fetch !== 'undefined';
 };
 
-// Debug Log Helper
-// Error Codes:
-// F1: songs.json Ladefehler
-// F2: Keine Genres gefunden
-// F3: iTunes API Fehler (DE)
-// F4: iTunes API Fehler (US)
-// F5: Keine Preview-URL verfügbar
-// F6: Keine abspielbaren Songs
-// F7: Playback-Fehler
-// F8: Kein Song geladen
+// Debug Log Helper (disabled - logs go to console only)
 function debugLog(message, errorCode = null) {
-    const logBox = document.getElementById('debugLog');
-    const logContent = document.getElementById('debugLogContent');
-    if (logBox && logContent) {
-        logBox.style.display = 'block';
-        const timestamp = new Date().toLocaleTimeString();
-        const codePrefix = errorCode ? `[${errorCode}] ` : '';
-        logContent.innerHTML += `<div>${codePrefix}[${timestamp}] ${message}</div>`;
-        logBox.scrollTop = logBox.scrollHeight;
-    }
-    console.log(message);
+    // Just log to console, don't display in UI
+    const prefix = errorCode ? `[${errorCode}] ` : '';
+    console.log(prefix + message);
 }
 
-debugLog(`🚀 App JS ${APP_VERSION} geladen`);
+// Removed: debugLog display on page load
 
 // Globale Variablen
 let gameState = {
