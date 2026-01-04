@@ -267,7 +267,7 @@ async function fetchItunes(searchTerm, { limit = 10, country = 'DE' } = {}) {
 }
 
 // Versucht mehrere Länder in Reihe, um F3/F4 zu reduzieren
-async function fetchItunesWithFallback(searchTerm, countries = ['DE', 'US', 'GB', 'CA'], limit = 10) {
+async function fetchItunesWithFallback(searchTerm, countries = ['DE', 'US', 'GB', 'FR', 'AU'], limit = 10) {
     let lastError = null;
     for (const country of countries) {
         try {
@@ -279,6 +279,7 @@ async function fetchItunesWithFallback(searchTerm, countries = ['DE', 'US', 'GB'
             debugLog(`⚠️ ${country} fehlgeschlagen: ${err.message}`, errCode);
         }
     }
+    debugLog(`❌ iTunes Suche komplett fehlgeschlagen: ${lastError ? lastError.message : 'Unbekannt'}`, 'F4');
     throw lastError || new Error('iTunes Suche fehlgeschlagen');
 }
 
