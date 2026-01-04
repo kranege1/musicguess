@@ -361,6 +361,7 @@ async function nextQuestion() {
     // Verstecke die nächste Frage Button
     document.getElementById('nextBtn').classList.remove('show');
     document.getElementById('resultMessage').textContent = '';
+    document.getElementById('errorMessage').classList.remove('show');
     document.getElementById('songInfo').classList.remove('show');
     document.getElementById('playBtn').disabled = false;
 
@@ -609,8 +610,7 @@ function stopPreview() {
 }
 
 // Update Zeit-Anzeige
-            document.getElementById('resultMessage').textContent = '';
-            document.getElementById('errorMessage').classList.remove('show');
+function updateTimeDisplay(seconds) {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     const duration = gameState.previewDuration;
