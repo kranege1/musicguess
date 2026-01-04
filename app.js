@@ -1,3 +1,16 @@
+// Debug Log Helper
+function debugLog(message) {
+    const logBox = document.getElementById('debugLog');
+    const logContent = document.getElementById('debugLogContent');
+    if (logBox && logContent) {
+        logBox.style.display = 'block';
+        const timestamp = new Date().toLocaleTimeString();
+        logContent.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+        logBox.scrollTop = logBox.scrollHeight;
+    }
+    console.log(message);
+}
+
 // Globale Variablen
 let gameState = {
     songs: [],
@@ -19,9 +32,11 @@ let gameState = {
 // Lade verfügbare Genres beim Seitenstart
 async function loadAvailableGenres() {
     console.log('loadAvailableGenres() wird aufgerufen...');
+    debugLog('🔄 Lade Genres...');
     try {
         const response = await fetch('songs.json', { cache: 'no-store' });
         console.log('songs.json Response:', response.status);
+        debugLog(`📥 songs.json: ${response.status}`);
         
         if (!response.ok) {
             throw new Error('Fehler beim Laden von songs.json');
@@ -29,10 +44,12 @@ async function loadAvailableGenres() {
 
         const songs = await response.json();
         console.log(`${songs.length} Songs geladen`);
+        debugLog(`✅ ${songs.length} Songs geladen`);
         
         // Extrahiere einzigartige Genres
         const genres = [...new Set(songs.map(song => song.genre))].sort();
         console.log('Gefundene Genres:', genres);
+        debugLog(`🎵 Genres: ${genres.join(', ')}`);
         
         // Fülle die Genre-Dropdown
         const genreSelect = document.getElementById('genreSelect');
@@ -215,12 +232,14 @@ async function loadSongsFromGenre(genre, limit) {
 async function fetchItunes(searchTerm, { limit = 10, country = 'DE' } = {}) {
     const encodedQuery = encodeURIComponent(searchTerm);
     const url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=${limit}&media=music&country=${country}&lang=de_DE`;
+    debugLog(`🔍 iTunes ${country}: "${searchTerm}"`);
     const response = await fetch(url, { cache: 'no-store', mode: 'cors' });
     if (!response.ok) {
         throw new Error(`iTunes API Anfrage fehlgeschlagen (${response.status})`);
     }
     const data = await response.json();
     console.log(`iTunes Suche ${country} für "${searchTerm}": ${data.results.length} Ergebnisse`);
+    debugLog(`📦 ${data.results.length} Ergebnisse (${country})`);
     return data.results;
 }
 
@@ -245,6 +264,7 @@ async function loadSongDataLive(artist, track) {
         );
         
         if (songsWithPreview.length === 0) {
+            debugLog(`❌ Keine Preview für "${artist} - ${track}"`);
             throw new Error(`Keine Preview-URL für "${artist} - ${track}" verfügbar (DE/US)`);
         }
         
@@ -261,6 +281,7 @@ async function loadSongDataLive(artist, track) {
         }
 
         const safePreview = (song.previewUrl || '').replace(/^http:/, 'https:');
+        debugLog(`✅ Song geladen: "${song.trackName}"`);
         return {
             id: song.trackId,
             track: song.trackName,
@@ -273,6 +294,7 @@ async function loadSongDataLive(artist, track) {
     } catch (error) {
         console.error(`Fehler beim Laden von "${artist} - ${track}":`, error);
         gameState.lastError = error.message || String(error);
+        debugLog(`⚠️ Fehler: ${gameState.lastError}`);
         showError(`iTunes-Fehler: ${gameState.lastError}`);
         throw error;
     }
@@ -330,6 +352,7 @@ async function nextQuestion() {
     let idx = gameState.currentQuestion;
 
     console.log('nextQuestion start, index:', idx, 'song:', gameState.songs[idx]);
+    debugLog(`🎯 Frage ${idx + 1}: Lade Song...`);
 
     let attempts = 0;
     const maxAttempts = Math.min(8, gameState.songs.length);
@@ -560,10 +583,12 @@ function playPreview() {
     audio.load();
     
     console.log('Versuche Preview abzuspielen:', gameState.currentSong.previewUrl);
+    debugLog(`▶️ Starte Preview...`);
     
     // Starte Playback
     audio.play().then(() => {
         console.log('Playback gestartet');
+        debugLog(`🔊 Playback läuft`);
         playBtn.disabled = true;
         stopBtn.classList.add('active');
 
