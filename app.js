@@ -1,4 +1,5 @@
-const APP_VERSION = 'v35';
+const APP_VERSION = 'v36';
+window.APP_VERSION = APP_VERSION;
 
 // Debug Log Helper
 // Error Codes:
