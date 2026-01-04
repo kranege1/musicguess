@@ -331,26 +331,40 @@ async function nextQuestion() {
 
     console.log('nextQuestion start, index:', gameState.currentQuestion, 'song:', baseSong);
 
+    let attempts = 0;
+    const maxAttempts = Math.min(8, gameState.songs.length);
+
     // Prüfe ob wir im Genre-Modus sind und nur Basis-Daten haben
-    if (baseSong.artist && baseSong.track && !baseSong.previewUrl) {
-        // Genre-Modus: Lade echte Song-Daten von iTunes API
+    while (attempts < maxAttempts) {
         try {
-            showLoadingState();
-            const fullSongData = await loadSongDataLive(baseSong.artist, baseSong.track);
-            gameState.currentSong = fullSongData;
-            hideLoadingState();
+            if (baseSong.artist && baseSong.track && !baseSong.previewUrl) {
+                showLoadingState();
+                const fullSongData = await loadSongDataLive(baseSong.artist, baseSong.track);
+                gameState.currentSong = fullSongData;
+                hideLoadingState();
+            } else {
+                gameState.currentSong = baseSong;
+            }
+
+            if (gameState.currentSong && gameState.currentSong.previewUrl) {
+                break;
+            }
         } catch (error) {
-            console.error('Fehler beim Laden der Song-Daten:', error);
+            console.error('Fehler beim Laden der Song-Daten, versuche nächsten:', error);
             gameState.lastError = error.message || String(error);
-            hideLoadingState();
-            showError(`Fehler beim Laden von "${baseSong.artist} - ${baseSong.track}". Überspringe Song...`);
-            gameState.currentQuestion++;
-            setTimeout(() => nextQuestion(), 2000);
-            return;
         }
-    } else {
-        // iTunes-Suchmodus: Song hat bereits alle Daten
-        gameState.currentSong = baseSong;
+
+        attempts++;
+        gameState.currentQuestion++;
+        if (gameState.currentQuestion >= gameState.songs.length) {
+            break;
+        }
+    }
+
+    if (!gameState.currentSong || !gameState.currentSong.previewUrl) {
+        showError('Keine abspielbaren Songs gefunden. Bitte anderes Genre oder Suchbegriff versuchen.');
+        endGame();
+        return;
     }
 
     // UI aktualisieren
