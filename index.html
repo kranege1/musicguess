@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎵 Musik Ratespiel</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <style>
         * {
             margin: 0;
@@ -581,6 +584,10 @@
     </div>
 
     <audio id="audioPlayer" preload="none" playsinline webkit-playsinline crossOrigin="anonymous"></audio>
-    <script src="app.js?v=40"></script>
+    <script>
+        // Force load latest version with dynamic cache buster
+        const ts = Math.floor(Date.now() / 60000); // Changes every minute
+        document.write('<script src="app.js?v=40&t=' + ts + '"><\/script>');
+    </script>
 </body>
 </html>
