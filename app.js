@@ -1,5 +1,12 @@
-const APP_VERSION = 'v38';
+const APP_VERSION = 'v39';
 window.APP_VERSION = APP_VERSION;
+
+// Detect if running on server or static hosting
+const API_BASE = window.location.origin; // Will use /api endpoints if available
+const USE_SERVER_API = () => {
+    // Try to use /api/preview if available (Render/Node server)
+    return typeof fetch !== 'undefined';
+};
 
 // Debug Log Helper
 // Error Codes:
@@ -49,14 +56,22 @@ async function loadAvailableGenres() {
     console.log('loadAvailableGenres() wird aufgerufen...');
     debugLog('🔄 Lade Genres...');
     try {
-        const cacheBuster = new Date().getTime();
-        const response = await fetch(`songs.json?v=${cacheBuster}`, { cache: 'no-store' });
-        console.log('songs.json Response:', response.status);
-        debugLog(`📥 songs.json: ${response.status}`);
+        let response;
+        // Try server API first, fallback to direct songs.json
+        try {
+            response = await fetch(`${API_BASE}/api/songs`, { cache: 'no-store' });
+        } catch (apiErr) {
+            console.log('API nicht verfügbar, nutze direktes songs.json');
+            const cacheBuster = new Date().getTime();
+            response = await fetch(`songs.json?v=${cacheBuster}`, { cache: 'no-store' });
+        }
+        
+        console.log('Songs Response:', response.status);
+        debugLog(`📥 Songs geladen: ${response.status}`);
         
         if (!response.ok) {
-                        debugLog(`[F1] ❌ songs.json HTTP ${response.status}`, 'F1');
-            throw new Error('Fehler beim Laden von songs.json');
+            debugLog(`[F1] ❌ Songs HTTP ${response.status}`, 'F1');
+            throw new Error('Fehler beim Laden der Songs');
         }
 
         const songs = await response.json();
@@ -288,6 +303,27 @@ function fetchItunesJsonp(searchTerm, { limit = 10, country = 'DE' } = {}) {
     });
 }
 
+// Fetch preview from server API (or fallback to direct iTunes if no server)
+async function fetchPreviewFromServer(artist, track) {
+    try {
+        // Try server API first
+        const response = await fetch(`${API_BASE}/api/preview?artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}`, {
+            cache: 'no-store'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            debugLog(`🎵 Server: "${track}" (${data.country || 'cached'})`);
+            return data.preview;
+        } else {
+            throw new Error(`Server API: ${response.status}`);
+        }
+    } catch (err) {
+        console.log('Server API failed, trying direct iTunes:', err.message);
+        throw err;
+    }
+}
+
 async function fetchItunes(searchTerm, { limit = 10, country = 'DE' } = {}) {
     const encodedQuery = encodeURIComponent(searchTerm);
     const url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=${limit}&media=music&country=${country}&lang=de_DE`;
@@ -351,8 +387,24 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
             };
         }
 
-        const searchTerm = `${artist} ${track}`;
+        // Try server API first
+        try {
+            const preview = await fetchPreviewFromServer(artist, track);
+            return {
+                id: Date.now(),
+                track: track,
+                artist: artist,
+                album: 'Unbekannt',
+                previewUrl: preview,
+                image: '',
+                genre: 'Unbekannt'
+            };
+        } catch (serverErr) {
+            console.log('Server API failed, trying direct iTunes fallback');
+        }
 
+        // Fallback: Direct iTunes (shouldn't reach here on server deployment)
+        const searchTerm = `${artist} ${track}`;
         const { results, country: usedCountry } = await fetchItunesWithFallback(searchTerm, ['DE', 'US', 'GB', 'CA'], 10);
 
         // Finde Songs mit Preview
