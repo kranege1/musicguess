@@ -212,33 +212,40 @@ async function loadSongsFromGenre(genre, limit) {
     }
 }
 
-// Lade Song-Daten live von iTunes API basierend auf Suchbegriffen
+async function fetchItunes(searchTerm, { limit = 10, country = 'DE' } = {}) {
+    const encodedQuery = encodeURIComponent(searchTerm);
+    const url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=${limit}&media=music&country=${country}&lang=de_DE`;
+    const response = await fetch(url, { cache: 'no-store', mode: 'cors' });
+    if (!response.ok) {
+        throw new Error(`iTunes API Anfrage fehlgeschlagen (${response.status})`);
+    }
+    const data = await response.json();
+    console.log(`iTunes Suche ${country} für "${searchTerm}": ${data.results.length} Ergebnisse`);
+    return data.results;
+}
+
+// Lade Song-Daten live von iTunes API basierend auf Suchbegriffen (mit Länder-Fallback DE -> US)
 async function loadSongDataLive(artist, track) {
     try {
         const searchTerm = `${artist} ${track}`;
-        const encodedQuery = encodeURIComponent(searchTerm);
-        const response = await fetch(
-            `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=10&media=music&country=DE&lang=de_DE`,
-            { cache: 'no-store', mode: 'cors' }
-        );
 
-        if (!response.ok) {
-            throw new Error('iTunes API Anfrage fehlgeschlagen');
+        let results = [];
+        try {
+            results = await fetchItunes(searchTerm, { limit: 10, country: 'DE' });
+        } catch (errDe) {
+            console.warn('DE-Suche fehlgeschlagen, versuche US:', errDe);
+            results = await fetchItunes(searchTerm, { limit: 10, country: 'US' });
         }
 
-        const data = await response.json();
-        
-        console.log(`iTunes Suche für "${searchTerm}": ${data.results.length} Ergebnisse`);
-        
         // Finde Songs mit Preview
-        const songsWithPreview = data.results.filter(result => 
+        const songsWithPreview = results.filter(result => 
             result.previewUrl && 
             result.trackName && 
             result.artistName
         );
         
         if (songsWithPreview.length === 0) {
-            throw new Error(`Keine Preview-URL für "${artist} - ${track}" verfügbar`);
+            throw new Error(`Keine Preview-URL für "${artist} - ${track}" verfügbar (DE/US)`);
         }
         
         // Versuche besten Match zu finden
@@ -274,18 +281,15 @@ async function loadSongDataLive(artist, track) {
 // Lade Songs von iTunes Search API
 async function loadSongsFromItunes(searchQuery, limit) {
     try {
-        const encodedQuery = encodeURIComponent(searchQuery);
-        const response = await fetch(
-            `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=50&media=music&country=DE&lang=de_DE`,
-            { cache: 'no-store', mode: 'cors' }
-        );
-
-        if (!response.ok) {
-            throw new Error('API Anfrage fehlgeschlagen');
+        let results = [];
+        try {
+            results = await fetchItunes(searchQuery, { limit: 50, country: 'DE' });
+        } catch (errDe) {
+            console.warn('DE-Suche fehlgeschlagen (Suchmodus), versuche US:', errDe);
+            results = await fetchItunes(searchQuery, { limit: 50, country: 'US' });
         }
 
-        const data = await response.json();
-        const songs = data.results
+        const songs = results
             .filter(song => 
                 song.previewUrl && 
                 song.trackName && 
