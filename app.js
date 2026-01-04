@@ -44,11 +44,13 @@ async function loadAvailableGenres() {
     console.log('loadAvailableGenres() wird aufgerufen...');
     debugLog('🔄 Lade Genres...');
     try {
-        const response = await fetch('songs.json', { cache: 'no-store' });
+        const cacheBuster = new Date().getTime();
+        const response = await fetch(`songs.json?v=${cacheBuster}`, { cache: 'no-store' });
         console.log('songs.json Response:', response.status);
         debugLog(`📥 songs.json: ${response.status}`);
         
         if (!response.ok) {
+                        debugLog(`[F1] ❌ songs.json HTTP ${response.status}`, 'F1');
             throw new Error('Fehler beim Laden von songs.json');
         }
 
@@ -90,7 +92,9 @@ async function loadAvailableGenres() {
         
         console.log(`✅ ${genres.length} Genres erfolgreich geladen!`);
     } catch (error) {
-        console.error('❌ Fehler beim Laden der Genres:', error);        debugLog(`❌ Fehler beim Laden der Genres: ${error.message}`, 'F1');    }
+        console.error('❌ Fehler beim Laden der Genres:', error);
+        debugLog(`[F1] ❌ Load failed: ${error.message}`, 'F1');
+    }
 }
 
 // Lade Version
