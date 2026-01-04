@@ -66,11 +66,31 @@ async function loadAvailableGenres() {
     }
 }
 
+// Lade Version
+async function loadVersion() {
+    try {
+        const response = await fetch('version.json');
+        if (response.ok) {
+            const data = await response.json();
+            const versionSpan = document.getElementById('version');
+            if (versionSpan) {
+                versionSpan.textContent = `v${data.version}`;
+            }
+        }
+    } catch (error) {
+        console.log('Version konnte nicht geladen werden:', error);
+    }
+}
+
 // Initialisierung beim Laden der Seite
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadAvailableGenres);
+    document.addEventListener('DOMContentLoaded', () => {
+        loadVersion();
+        loadAvailableGenres();
+    });
 } else {
     // DOM ist bereits geladen
+    loadVersion();
     loadAvailableGenres();
 }
 
