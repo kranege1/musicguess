@@ -251,12 +251,13 @@ async function loadSongDataLive(artist, track) {
             console.log(`Verwende Fallback: "${song.artistName} - ${song.trackName}"`);
         }
 
+        const safePreview = (song.previewUrl || '').replace(/^http:/, 'https:');
         return {
             id: song.trackId,
             track: song.trackName,
             artist: song.artistName,
             album: song.collectionName || 'Unbekannt',
-            previewUrl: song.previewUrl,
+            previewUrl: safePreview,
             image: song.artworkUrl100 || song.artworkUrl60,
             genre: song.primaryGenreName || 'Unbekannt'
         };
@@ -292,7 +293,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 track: song.trackName,
                 artist: song.artistName,
                 album: song.collectionName,
-                previewUrl: song.previewUrl,
+                previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
                 image: song.artworkUrl100 || song.artworkUrl60,
                 genre: song.primaryGenreName || 'Unbekannt'
             }));
@@ -523,8 +524,9 @@ function playPreview() {
     audio.setAttribute('preload', 'none');
     audio.crossOrigin = 'anonymous';
 
-    // Setze Audio-Quelle
-    audio.src = gameState.currentSong.previewUrl;
+    // Setze Audio-Quelle (erzwinge https, falls noch http)
+    const safeSrc = gameState.currentSong.previewUrl.replace(/^http:/, 'https:');
+    audio.src = safeSrc;
     audio.currentTime = 0;
     audio.load();
     
