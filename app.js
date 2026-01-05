@@ -868,19 +868,81 @@ function displayAnswers() {
     }
 }
 
+// Normalisiere Song-Titel (entfernt Versionsangaben, Klammern, etc.)
+function normalizeSongTitle(title) {
+    if (!title) return '';
+    
+    // Konvertiere zu Kleinbuchstaben
+    let normalized = title.toLowerCase();
+    
+    // Entferne gängige Versionsangaben und Klammern
+    normalized = normalized
+        .replace(/\s*\(.*?(remix|mix|version|edit|remaster|live|acoustic|radio|extended|instrumental|feat\.|featuring|ft\.).*?\)/gi, '')
+        .replace(/\s*\[.*?(remix|mix|version|edit|remaster|live|acoustic|radio|extended|instrumental|feat\.|featuring|ft\.).*?\]/gi, '')
+        .replace(/\s*-\s*(remix|mix|version|edit|remaster|live|acoustic|radio edit|extended|instrumental).*/gi, '')
+        .replace(/\s+/g, ' ')  // Mehrfache Leerzeichen auf eines reduzieren
+        .trim();
+    
+    return normalized;
+}
+
+// Prüfe ob zwei Song-Titel zu ähnlich sind
+function areSongsTooSimilar(title1, title2) {
+    const normalized1 = normalizeSongTitle(title1);
+    const normalized2 = normalizeSongTitle(title2);
+    
+    // Exakte Übereinstimmung nach Normalisierung
+    if (normalized1 === normalized2) {
+        return true;
+    }
+    
+    // Prüfe ob ein Titel im anderen enthalten ist (für sehr kurze Titel)
+    if (normalized1.length < 15 || normalized2.length < 15) {
+        if (normalized1.includes(normalized2) || normalized2.includes(normalized1)) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 // Generiere zufällige falsche Antworten
 function getRandomWrongAnswers(count) {
     const wrongAnswers = [];
     const usedTracks = new Set([gameState.currentSong.track]);
+    const usedNormalizedTitles = new Set([normalizeSongTitle(gameState.currentSong.track)]);
 
     let attempts = 0;
-    const maxAttempts = gameState.songs.length * 2;
+    const maxAttempts = gameState.songs.length * 3;
 
     while (wrongAnswers.length < count && attempts < maxAttempts) {
         const randomSong = gameState.songs[Math.floor(Math.random() * gameState.songs.length)];
+        const normalizedTitle = normalizeSongTitle(randomSong.track);
         
-        if (!usedTracks.has(randomSong.track)) {
+        // Prüfe ob exakter Titel bereits verwendet
+        if (usedTracks.has(randomSong.track)) {
+            attempts++;
+            continue;
+        }
+        
+        // Prüfe ob normalisierter Titel bereits verwendet (filtert Remixe etc.)
+        if (usedNormalizedTitles.has(normalizedTitle)) {
+            attempts++;
+            continue;
+        }
+        
+        // Prüfe ob zu ähnlich zu bereits verwendeten Songs
+        let tooSimilar = false;
+        for (const usedAnswer of wrongAnswers) {
+            if (areSongsTooSimilar(randomSong.track, usedAnswer)) {
+                tooSimilar = true;
+                break;
+            }
+        }
+        
+        if (!tooSimilar) {
             usedTracks.add(randomSong.track);
+            usedNormalizedTitles.add(normalizedTitle);
             wrongAnswers.push(randomSong.track);
         }
         
