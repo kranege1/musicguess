@@ -1,4 +1,4 @@
-const APP_VERSION = 'v60';
+const APP_VERSION = 'v71';
 window.APP_VERSION = APP_VERSION;
 
 // Detect if running on server or static hosting
@@ -23,6 +23,7 @@ let gameState = {
     currentQuestion: 0,
     correctAnswers: 0,
     wrongAnswers: 0,
+    totalPoints: 0,
     currentSong: null,
     currentAudio: null,
     isAnswered: false,
@@ -30,7 +31,10 @@ let gameState = {
     audioSource: null,
     audioContext: null,
     progressInterval: null,
-    lastError: ''
+    lastError: '',
+    // Tracking für aktuelle Frage
+    currentPlayCount: 0,
+    currentPlayedReverse: false
 };
 
 // Lade verfügbare Genres beim Seitenstart
@@ -384,13 +388,13 @@ async function startGame() {
     const selectedMode = document.querySelector('input[name="gameMode"]:checked');
     const gameMode = selectedMode ? selectedMode.value : 'genre';
     const songCount = parseInt(document.getElementById('songCount').value);
-    const previewDuration = parseInt(document.getElementById('previewDuration').value);
 
-    // State speichern
-    gameState.previewDuration = previewDuration;
+    // State speichern (previewDuration wird während des Spiels per Button gewählt)
+    gameState.previewDuration = 5; // Standard-Wert, wird beim Klicken auf Duration-Button überschrieben
     gameState.currentQuestion = 0;
     gameState.correctAnswers = 0;
     gameState.wrongAnswers = 0;
+    gameState.totalPoints = 0;
 
     // UI aktualisieren
     document.getElementById('setupScreen').style.display = 'none';
@@ -749,6 +753,8 @@ async function nextQuestion() {
 
     // Setze State zurück
     gameState.isAnswered = false;
+    gameState.currentPlayCount = 0;
+    gameState.currentPlayedReverse = false;
     let idx = gameState.currentQuestion;
 
     console.log('nextQuestion start, index:', idx, 'song:', gameState.songs[idx]);
@@ -803,7 +809,9 @@ async function nextQuestion() {
     document.getElementById('resultMessage').textContent = '';
     document.getElementById('errorMessage').classList.remove('show');
     document.getElementById('songInfo').classList.remove('show');
-    document.getElementById('playBtn').disabled = false;
+    
+    // Aktiviere Duration-Buttons für neue Frage
+    disableDurationButtons(false);
 
     gameState.currentQuestion++;
 }
@@ -993,7 +1001,12 @@ function selectAnswer(answer, index) {
     // Update Score
     if (isCorrect) {
         gameState.correctAnswers++;
-        document.getElementById('resultMessage').textContent = '✅ Richtig!';
+        
+        // Berechne Punkte
+        const points = calculatePoints();
+        gameState.totalPoints += points;
+        
+        document.getElementById('resultMessage').textContent = `✅ Richtig! +${points} Punkte`;
         document.getElementById('resultMessage').classList.remove('incorrect');
         document.getElementById('resultMessage').classList.add('correct');
     } else {
@@ -1022,6 +1035,47 @@ function showSongInfo() {
     genreRow.style.display = 'none';
 
     document.getElementById('songInfo').classList.add('show');
+}
+
+// Berechne Punkte für richtige Antwort
+function calculatePoints() {
+    let points = 100; // Basispunkte
+    
+    // Multiplikator für Preview-Dauer
+    const duration = gameState.previewDuration;
+    let durationMultiplier = 1;
+    
+    if (duration === 3) {
+        durationMultiplier = 2;
+    } else if (duration === 7) {
+        durationMultiplier = 0.8;
+    } else if (duration === 10) {
+        durationMultiplier = 0.7;
+    }
+    // Bei 5 Sekunden bleibt der Multiplikator 1
+    
+    points *= durationMultiplier;
+    
+    // Division durch Anzahl der Abspielvorgänge
+    const playCount = Math.max(1, gameState.currentPlayCount); // Mindestens 1
+    points /= playCount;
+    
+    // Multiplikator für Rückwärts-Abspielen
+    if (gameState.currentPlayedReverse) {
+        points *= 2;
+    }
+    
+    // Runde auf ganze Zahl
+    return Math.round(points);
+}
+
+// Spiele Preview mit gewählter Dauer ab
+function playPreviewWithDuration(duration) {
+    // Setze die gewählte Dauer für diese Frage
+    gameState.previewDuration = duration;
+    
+    // Rufe die normale playPreview Funktion auf
+    playPreview();
 }
 
 // Spiele Preview ab (iOS-kompatibel)
@@ -1069,7 +1123,12 @@ function playPreview() {
     audio.play().then(() => {
         console.log('Playback gestartet');
         debugLog(`🔊 Playback läuft`);
-        playBtn.disabled = true;
+        
+        // Tracking: Erhöhe Play-Count
+        gameState.currentPlayCount++;
+        
+        // Deaktiviere alle Duration-Buttons während Playback
+        disableDurationButtons(true);
         stopBtn.classList.add('active');
 
         // Update Progress
@@ -1105,7 +1164,6 @@ function playPreview() {
 // Stoppe Preview (iOS-kompatibel)
 function stopPreview() {
     const audio = document.getElementById('audioPlayer');
-    const playBtn = document.getElementById('playBtn');
     const stopBtn = document.getElementById('stopBtn');
 
     stopReversePlayback();
@@ -1126,27 +1184,37 @@ function stopPreview() {
         gameState.stopTimeout = null;
     }
 
-    playBtn.disabled = false;
+    // Aktiviere Duration-Buttons wieder
+    disableDurationButtons(false);
     stopBtn.classList.remove('active');
     document.getElementById('progressFill').style.width = '0%';
     updateTimeDisplay(0);
+}
+
+// Helper: Duration-Buttons aktivieren/deaktivieren
+function disableDurationButtons(disabled) {
+    const buttons = document.querySelectorAll('.duration-btn');
+    buttons.forEach(btn => {
+        btn.disabled = disabled;
+    });
 }
 
 // Reverse Preview abspielen
 async function playPreviewReverse() {
     if (!gameState.currentSong) return;
 
-    const playBtn = document.getElementById('playBtn');
     const stopBtn = document.getElementById('stopBtn');
     const audio = document.getElementById('audioPlayer');
 
     // Stoppe normales Preview und laufende Reverse-Instanzen
     audio.pause();
     stopReversePlayback();
-    playBtn.disabled = false;
 
     const safeSrc = gameState.currentSong.previewUrl.replace(/^http:/, 'https:');
     stopBtn.classList.add('active');
+    
+    // Deaktiviere Duration-Buttons während Reverse-Playback
+    disableDurationButtons(true);
 
     try {
         if (!reverseCtx || reverseCtx.state === 'closed') {
@@ -1167,6 +1235,9 @@ async function playPreviewReverse() {
         source.connect(reverseCtx.destination);
         reverseSource = source;
         reversePlaying = true;
+        
+        // Tracking: Markiere, dass rückwärts abgespielt wurde (erhöht NICHT den playCount)
+        gameState.currentPlayedReverse = true;
 
         const duration = gameState.previewDuration;
         const startTime = reverseCtx.currentTime;
@@ -1243,6 +1314,11 @@ function updateStats() {
     if (wrongEl) {
         wrongEl.textContent = gameState.wrongAnswers;
     }
+    
+    const pointsEl = document.getElementById('pointsCount');
+    if (pointsEl) {
+        pointsEl.textContent = gameState.totalPoints;
+    }
 }
 
 // Spiel beenden
@@ -1254,6 +1330,7 @@ function endGame() {
     document.getElementById('gameOverScreen').classList.add('show');
     document.getElementById('finalScore').textContent = `${gameState.correctAnswers}/${total}`;
     document.getElementById('scorePercentage').textContent = `${percentage}%`;
+    document.getElementById('finalPoints').textContent = `🏆 ${gameState.totalPoints} Punkte`;
 
     stopPreview();
 }
