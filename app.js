@@ -856,7 +856,7 @@ function displayAnswers() {
             if (answer && answer.trim()) {
                 const btn = document.createElement('button');
                 btn.className = 'answer-btn';
-                btn.textContent = answer;
+                btn.textContent = formatSongTitleForDisplay(answer);
                 btn.onclick = () => selectAnswer(answer, index);
                 answersContainer.appendChild(btn);
             }
@@ -887,6 +887,20 @@ function normalizeSongTitle(title) {
         .trim();
     
     return normalized;
+}
+
+// Für Anzeige: entferne Klammer-/Versionsinfos, behalte aber die Original-Schreibweise
+function formatSongTitleForDisplay(title) {
+    if (!title) return '';
+
+    return title
+        .replace(/\s*\(.*?(remix|mix|version|edit|remaster|live|acoustic|radio|extended|instrumental|feat\.|featuring|ft\.).*?\)/gi, '')
+        .replace(/\s*\[.*?(remix|mix|version|edit|remaster|live|acoustic|radio|extended|instrumental|feat\.|featuring|ft\.).*?\]/gi, '')
+        .replace(/\s*-\s*(remix|mix|version|edit|remaster|live|acoustic|radio edit|extended|instrumental).*/gi, '')
+        .replace(/\s*\([^)]*\)/g, '')
+        .replace(/\s*\[[^\]]*\]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
 }
 
 // Prüfe ob zwei Song-Titel zu ähnlich sind
