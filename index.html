@@ -266,12 +266,21 @@
         .play-wrap {
             position: relative;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 6px;
+            width: 100%;
         }
 
         .play-btn {
             background: #4CAF50;
+            border-radius: 25px;
+            width: 100%;
+        }
+
+        .reverse-btn {
+            background: #555;
             border-radius: 25px;
             width: 100%;
         }
@@ -633,6 +642,7 @@
                 <button onclick="endGame()" class="control-btn" style="background: #999; color: white;">🏁 Spiel Beenden</button>
                 <div class="play-wrap">
                     <button class="play-btn control-btn" id="playBtn" onclick="playPreview()" style="color: white;">▶️ Preview</button>
+                    <button class="reverse-btn control-btn" id="reverseBtn" onclick="playPreviewReverse()" style="color: white;">⏪ Revers</button>
                     <button class="stop-btn" id="stopBtn" onclick="stopPreview()">⏹️</button>
                 </div>
                 <button class="next-btn control-btn" id="nextBtn" onclick="nextQuestion()" style="background: #667eea; color: white;">⬜ Nächste Frage</button>

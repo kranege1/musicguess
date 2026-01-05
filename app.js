@@ -288,6 +288,28 @@ function stopArtistBubbles() {
     activeBubbles = 0;
 }
 
+// Reverse Preview (Web Audio)
+let reverseCtx = null;
+let reverseSource = null;
+let reversePlaying = false;
+
+function stopReversePlayback() {
+    if (reverseSource) {
+        try {
+            reverseSource.onended = null;
+            reverseSource.stop(0);
+        } catch (e) {
+            console.warn('reverse stop error', e);
+        }
+        reverseSource = null;
+    }
+    if (reverseCtx && reverseCtx.state !== 'closed') {
+        reverseCtx.close();
+        reverseCtx = null;
+    }
+    reversePlaying = false;
+}
+
 // Erstelle eine einzelne Artist Bubble
 function createArtistBubble() {
     if (artistNames.length === 0) return;
@@ -939,6 +961,9 @@ function playPreview() {
     const playBtn = document.getElementById('playBtn');
     const stopBtn = document.getElementById('stopBtn');
 
+    // Stoppe evtl. Reverse-Playback
+    stopReversePlayback();
+
     // iOS-Sicherheit: Stelle sicher, dass das Element korrekt vorbereitet ist
     audio.setAttribute('playsinline', 'true');
     audio.setAttribute('webkit-playsinline', 'true');
@@ -997,6 +1022,8 @@ function stopPreview() {
     const playBtn = document.getElementById('playBtn');
     const stopBtn = document.getElementById('stopBtn');
 
+    stopReversePlayback();
+
     // Stoppe Audio Element
     audio.pause();
     audio.currentTime = 0;
@@ -1017,6 +1044,58 @@ function stopPreview() {
     stopBtn.classList.remove('active');
     document.getElementById('progressFill').style.width = '0%';
     updateTimeDisplay(0);
+}
+
+// Reverse Preview abspielen
+async function playPreviewReverse() {
+    if (!gameState.currentSong) return;
+
+    const playBtn = document.getElementById('playBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const audio = document.getElementById('audioPlayer');
+
+    // Stoppe normales Preview und laufende Reverse-Instanzen
+    audio.pause();
+    stopReversePlayback();
+    playBtn.disabled = false;
+
+    const safeSrc = gameState.currentSong.previewUrl.replace(/^http:/, 'https:');
+    stopBtn.classList.add('active');
+
+    try {
+        if (!reverseCtx || reverseCtx.state === 'closed') {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            reverseCtx = new Ctx();
+        }
+
+        const resp = await fetch(safeSrc, { cache: 'no-store' });
+        const arrBuf = await resp.arrayBuffer();
+        const decoded = await reverseCtx.decodeAudioData(arrBuf);
+
+        for (let ch = 0; ch < decoded.numberOfChannels; ch++) {
+            decoded.getChannelData(ch).reverse();
+        }
+
+        const source = reverseCtx.createBufferSource();
+        source.buffer = decoded;
+        source.connect(reverseCtx.destination);
+        reverseSource = source;
+        reversePlaying = true;
+
+        source.onended = () => {
+            reversePlaying = false;
+            reverseSource = null;
+            stopBtn.classList.remove('active');
+            document.getElementById('progressFill').style.width = '0%';
+            updateTimeDisplay(0);
+        };
+
+        source.start(0);
+    } catch (err) {
+        console.error('Reverse playback error:', err);
+        stopBtn.classList.remove('active');
+        alert('Konnte Reverse-Preview nicht abspielen.');
+    }
 }
 
 // Update Zeit-Anzeige
