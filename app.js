@@ -237,7 +237,7 @@ async function loadSongsFromGenre(genre, limit) {
         // Mische und begrenze die Anzahl
         const selectedSongs = shuffleArray(filteredSongs).slice(0, Math.min(limit, filteredSongs.length));
         
-        // Speichere nur die Suchbegriffe - die echten Daten werden später geladen
+        // Speichere Songs - artwork wird später von iTunes API geladen
         gameState.songs = selectedSongs;
         
         console.log(`${gameState.songs.length} Songs aus Genre "${genre}" geladen`);
