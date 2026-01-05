@@ -228,7 +228,6 @@ if (document.readyState === 'loading') {
 let artistNames = [];
 let bubbleInterval = null;
 let activeBubbles = 0;
-const MAX_BUBBLES = 8;
 
 // Lade Künstlernamen aus ArtistsList.json
 async function loadArtistNames() {
@@ -263,17 +262,14 @@ function startArtistBubbles() {
     }
     container.innerHTML = '';
     
-    // Starte neue Bubbles in Intervallen
+    // Erstelle kontinuierlich neue Bubbles
+    // Intervall für ~10px Abstand bei durchschnittlich 120px Bubble-Breite
     bubbleInterval = setInterval(() => {
-        if (activeBubbles < MAX_BUBBLES) {
-            createArtistBubble();
-        }
-    }, 1000); // Neue Bubble alle 1 Sekunde
+        createArtistBubble();
+    }, 1350);
     
-    // Erstelle initiale Bubbles
-    for (let i = 0; i < 5; i++) {
-        setTimeout(() => createArtistBubble(), i * 200);
-    }
+    // Erstelle erste Bubble sofort
+    createArtistBubble();
 }
 
 // Stoppe Artist Bubbles Animation
@@ -306,8 +302,11 @@ function createArtistBubble() {
     const bubble = document.createElement('div');
     bubble.className = 'artist-bubble';
     bubble.textContent = randomArtist;
-    bubble.style.left = `${Math.random() * 60 + 20}%`; // Zufällige horizontale Position
     
+    // Starte immer rechts außerhalb (100%)
+    bubble.style.left = '100%';
+    
+    container.appendChild(bubble);
     activeBubbles++;
     
     // Click Handler
@@ -319,14 +318,15 @@ function createArtistBubble() {
         }
     };
     
-    // Entferne Bubble nach Animation
-    bubble.addEventListener('animationend', () => {
-        bubble.remove();
-        activeBubbles--;
-    });
-    
-    container.appendChild(bubble);
+    // Entferne Bubble nach Animation (11 Sekunden = 10s Animation + 1s Buffer)
+    setTimeout(() => {
+        if (bubble.parentElement) {
+            bubble.remove();
+            activeBubbles--;
+        }
+    }, 11000);
 }
+
 
 // Toggle zwischen Genre-, Billboard- und Suchmodus
 function toggleGameMode() {

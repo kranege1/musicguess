@@ -105,27 +105,14 @@
             cursor: pointer;
         }
 
-        /* Game Mode Wrapper */
-        .game-mode-wrapper {
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-        }
-
-        .game-mode-options {
-            flex: 0 0 auto;
-            min-width: fit-content;
-        }
-
         /* Artist Bubbles Animation */
         .artist-bubbles-container {
-            flex: 1;
             position: relative;
-            min-height: 250px;
-            border: 2px dashed #ddd;
-            border-radius: 10px;
+            height: 50px;
             overflow: hidden;
-            background: linear-gradient(180deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: 10px;
+            margin-top: 8px;
             display: none;
         }
 
@@ -135,9 +122,8 @@
 
         .artist-bubble {
             position: absolute;
-            bottom: -60px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 50%;
+            transform: translateY(-50%);
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 10px 16px;
@@ -147,29 +133,20 @@
             cursor: pointer;
             white-space: nowrap;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            animation: floatUp 8s linear;
-            opacity: 0;
+            animation: slideLeftChain 10s linear forwards;
         }
 
         .artist-bubble:hover {
-            transform: translateX(-50%) scale(1.1);
+            transform: translateY(-50%) scale(1.1);
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
         }
 
-        @keyframes floatUp {
-            0% {
-                bottom: -60px;
-                opacity: 0;
+        @keyframes slideLeftChain {
+            from {
+                transform: translateY(-50%) translateX(0);
             }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                bottom: 310px;
-                opacity: 0;
+            to {
+                transform: translateY(-50%) translateX(calc(-100vw - 200px));
             }
         }
 
@@ -223,20 +200,30 @@
         .stat-label {
             color: #666;
             font-size: 0.7em;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-
-        .album-cover {
-            text-align: center;
-            margin-bottom: 12px;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 8px 12px;
+            font-size: 13px;
+            display: none;
+            align-items: center;
+            justify-content: center;
         }
 
         .album-cover img {
             max-width: 100%;
             max-height: 160px;
-            border-radius: 9px;
-            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .album-cover {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 8px 0;
         }
 
         .cover-placeholder {
@@ -253,18 +240,40 @@
         }
 
         .player-controls {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
             margin-bottom: 12px;
-            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-btn {
+            width: 100%;
+            min-width: 0;
+            padding: 12px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .play-btn {
             background: #4CAF50;
-            padding: 7px 18px;
-            font-size: 0.85em;
-            border-radius: 22px;
+            border-radius: 25px;
+            width: 100%;
         }
 
         .play-btn:hover {
@@ -278,14 +287,20 @@
 
         .stop-btn {
             background: #f44336;
-            padding: 7px 18px;
-            font-size: 0.85em;
-            border-radius: 22px;
+            border-radius: 18px;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 8px 12px;
+            font-size: 13px;
             display: none;
+            align-items: center;
+            justify-content: center;
         }
 
         .stop-btn.active {
-            display: inline-block;
+            display: inline-flex;
         }
 
         .progress-bar {
@@ -388,13 +403,11 @@
         }
 
         .next-btn {
-            width: 100%;
             background: #667eea;
-            display: none;
-        }
-
-        .next-btn.show {
-            display: block;
+            border-radius: 25px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .song-info {
@@ -525,23 +538,19 @@
         <div class="setup-screen" id="setupScreen">
             <div class="input-group">
                 <label>🎮 Spielmodus:</label>
-                <div class="game-mode-wrapper">
-                    <div class="game-mode-options" style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
-                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
-                            <input type="radio" name="gameMode" value="genre" checked onchange="toggleGameMode()">
-                            <span>Genre auswählen</span>
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
-                            <input type="radio" name="gameMode" value="billboard" onchange="toggleGameMode()">
-                            <span>Billboard Hot 100</span>
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
-                            <input type="radio" name="gameMode" value="search" onchange="toggleGameMode()">
-                            <span>Freie Wahl (iTunes Suche)</span>
-                        </label>
-                    </div>
-                    <!-- Artist Bubbles Container -->
-                    <div class="artist-bubbles-container" id="artistBubblesContainer"></div>
+                <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
+                        <input type="radio" name="gameMode" value="genre" checked onchange="toggleGameMode()">
+                        <span>Genre auswählen</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
+                        <input type="radio" name="gameMode" value="billboard" onchange="toggleGameMode()">
+                        <span>Billboard Hot 100</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
+                        <input type="radio" name="gameMode" value="search" onchange="toggleGameMode()">
+                        <span>Freie Wahl (iTunes Suche)</span>
+                    </label>
                 </div>
             </div>
 
@@ -570,6 +579,8 @@
             <div class="input-group" id="searchSelection" style="display: none;">
                 <label for="searchQuery">🎤 Künstler oder Titel durchsuchen:</label>
                 <input type="text" id="searchQuery" placeholder="z.B. 'Taylor Swift' oder 'Bohemian Rhapsody'">
+                <!-- Artist Bubbles Container -->
+                <div class="artist-bubbles-container" id="artistBubblesContainer"></div>
             </div>
 
             <div class="input-group">
@@ -619,8 +630,12 @@
             </div>
 
             <div class="player-controls">
-                <button class="play-btn" id="playBtn" onclick="playPreview()">▶️ Preview Abspielen</button>
-                <button class="stop-btn" id="stopBtn" onclick="stopPreview()">⏹️ Stopp</button>
+                <button onclick="endGame()" class="control-btn" style="background: #999; color: white;">🏁 Spiel Beenden</button>
+                <div class="play-wrap">
+                    <button class="play-btn control-btn" id="playBtn" onclick="playPreview()" style="color: white;">▶️ Preview</button>
+                    <button class="stop-btn" id="stopBtn" onclick="stopPreview()">⏹️</button>
+                </div>
+                <button class="next-btn control-btn" id="nextBtn" onclick="nextQuestion()" style="background: #667eea; color: white;">⬜ Nächste Frage</button>
             </div>
 
             <div class="progress-bar">
@@ -656,9 +671,6 @@
                     </div>
                 </div>
             </div>
-
-            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">⬜ Nächste Frage</button>
-            <button onclick="endGame()" style="margin-top: 15px; background: #999;">🏁 Spiel Beenden</button>
         </div>
 
         <!-- Game Over Screen -->
