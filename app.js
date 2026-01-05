@@ -1,4 +1,4 @@
-const APP_VERSION = 'v44';
+const APP_VERSION = 'v47';
 window.APP_VERSION = APP_VERSION;
 
 // Detect if running on server or static hosting
