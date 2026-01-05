@@ -1,4 +1,4 @@
-const APP_VERSION = 'v53';
+const APP_VERSION = 'v54';
 window.APP_VERSION = APP_VERSION;
 
 // Detect if running on server or static hosting
@@ -26,8 +26,6 @@ let gameState = {
     currentSong: null,
     currentAudio: null,
     isAnswered: false,
-    multipleChoice: true,
-    showGenre: false,
     previewDuration: 5,
     audioSource: null,
     audioContext: null,
@@ -106,13 +104,20 @@ async function loadAvailableYears() {
     console.log('loadAvailableYears() wird aufgerufen...');
     try {
         const cacheBuster = new Date().getTime();
-        const response = await fetch(`hot-100-unique-songs.json?v=${cacheBuster}`, { cache: 'no-store' });
+        const response = await fetch(`hot-100-unique-songs.json.gz?v=${cacheBuster}`, { cache: 'no-store' });
         
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Billboard Daten');
         }
 
-        const songs = await response.json();
+        // Dekomprimiere gzip
+        const blob = await response.blob();
+        const ds = new DecompressionStream('gzip');
+        const decompressedStream = blob.stream().pipeThrough(ds);
+        const decompressedBlob = await new Response(decompressedStream).blob();
+        const text = await decompressedBlob.text();
+        const songs = JSON.parse(text);
+        
         console.log(`${songs.length} Billboard Songs geladen`);
         
         // Extrahiere einzigartige Jahre aus chart_week
@@ -162,13 +167,19 @@ async function loadBillboardSongsForYear() {
     
     try {
         const cacheBuster = new Date().getTime();
-        const response = await fetch(`hot-100-unique-songs.json?v=${cacheBuster}`, { cache: 'no-store' });
+        const response = await fetch(`hot-100-unique-songs.json.gz?v=${cacheBuster}`, { cache: 'no-store' });
         
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Billboard Daten');
         }
 
-        const allSongs = await response.json();
+        // Dekomprimiere gzip
+        const blob = await response.blob();
+        const ds = new DecompressionStream('gzip');
+        const decompressedStream = blob.stream().pipeThrough(ds);
+        const decompressedBlob = await new Response(decompressedStream).blob();
+        const text = await decompressedBlob.text();
+        const allSongs = JSON.parse(text);
         
         // Filtere Songs nach Jahr
         const yearSongs = allSongs.filter(song => song.chart_week.startsWith(selectedYear));
@@ -253,13 +264,9 @@ async function startGame() {
     const selectedMode = document.querySelector('input[name="gameMode"]:checked');
     const gameMode = selectedMode ? selectedMode.value : 'genre';
     const songCount = parseInt(document.getElementById('songCount').value);
-    const multipleChoice = document.getElementById('multipleChoice').checked;
-    const showGenre = document.getElementById('genreMode').checked;
     const previewDuration = parseInt(document.getElementById('previewDuration').value);
 
     // State speichern
-    gameState.multipleChoice = multipleChoice;
-    gameState.showGenre = showGenre;
     gameState.previewDuration = previewDuration;
     gameState.currentQuestion = 0;
     gameState.correctAnswers = 0;
@@ -699,8 +706,8 @@ function displayAnswers() {
 
         let answers = [song.track];
 
-        if (gameState.multipleChoice && gameState.songs && gameState.songs.length > 1) {
-            // Generiere 3 falsche Antworten
+        // Generiere immer 3 falsche Antworten (4 Antworten gesamt)
+        if (gameState.songs && gameState.songs.length > 1) {
             const wrongAnswers = getRandomWrongAnswers(3);
             if (wrongAnswers.length > 0) {
                 answers = answers.concat(wrongAnswers);
@@ -806,12 +813,7 @@ function showSongInfo() {
     document.getElementById('infoAlbum').textContent = song.album;
 
     const genreRow = document.getElementById('genreRow');
-    if (gameState.showGenre) {
-        document.getElementById('infoGenre').textContent = song.genre;
-        genreRow.style.display = 'flex';
-    } else {
-        genreRow.style.display = 'none';
-    }
+    genreRow.style.display = 'none';
 
     document.getElementById('songInfo').classList.add('show');
 }
