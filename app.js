@@ -1,4 +1,4 @@
-const APP_VERSION = 'v47';
+const APP_VERSION = 'v49';
 window.APP_VERSION = APP_VERSION;
 
 // Detect if running on server or static hosting
@@ -357,37 +357,7 @@ async function fetchItunesWithFallback(searchTerm, countries = ['DE', 'US', 'GB'
 // Lade Song-Daten live von iTunes API basierend auf Suchbegriffen (mit Länder-Fallback DE -> US)
 async function loadSongDataLive(artist, track, cachedPreview = null) {
     try {
-        // Falls Preview-URL bereits in songs.json vorhanden ist, nutze sie direkt
-        if (cachedPreview) {
-            debugLog(`✅ Song aus Cache: "${track}"`);
-            return {
-                id: Date.now(),
-                track: track,
-                artist: artist,
-                album: 'Unbekannt',
-                previewUrl: cachedPreview.replace(/^http:/, 'https:'),
-                image: '',
-                genre: 'Unbekannt'
-            };
-        }
-
-        // Try server API first
-        try {
-            const preview = await fetchPreviewFromServer(artist, track);
-            return {
-                id: Date.now(),
-                track: track,
-                artist: artist,
-                album: 'Unbekannt',
-                previewUrl: preview,
-                image: '',
-                genre: 'Unbekannt'
-            };
-        } catch (serverErr) {
-            console.log('Server API failed, trying direct iTunes fallback');
-        }
-
-        // Fallback: Direct iTunes (shouldn't reach here on server deployment)
+        // Immer iTunes API aufrufen für vollständige Metadaten (inkl. Artwork)
         const searchTerm = `${artist} ${track}`;
         const { results, country: usedCountry } = await fetchItunesWithFallback(searchTerm, ['DE', 'US', 'GB', 'CA'], 10);
 
@@ -416,14 +386,18 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
         }
 
         const safePreview = (song.previewUrl || '').replace(/^http:/, 'https:');
-        debugLog(`✅ Song geladen: "${song.trackName}" (${usedCountry})`);
+        
+        // Verwende gecachte Preview-URL wenn vorhanden, sonst von iTunes
+        const finalPreview = cachedPreview ? cachedPreview.replace(/^http:/, 'https:') : safePreview;
+        
+        debugLog(`✅ Song geladen: "${song.trackName}" (${usedCountry})${cachedPreview ? ' [cached preview]' : ''}`);
         return {
             id: song.trackId,
             track: song.trackName,
             artist: song.artistName,
             album: song.collectionName || 'Unbekannt',
-            previewUrl: safePreview,
-            image: song.artworkUrl100 || song.artworkUrl60,
+            previewUrl: finalPreview,
+            image: song.artworkUrl100 || song.artworkUrl60 || '',
             genre: song.primaryGenreName || 'Unbekannt'
         };
     } catch (error) {
