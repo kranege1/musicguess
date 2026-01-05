@@ -1,4 +1,4 @@
-const APP_VERSION = 'v56';
+const APP_VERSION = 'v57';
 window.APP_VERSION = APP_VERSION;
 
 // Detect if running on server or static hosting
@@ -104,19 +104,13 @@ async function loadAvailableYears() {
     console.log('loadAvailableYears() wird aufgerufen...');
     try {
         const cacheBuster = new Date().getTime();
-        const response = await fetch(`hot-100-unique-songs.json.gz?v=${cacheBuster}`, { cache: 'no-store' });
+        const response = await fetch(`hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
         
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Billboard Daten');
         }
 
-        // Dekomprimiere gzip
-        const blob = await response.blob();
-        const ds = new DecompressionStream('gzip');
-        const decompressedStream = blob.stream().pipeThrough(ds);
-        const decompressedBlob = await new Response(decompressedStream).blob();
-        const text = await decompressedBlob.text();
-        const songs = JSON.parse(text);
+        const songs = await response.json();
         
         console.log(`${songs.length} Billboard Songs geladen`);
         
@@ -167,19 +161,13 @@ async function loadBillboardSongsForYear() {
     
     try {
         const cacheBuster = new Date().getTime();
-        const response = await fetch(`hot-100-unique-songs.json.gz?v=${cacheBuster}`, { cache: 'no-store' });
+        const response = await fetch(`hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
         
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Billboard Daten');
         }
 
-        // Dekomprimiere gzip
-        const blob = await response.blob();
-        const ds = new DecompressionStream('gzip');
-        const decompressedStream = blob.stream().pipeThrough(ds);
-        const decompressedBlob = await new Response(decompressedStream).blob();
-        const text = await decompressedBlob.text();
-        const allSongs = JSON.parse(text);
+        const allSongs = await response.json();
         
         // Filtere Songs nach Jahr
         const yearSongs = allSongs.filter(song => song.chart_week.startsWith(selectedYear));
@@ -370,14 +358,14 @@ async function loadSongsFromGenre(genre, limit) {
     }
 }
 
-// Lade Songs aus Billboard Hot 100 basierend auf Jahr
+// Lade Songs aus Billboard Hot 10 basierend auf Jahr
 async function loadSongsFromBillboard(year, limit) {
     try {
-        // Lade hot-100-unique-songs.json
+        // Lade hot-10-unique.json
         const cacheBuster = Date.now();
-        const response = await fetch(`hot-100-unique-songs.json?v=${cacheBuster}`, { cache: 'no-store' });
+        const response = await fetch(`hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
         if (!response.ok) {
-            throw new Error('Fehler beim Laden von hot-100-unique-songs.json');
+            throw new Error('Fehler beim Laden von hot-10-unique.json');
         }
 
         const allSongs = await response.json();
