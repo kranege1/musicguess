@@ -407,6 +407,9 @@ async function startGame() {
             // Genre-Modus: Lade Songs aus songs.json
             const selectedGenre = document.getElementById('genreSelect').value;
             await loadSongsFromGenre(selectedGenre, songCount);
+            // Update Subtitle
+            const genreText = selectedGenre === 'Alle' ? 'Alle Genres' : selectedGenre;
+            document.getElementById('gameSubtitle').textContent = `Genre: ${genreText}`;
         } else if (gameMode === 'billboard') {
             // Billboard-Modus: Lade Songs nach Jahr
             const selectedYear = document.getElementById('yearSelect').value;
@@ -418,6 +421,8 @@ async function startGame() {
                 return;
             }
             await loadSongsFromBillboard(selectedYear, songCount);
+            // Update Subtitle
+            document.getElementById('gameSubtitle').textContent = `Billboard Charts aus ${selectedYear}`;
         } else {
             // iTunes Suchmodus
             const searchQuery = document.getElementById('searchQuery').value.trim();
@@ -429,6 +434,8 @@ async function startGame() {
                 return;
             }
             await loadSongsFromItunes(searchQuery, songCount);
+            // Update Subtitle
+            document.getElementById('gameSubtitle').textContent = `Songs von ${searchQuery}`;
         }
 
         // Verstecke Loading-Indicator
