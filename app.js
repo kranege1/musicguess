@@ -1082,6 +1082,22 @@ async function playPreviewReverse() {
         reverseSource = source;
         reversePlaying = true;
 
+        const duration = gameState.previewDuration;
+        const startTime = reverseCtx.currentTime;
+
+        // Progress Update für Reverse
+        const updateReverseProgress = () => {
+            if (!reversePlaying) return;
+            const elapsed = reverseCtx.currentTime - startTime;
+            const progress = Math.min((elapsed / duration) * 100, 100);
+            document.getElementById('progressFill').style.width = progress + '%';
+            updateTimeDisplay(elapsed);
+
+            if (elapsed < duration && reversePlaying) {
+                requestAnimationFrame(updateReverseProgress);
+            }
+        };
+
         source.onended = () => {
             reversePlaying = false;
             reverseSource = null;
@@ -1090,7 +1106,23 @@ async function playPreviewReverse() {
             updateTimeDisplay(0);
         };
 
+        // Stoppe nach Preview-Dauer
+        setTimeout(() => {
+            if (reversePlaying && reverseSource) {
+                try {
+                    reverseSource.stop(0);
+                } catch (e) {
+                    console.warn('reverse stop timeout error', e);
+                }
+                stopReversePlayback();
+                stopBtn.classList.remove('active');
+                document.getElementById('progressFill').style.width = '0%';
+                updateTimeDisplay(0);
+            }
+        }, duration * 1000);
+
         source.start(0);
+        updateReverseProgress();
     } catch (err) {
         console.error('Reverse playback error:', err);
         stopBtn.classList.remove('active');
