@@ -105,6 +105,59 @@
             cursor: pointer;
         }
 
+        /* Artist Bubbles Animation */
+        .artist-bubbles-container {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 200px;
+            height: 500px;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .artist-bubble {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 25px;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            pointer-events: auto;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            animation: floatUp 8s linear;
+            opacity: 0;
+        }
+
+        .artist-bubble:hover {
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        @keyframes floatUp {
+            0% {
+                bottom: -60px;
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                bottom: 560px;
+                opacity: 0;
+            }
+        }
+
         button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -499,6 +552,9 @@
                 <label for="searchQuery">🎤 Künstler oder Titel durchsuchen:</label>
                 <input type="text" id="searchQuery" placeholder="z.B. 'Taylor Swift' oder 'Bohemian Rhapsody'">
             </div>
+
+            <!-- Artist Bubbles Container -->
+            <div class="artist-bubbles-container" id="artistBubblesContainer" style="display: none;"></div>
 
             <div class="input-group">
                 <label for="songCount">📊 Anzahl der Songs:</label>

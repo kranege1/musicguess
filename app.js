@@ -1,4 +1,4 @@
-const APP_VERSION = 'v57';
+const APP_VERSION = 'v58';
 window.APP_VERSION = APP_VERSION;
 
 // Detect if running on server or static hosting
@@ -214,12 +214,118 @@ if (document.readyState === 'loading') {
         loadVersion();
         loadAvailableGenres();
         loadAvailableYears();
+        loadArtistNames();
     });
 } else {
     // DOM ist bereits geladen
     loadVersion();
     loadAvailableGenres();
     loadAvailableYears();
+    loadArtistNames();
+}
+
+// Artist Bubbles Animation
+let artistNames = [];
+let bubbleInterval = null;
+let activeBubbles = 0;
+const MAX_BUBBLES = 8;
+
+// Lade Künstlernamen aus hot-10-unique.json
+async function loadArtistNames() {
+    try {
+        const cacheBuster = new Date().getTime();
+        const response = await fetch(`hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
+        
+        if (!response.ok) {
+            throw new Error('Fehler beim Laden der Künstler');
+        }
+
+        const songs = await response.json();
+        
+        // Extrahiere einzigartige Künstler
+        const uniqueArtists = [...new Set(songs.map(song => song.performer))];
+        artistNames = uniqueArtists.filter(name => name && name.trim());
+        
+        console.log(`${artistNames.length} Künstler für Bubbles geladen`);
+    } catch (error) {
+        console.error('❌ Fehler beim Laden der Künstler:', error);
+    }
+}
+
+// Starte Artist Bubbles Animation
+function startArtistBubbles() {
+    const container = document.getElementById('artistBubblesContainer');
+    if (!container || artistNames.length === 0) return;
+    
+    container.style.display = 'block';
+    activeBubbles = 0;
+    
+    // Stoppe vorherige Animation
+    stopArtistBubbles();
+    
+    // Starte neue Bubbles in Intervallen
+    bubbleInterval = setInterval(() => {
+        if (activeBubbles < MAX_BUBBLES) {
+            createArtistBubble();
+        }
+    }, 1000); // Neue Bubble alle 1 Sekunde
+    
+    // Erstelle initiale Bubbles
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => createArtistBubble(), i * 200);
+    }
+}
+
+// Stoppe Artist Bubbles Animation
+function stopArtistBubbles() {
+    const container = document.getElementById('artistBubblesContainer');
+    if (container) {
+        container.style.display = 'none';
+        container.innerHTML = '';
+    }
+    
+    if (bubbleInterval) {
+        clearInterval(bubbleInterval);
+        bubbleInterval = null;
+    }
+    
+    activeBubbles = 0;
+}
+
+// Erstelle eine einzelne Artist Bubble
+function createArtistBubble() {
+    if (artistNames.length === 0) return;
+    
+    const container = document.getElementById('artistBubblesContainer');
+    if (!container || container.style.display === 'none') return;
+    
+    // Wähle zufälligen Künstler
+    const randomArtist = artistNames[Math.floor(Math.random() * artistNames.length)];
+    
+    // Erstelle Bubble
+    const bubble = document.createElement('div');
+    bubble.className = 'artist-bubble';
+    bubble.textContent = randomArtist;
+    bubble.style.left = `${Math.random() * 60 + 20}%`; // Zufällige horizontale Position
+    
+    activeBubbles++;
+    
+    // Click Handler
+    bubble.onclick = () => {
+        const searchInput = document.getElementById('searchQuery');
+        if (searchInput) {
+            searchInput.value = randomArtist;
+            searchInput.focus();
+        }
+    };
+    
+    // Entferne Bubble nach Animation
+    bubble.addEventListener('animationend', () => {
+        bubble.remove();
+        activeBubbles--;
+    });
+    
+    container.appendChild(bubble);
 }
 
 // Toggle zwischen Genre-, Billboard- und Suchmodus
@@ -231,19 +337,23 @@ function toggleGameMode() {
     const genreSelection = document.getElementById('genreSelection');
     const billboardSelection = document.getElementById('billboardSelection');
     const searchSelection = document.getElementById('searchSelection');
+    const artistBubblesContainer = document.getElementById('artistBubblesContainer');
 
     if (mode === 'genre') {
         genreSelection.style.display = 'flex';
         billboardSelection.style.display = 'none';
         searchSelection.style.display = 'none';
+        stopArtistBubbles();
     } else if (mode === 'billboard') {
         genreSelection.style.display = 'none';
         billboardSelection.style.display = 'flex';
         searchSelection.style.display = 'none';
+        stopArtistBubbles();
     } else {
         genreSelection.style.display = 'none';
         billboardSelection.style.display = 'none';
         searchSelection.style.display = 'flex';
+        startArtistBubbles();
     }
 }
 
