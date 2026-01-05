@@ -880,6 +880,9 @@ function normalizeSongTitle(title) {
         .replace(/\s*\(.*?(remix|mix|version|edit|remaster|live|acoustic|radio|extended|instrumental|feat\.|featuring|ft\.).*?\)/gi, '')
         .replace(/\s*\[.*?(remix|mix|version|edit|remaster|live|acoustic|radio|extended|instrumental|feat\.|featuring|ft\.).*?\]/gi, '')
         .replace(/\s*-\s*(remix|mix|version|edit|remaster|live|acoustic|radio edit|extended|instrumental).*/gi, '')
+        // Entferne alle restlichen Klammer-Inhalte wie "(feat. ...)" oder "(with ...)"
+        .replace(/\s*\([^)]*\)/g, '')
+        .replace(/\s*\[[^\]]*\]/g, '')
         .replace(/\s+/g, ' ')  // Mehrfache Leerzeichen auf eines reduzieren
         .trim();
     
