@@ -1,4 +1,4 @@
-const APP_VERSION = 'v58';
+const APP_VERSION = 'v59';
 window.APP_VERSION = APP_VERSION;
 
 // Detect if running on server or static hosting
@@ -257,11 +257,14 @@ function startArtistBubbles() {
     const container = document.getElementById('artistBubblesContainer');
     if (!container || artistNames.length === 0) return;
     
-    container.style.display = 'block';
+    container.classList.add('active');
     activeBubbles = 0;
     
     // Stoppe vorherige Animation
-    stopArtistBubbles();
+    if (bubbleInterval) {
+        clearInterval(bubbleInterval);
+    }
+    container.innerHTML = '';
     
     // Starte neue Bubbles in Intervallen
     bubbleInterval = setInterval(() => {
@@ -280,7 +283,7 @@ function startArtistBubbles() {
 function stopArtistBubbles() {
     const container = document.getElementById('artistBubblesContainer');
     if (container) {
-        container.style.display = 'none';
+        container.classList.remove('active');
         container.innerHTML = '';
     }
     
@@ -297,7 +300,7 @@ function createArtistBubble() {
     if (artistNames.length === 0) return;
     
     const container = document.getElementById('artistBubblesContainer');
-    if (!container || container.style.display === 'none') return;
+    if (!container || !container.classList.contains('active')) return;
     
     // Wähle zufälligen Künstler
     const randomArtist = artistNames[Math.floor(Math.random() * artistNames.length)];

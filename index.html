@@ -105,16 +105,32 @@
             cursor: pointer;
         }
 
+        /* Game Mode Wrapper */
+        .game-mode-wrapper {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .game-mode-options {
+            flex: 0 0 auto;
+            min-width: fit-content;
+        }
+
         /* Artist Bubbles Animation */
         .artist-bubbles-container {
-            position: fixed;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 200px;
-            height: 500px;
-            pointer-events: none;
-            z-index: 100;
+            flex: 1;
+            position: relative;
+            min-height: 250px;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            display: none;
+        }
+
+        .artist-bubbles-container.active {
+            display: block;
         }
 
         .artist-bubble {
@@ -129,7 +145,6 @@
             font-size: 0.85em;
             font-weight: 600;
             cursor: pointer;
-            pointer-events: auto;
             white-space: nowrap;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
             animation: floatUp 8s linear;
@@ -153,7 +168,7 @@
                 opacity: 1;
             }
             100% {
-                bottom: 560px;
+                bottom: 310px;
                 opacity: 0;
             }
         }
@@ -510,19 +525,23 @@
         <div class="setup-screen" id="setupScreen">
             <div class="input-group">
                 <label>🎮 Spielmodus:</label>
-                <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
-                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
-                        <input type="radio" name="gameMode" value="genre" checked onchange="toggleGameMode()">
-                        <span>Genre auswählen</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
-                        <input type="radio" name="gameMode" value="billboard" onchange="toggleGameMode()">
-                        <span>Billboard Hot 100</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
-                        <input type="radio" name="gameMode" value="search" onchange="toggleGameMode()">
-                        <span>Freie Wahl (iTunes Suche)</span>
-                    </label>
+                <div class="game-mode-wrapper">
+                    <div class="game-mode-options" style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
+                            <input type="radio" name="gameMode" value="genre" checked onchange="toggleGameMode()">
+                            <span>Genre auswählen</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
+                            <input type="radio" name="gameMode" value="billboard" onchange="toggleGameMode()">
+                            <span>Billboard Hot 100</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
+                            <input type="radio" name="gameMode" value="search" onchange="toggleGameMode()">
+                            <span>Freie Wahl (iTunes Suche)</span>
+                        </label>
+                    </div>
+                    <!-- Artist Bubbles Container -->
+                    <div class="artist-bubbles-container" id="artistBubblesContainer"></div>
                 </div>
             </div>
 
@@ -552,9 +571,6 @@
                 <label for="searchQuery">🎤 Künstler oder Titel durchsuchen:</label>
                 <input type="text" id="searchQuery" placeholder="z.B. 'Taylor Swift' oder 'Bohemian Rhapsody'">
             </div>
-
-            <!-- Artist Bubbles Container -->
-            <div class="artist-bubbles-container" id="artistBubblesContainer" style="display: none;"></div>
 
             <div class="input-group">
                 <label for="songCount">📊 Anzahl der Songs:</label>
