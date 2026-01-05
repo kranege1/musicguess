@@ -1,4 +1,4 @@
-const APP_VERSION = 'v59';
+const APP_VERSION = 'v60';
 window.APP_VERSION = APP_VERSION;
 
 // Detect if running on server or static hosting
@@ -230,21 +230,18 @@ let bubbleInterval = null;
 let activeBubbles = 0;
 const MAX_BUBBLES = 8;
 
-// Lade Künstlernamen aus hot-10-unique.json
+// Lade Künstlernamen aus ArtistsList.json
 async function loadArtistNames() {
     try {
         const cacheBuster = new Date().getTime();
-        const response = await fetch(`hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
+        const response = await fetch(`ArtistsList.json?v=${cacheBuster}`, { cache: 'no-store' });
         
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Künstler');
         }
 
-        const songs = await response.json();
-        
-        // Extrahiere einzigartige Künstler
-        const uniqueArtists = [...new Set(songs.map(song => song.performer))];
-        artistNames = uniqueArtists.filter(name => name && name.trim());
+        const data = await response.json();
+        artistNames = data.famous_song_interpreters || [];
         
         console.log(`${artistNames.length} Künstler für Bubbles geladen`);
     } catch (error) {
