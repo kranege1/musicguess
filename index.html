@@ -454,11 +454,21 @@
         <!-- Setup Screen -->
         <div class="setup-screen" id="setupScreen">
             <div class="input-group">
-                <label for="gameMode">🎮 Spielmodus:</label>
-                <select id="gameMode" onchange="toggleGameMode()">
-                    <option value="genre">Genre auswählen (validierte Songs mit Previews)</option>
-                    <option value="search">iTunes Suche</option>
-                </select>
+                <label>🎮 Spielmodus:</label>
+                <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
+                        <input type="radio" name="gameMode" value="genre" checked onchange="toggleGameMode()">
+                        <span>Genre auswählen (validierte Songs mit Previews)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
+                        <input type="radio" name="gameMode" value="billboard" onchange="toggleGameMode()">
+                        <span>Billboard Hot 100</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
+                        <input type="radio" name="gameMode" value="search" onchange="toggleGameMode()">
+                        <span>Freie Wahl (iTunes Suche)</span>
+                    </label>
+                </div>
             </div>
 
             <div class="input-group" id="genreSelection">
@@ -467,6 +477,20 @@
                     <option value="Alle">Alle Genres</option>
                     <!-- Genres werden dynamisch geladen -->
                 </select>
+            </div>
+
+            <div class="input-group" id="billboardSelection" style="display: none;">
+                <label for="yearSelect">📅 Jahr wählen:</label>
+                <div style="display: flex; gap: 10px;">
+                    <select id="yearSelect" style="flex: 1;" onchange="loadBillboardSongsForYear()">
+                        <option value="">Jahr auswählen...</option>
+                        <!-- Jahre werden dynamisch geladen -->
+                    </select>
+                    <select id="billboardSongInfo" style="flex: 2;" disabled>
+                        <option value="">Wähle zuerst ein Jahr...</option>
+                        <!-- Songs werden dynamisch geladen -->
+                    </select>
+                </div>
             </div>
 
             <div class="input-group" id="searchSelection" style="display: none;">

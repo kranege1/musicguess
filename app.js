@@ -1,4 +1,4 @@
-const APP_VERSION = 'v51';
+const APP_VERSION = 'v53';
 window.APP_VERSION = APP_VERSION;
 
 // Detect if running on server or static hosting
@@ -101,6 +101,98 @@ async function loadAvailableGenres() {
     }
 }
 
+// Lade verfügbare Jahre für Billboard
+async function loadAvailableYears() {
+    console.log('loadAvailableYears() wird aufgerufen...');
+    try {
+        const cacheBuster = new Date().getTime();
+        const response = await fetch(`hot-100-unique-songs.json?v=${cacheBuster}`, { cache: 'no-store' });
+        
+        if (!response.ok) {
+            throw new Error('Fehler beim Laden der Billboard Daten');
+        }
+
+        const songs = await response.json();
+        console.log(`${songs.length} Billboard Songs geladen`);
+        
+        // Extrahiere einzigartige Jahre aus chart_week
+        const years = [...new Set(songs.map(song => {
+            const year = song.chart_week.substring(0, 4);
+            return year;
+        }))].sort((a, b) => b - a); // Neueste zuerst
+        
+        console.log('Gefundene Jahre:', years);
+        
+        // Fülle die Jahr-Dropdown
+        const yearSelect = document.getElementById('yearSelect');
+        
+        if (!yearSelect) {
+            console.error('yearSelect Element nicht gefunden!');
+            return;
+        }
+        
+        // Lösche alle Optionen außer der ersten
+        yearSelect.innerHTML = '<option value="">Jahr auswählen...</option>';
+        
+        // Füge alle gefundenen Jahre hinzu
+        years.forEach(year => {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            yearSelect.appendChild(option);
+        });
+        
+        console.log(`✅ ${years.length} Jahre erfolgreich geladen!`);
+    } catch (error) {
+        console.error('❌ Fehler beim Laden der Jahre:', error);
+    }
+}
+
+// Lade Billboard Songs für ausgewähltes Jahr
+async function loadBillboardSongsForYear() {
+    const yearSelect = document.getElementById('yearSelect');
+    const songInfoSelect = document.getElementById('billboardSongInfo');
+    const selectedYear = yearSelect.value;
+    
+    if (!selectedYear) {
+        songInfoSelect.innerHTML = '<option value="">Wähle zuerst ein Jahr...</option>';
+        songInfoSelect.disabled = true;
+        return;
+    }
+    
+    try {
+        const cacheBuster = new Date().getTime();
+        const response = await fetch(`hot-100-unique-songs.json?v=${cacheBuster}`, { cache: 'no-store' });
+        
+        if (!response.ok) {
+            throw new Error('Fehler beim Laden der Billboard Daten');
+        }
+
+        const allSongs = await response.json();
+        
+        // Filtere Songs nach Jahr
+        const yearSongs = allSongs.filter(song => song.chart_week.startsWith(selectedYear));
+        
+        console.log(`${yearSongs.length} Songs für Jahr ${selectedYear} gefunden`);
+        
+        // Fülle Info-Dropdown
+        songInfoSelect.innerHTML = `<option value="">${yearSongs.length} Songs aus ${selectedYear}</option>`;
+        
+        yearSongs.forEach(song => {
+            const option = document.createElement('option');
+            option.value = `${song.performer} - ${song.title}`;
+            option.textContent = `${song.performer} - ${song.title}`;
+            songInfoSelect.appendChild(option);
+        });
+        
+        songInfoSelect.disabled = false;
+    } catch (error) {
+        console.error('❌ Fehler beim Laden der Songs:', error);
+        songInfoSelect.innerHTML = '<option value="">Fehler beim Laden...</option>';
+        songInfoSelect.disabled = true;
+    }
+}
+
 // Lade Version
 async function loadVersion() {
     try {
@@ -122,31 +214,44 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         loadVersion();
         loadAvailableGenres();
+        loadAvailableYears();
     });
 } else {
     // DOM ist bereits geladen
     loadVersion();
     loadAvailableGenres();
+    loadAvailableYears();
 }
 
-// Toggle zwischen Genre- und Suchmodus
+// Toggle zwischen Genre-, Billboard- und Suchmodus
 function toggleGameMode() {
-    const mode = document.getElementById('gameMode').value;
+    const selectedMode = document.querySelector('input[name="gameMode"]:checked');
+    if (!selectedMode) return;
+    
+    const mode = selectedMode.value;
     const genreSelection = document.getElementById('genreSelection');
+    const billboardSelection = document.getElementById('billboardSelection');
     const searchSelection = document.getElementById('searchSelection');
 
     if (mode === 'genre') {
         genreSelection.style.display = 'flex';
+        billboardSelection.style.display = 'none';
+        searchSelection.style.display = 'none';
+    } else if (mode === 'billboard') {
+        genreSelection.style.display = 'none';
+        billboardSelection.style.display = 'flex';
         searchSelection.style.display = 'none';
     } else {
         genreSelection.style.display = 'none';
+        billboardSelection.style.display = 'none';
         searchSelection.style.display = 'flex';
     }
 }
 
 // Starte das Spiel
 async function startGame() {
-    const gameMode = document.getElementById('gameMode').value;
+    const selectedMode = document.querySelector('input[name="gameMode"]:checked');
+    const gameMode = selectedMode ? selectedMode.value : 'genre';
     const songCount = parseInt(document.getElementById('songCount').value);
     const multipleChoice = document.getElementById('multipleChoice').checked;
     const showGenre = document.getElementById('genreMode').checked;
@@ -175,6 +280,17 @@ async function startGame() {
             // Genre-Modus: Lade Songs aus songs.json
             const selectedGenre = document.getElementById('genreSelect').value;
             await loadSongsFromGenre(selectedGenre, songCount);
+        } else if (gameMode === 'billboard') {
+            // Billboard-Modus: Lade Songs nach Jahr
+            const selectedYear = document.getElementById('yearSelect').value;
+            if (!selectedYear) {
+                showError('Bitte wählen Sie ein Jahr aus!');
+                document.getElementById('setupScreen').style.display = 'block';
+                document.getElementById('quizScreen').style.display = 'none';
+                hideLoadingState();
+                return;
+            }
+            await loadSongsFromBillboard(selectedYear, songCount);
         } else {
             // iTunes Suchmodus
             const searchQuery = document.getElementById('searchQuery').value.trim();
@@ -243,6 +359,42 @@ async function loadSongsFromGenre(genre, limit) {
         console.log(`${gameState.songs.length} Songs aus Genre "${genre}" geladen`);
     } catch (error) {
         console.error('Fehler beim Laden der Songs:', error);
+        throw error;
+    }
+}
+
+// Lade Songs aus Billboard Hot 100 basierend auf Jahr
+async function loadSongsFromBillboard(year, limit) {
+    try {
+        // Lade hot-100-unique-songs.json
+        const cacheBuster = Date.now();
+        const response = await fetch(`hot-100-unique-songs.json?v=${cacheBuster}`, { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error('Fehler beim Laden von hot-100-unique-songs.json');
+        }
+
+        const allSongs = await response.json();
+        
+        // Filtere nach Jahr
+        const filteredSongs = allSongs.filter(song => song.chart_week.startsWith(year));
+
+        if (filteredSongs.length === 0) {
+            throw new Error('Keine Songs für dieses Jahr gefunden');
+        }
+
+        // Mische und begrenze die Anzahl
+        const selectedSongs = shuffleArray(filteredSongs).slice(0, Math.min(limit, filteredSongs.length));
+        
+        // Konvertiere Billboard Format zu app Format
+        gameState.songs = selectedSongs.map(song => ({
+            artist: song.performer,
+            track: song.title,
+            genre: year // Jahr als Genre verwenden
+        }));
+        
+        console.log(`${gameState.songs.length} Billboard Songs aus Jahr "${year}" geladen`);
+    } catch (error) {
+        console.error('Fehler beim Laden der Billboard Songs:', error);
         throw error;
     }
 }
