@@ -1,4 +1,4 @@
-const APP_VERSION = 'v49';
+const APP_VERSION = 'v51';
 window.APP_VERSION = APP_VERSION;
 
 // Detect if running on server or static hosting
@@ -357,7 +357,7 @@ async function fetchItunesWithFallback(searchTerm, countries = ['DE', 'US', 'GB'
 // Lade Song-Daten live von iTunes API basierend auf Suchbegriffen (mit Länder-Fallback DE -> US)
 async function loadSongDataLive(artist, track, cachedPreview = null) {
     try {
-        // Immer iTunes API aufrufen für vollständige Metadaten (inkl. Artwork)
+        // Immer live von iTunes API laden - songs.json ist nur Suchbegriff-Liste
         const searchTerm = `${artist} ${track}`;
         const { results, country: usedCountry } = await fetchItunesWithFallback(searchTerm, ['DE', 'US', 'GB', 'CA'], 10);
 
@@ -387,16 +387,13 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
 
         const safePreview = (song.previewUrl || '').replace(/^http:/, 'https:');
         
-        // Verwende gecachte Preview-URL wenn vorhanden, sonst von iTunes
-        const finalPreview = cachedPreview ? cachedPreview.replace(/^http:/, 'https:') : safePreview;
-        
-        debugLog(`✅ Song geladen: "${song.trackName}" (${usedCountry})${cachedPreview ? ' [cached preview]' : ''}`);
+        debugLog(`✅ Song geladen: "${song.trackName}" (${usedCountry})`);
         return {
             id: song.trackId,
             track: song.trackName,
             artist: song.artistName,
             album: song.collectionName || 'Unbekannt',
-            previewUrl: finalPreview,
+            previewUrl: safePreview,
             image: song.artworkUrl100 || song.artworkUrl60 || '',
             genre: song.primaryGenreName || 'Unbekannt'
         };
@@ -481,8 +478,8 @@ async function nextQuestion() {
             if (candidate.artist && candidate.track) {
                 loadingShown = true;
                 showLoadingState();
-                const cachedUrl = candidate.previewUrl || null;
-                const fullSongData = await loadSongDataLive(candidate.artist, candidate.track, cachedUrl);
+                // Lade alles live von iTunes API (kein Cache)
+                const fullSongData = await loadSongDataLive(candidate.artist, candidate.track);
                 gameState.currentSong = fullSongData;
             } else {
                 gameState.currentSong = candidate;

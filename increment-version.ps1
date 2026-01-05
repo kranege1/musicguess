@@ -13,7 +13,7 @@ if (Test-Path $versionFile) {
     $json.version = $newVersion.ToString()
     $json | ConvertTo-Json | Set-Content $versionFile -Encoding UTF8
     
-    Write-Host "Version erhöht: v$($json.version)" -ForegroundColor Green
+    Write-Host "Version erhoeht: v$($json.version)" -ForegroundColor Green
     
     # Füge zur Staging Area hinzu
     git add $versionFile
