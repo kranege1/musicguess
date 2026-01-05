@@ -1227,9 +1227,22 @@ function updateTimeDisplay(seconds) {
 
 // Update Statistiken
 function updateStats() {
-    document.getElementById('currentQuestion').textContent = gameState.currentQuestion;
-    document.getElementById('correctCount').textContent = gameState.correctAnswers;
-    document.getElementById('wrongCount').textContent = gameState.wrongAnswers;
+    const totalQuestions = gameState.songs ? gameState.songs.length : 0;
+    const displayedQuestion = Math.min(gameState.currentQuestion + 1, totalQuestions);
+    const totalEl = document.getElementById('totalProgress');
+    if (totalEl) {
+        totalEl.textContent = `${displayedQuestion} von ${totalQuestions} Fragen`;
+    }
+
+    const correctEl = document.getElementById('correctCount');
+    if (correctEl) {
+        correctEl.textContent = gameState.correctAnswers;
+    }
+
+    const wrongEl = document.getElementById('wrongCount');
+    if (wrongEl) {
+        wrongEl.textContent = gameState.wrongAnswers;
+    }
 }
 
 // Spiel beenden
