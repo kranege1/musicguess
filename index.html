@@ -989,10 +989,6 @@
     </div>
 
     <audio id="audioPlayer" preload="none" playsinline webkit-playsinline crossOrigin="anonymous"></audio>
-    <script>
-        // Force load latest version with dynamic cache buster
-        const ts = Math.floor(Date.now() / 60000); // Changes every minute
-        document.write('<script src="app.js?v=40&t=' + ts + '"><\/script>');
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
