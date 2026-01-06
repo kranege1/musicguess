@@ -1699,7 +1699,15 @@ async function saveGameScore() {
     const gameMode = gameState.currentGameMode || 'Genre';
     const points = gameState.totalPoints || 0;
     const totalQuestions = gameState.songs ? gameState.songs.length : 0;
-    const correctAnswers = gameState.correctCount || 0;
+    const correctAnswers = gameState.correctAnswers || 0;
+    
+    console.log('💾 Speichere Score:', {
+        playerName,
+        gameMode,
+        points,
+        totalQuestions,
+        correctAnswers
+    });
     
     try {
         const res = await fetch('/api/score', {
@@ -1722,11 +1730,11 @@ async function saveGameScore() {
             console.log('✅ Score gespeichert:', data.score);
             return true;
         } else {
-            console.error('Score-Speichern fehlgeschlagen:', data.error);
+            console.error('❌ Score-Speichern fehlgeschlagen:', data.error);
             return false;
         }
     } catch (err) {
-        console.error('Fehler beim Speichern des Scores:', err);
+        console.error('❌ Fehler beim Speichern des Scores:', err);
         return false;
     }
 }
