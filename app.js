@@ -1,4 +1,4 @@
-const APP_VERSION = 'v73';
+const APP_VERSION = 'v92';
 window.APP_VERSION = APP_VERSION;
 
 // Detect if running on server or static hosting
@@ -35,7 +35,14 @@ let gameState = {
     // Tracking für aktuelle Frage
     currentPlayCount: 0,
     currentPlayedReverse: false,
-    totalPlayTime: 0  // Gesamt-Abspielzeit in Sekunden für aktuelle Frage
+    totalPlayTime: 0,  // Gesamt-Abspielzeit in Sekunden für aktuelle Frage
+    previewFinished: false,
+    pointsCountdownValue: 0,
+    pointsCountdownBase: 0,
+    pointsCountdownTimer: null,
+    pointsCountdownActive: false,
+    pointsCountdownInitial: 0,
+    pointsCountdownStartTime: null,
 };
 
 // Lade verfügbare Genres beim Seitenstart
@@ -772,6 +779,8 @@ async function nextQuestion() {
     gameState.currentPlayCount = 0;
     gameState.currentPlayedReverse = false;
     gameState.totalPlayTime = 0;
+    gameState.previewFinished = false;
+    stopPointsCountdown(); // Ensure countdown is stopped before starting a new question
     let idx = gameState.currentQuestion;
 
     console.log('nextQuestion start, index:', idx, 'song:', gameState.songs[idx]);
@@ -869,14 +878,48 @@ function displayAnswers() {
 
         let answers = [song.track];
 
-        // Generiere immer 3 falsche Antworten (4 Antworten gesamt)
+        // Generiere immer 3 falsche Antworten (4 Antworten gesamt) mit Fallbacks
+        let wrongAnswers = [];
         if (gameState.songs && gameState.songs.length > 1) {
-            const wrongAnswers = getRandomWrongAnswers(3);
-            if (wrongAnswers.length > 0) {
-                answers = answers.concat(wrongAnswers);
-                answers = shuffleArray(answers);
+            wrongAnswers = getRandomWrongAnswers(3);
+        }
+
+        // Fallback: nimm weitere Tracks aus dem Pool, wenn zu wenige
+        if (wrongAnswers.length < 3 && gameState.songs && gameState.songs.length > 0) {
+            const pool = shuffleArray(
+                gameState.songs
+                    .map(s => s.track)
+                    .filter(t => t && t !== song.track && !wrongAnswers.includes(t))
+            );
+            for (const t of pool) {
+                if (wrongAnswers.length >= 3) break;
+                wrongAnswers.push(t);
             }
         }
+
+        // Letzter Fallback: statische Dummy-Antworten, damit immer 4 Optionen existieren
+        if (wrongAnswers.length < 3) {
+            const fallbackTitles = ['Neon Nights', 'Golden Sky', 'Silent Echo', 'Velvet Road', 'Midnight Drive'];
+            for (const t of fallbackTitles) {
+                if (wrongAnswers.length >= 3) break;
+                if (!wrongAnswers.includes(t) && t !== song.track) {
+                    wrongAnswers.push(t);
+                }
+            }
+        }
+
+        // Baue finalen Antwortsatz und mische
+        answers = answers.concat(wrongAnswers.slice(0, 3));
+        answers = [...new Set(answers)];
+
+        // Sicherheit: falls nach Deduplizierung weniger als 4 übrig sind, mit Fallbacks auffüllen
+        const fallbackTitles = ['Neon Nights', 'Golden Sky', 'Silent Echo', 'Velvet Road', 'Midnight Drive'];
+        for (const t of fallbackTitles) {
+            if (answers.length >= 4) break;
+            if (!answers.includes(t)) answers.push(t);
+        }
+
+        answers = shuffleArray(answers);
 
         const answersContainer = document.getElementById('answersContainer');
         if (!answersContainer) {
@@ -1026,23 +1069,43 @@ function selectAnswer(answer, index) {
         }
     });
 
-    // Update Score
+    // Update Score + Stempel
     if (isCorrect) {
         gameState.correctAnswers++;
         
-        // Berechne Punkte
-        const points = calculatePoints();
-        gameState.totalPoints += points;
+        // Nutze aktiven Countdown (falls vorhanden), sonst Standardberechnung
+        const countdownActive = gameState.pointsCountdownActive;
+        const countdownPoints = countdownActive ? Math.max(0, Math.round(gameState.pointsCountdownValue)) : null;
+        const guessedWithoutPlay = gameState.totalPlayTime <= 0 && gameState.currentPlayCount === 0;
+        const basePoints = guessedWithoutPlay
+            ? 150
+            : (countdownPoints !== null ? countdownPoints : calculatePoints());
+        const awardedPoints = basePoints;
+
+        gameState.totalPoints += awardedPoints;
         
-        document.getElementById('resultMessage').textContent = `✅ Richtig! +${points} Punkte`;
+        // Stempel auf gewählter Antwort
+        if (selectedBtn) {
+            selectedBtn.dataset.stamp = `+${awardedPoints}`;
+            selectedBtn.classList.add('stamp', 'stamp-correct');
+        }
+
+        document.getElementById('resultMessage').textContent = `✅ Richtig! +${awardedPoints} Punkte`;
         document.getElementById('resultMessage').classList.remove('incorrect');
         document.getElementById('resultMessage').classList.add('correct');
     } else {
         gameState.wrongAnswers++;
+        if (selectedBtn) {
+            selectedBtn.dataset.stamp = '✕';
+            selectedBtn.classList.add('stamp', 'stamp-wrong');
+        }
         document.getElementById('resultMessage').textContent = '❌ Falsch!';
         document.getElementById('resultMessage').classList.remove('correct');
         document.getElementById('resultMessage').classList.add('incorrect');
     }
+
+    // Countdown stoppen (kein weiteres Abbauen nach Antwort)
+    stopPointsCountdown();
 
     // Zeige Song-Infos
     showSongInfo();
@@ -1079,6 +1142,79 @@ function calculatePoints() {
     
     // Runde auf ganze Zahl
     return Math.round(points);
+}
+
+// Punkte-Countdown für aktuelle Frage anzeigen und langsam abbauen
+function startPointsCountdown(basePoints) {
+    const container = document.getElementById('pointsCountdown');
+    const valueEl = document.getElementById('pointsCountdownValue');
+    const barEl = document.getElementById('pointsCountdownBar');
+    if (!container || !valueEl || !barEl) return;
+
+    const normalizedBase = Math.max(0, Math.round(basePoints));
+
+    // Wenn schon aktiv: nicht erhöhen, nur ggf. Basis absenken
+    if (gameState.pointsCountdownActive) {
+        gameState.pointsCountdownInitial = Math.min(gameState.pointsCountdownInitial, normalizedBase);
+    } else {
+        gameState.pointsCountdownActive = true;
+        gameState.pointsCountdownInitial = normalizedBase;
+        gameState.pointsCountdownStartTime = performance.now();
+    }
+
+    // Initiale Anzeige nicht erhöhen
+    const elapsedMs = gameState.pointsCountdownStartTime ? (performance.now() - gameState.pointsCountdownStartTime) : 0;
+    const totalDurationMs = 60000; // 60 Sekunden bis 0
+    const progress = Math.min(1, elapsedMs / totalDurationMs);
+    const current = Math.max(0, Math.round(gameState.pointsCountdownInitial * (1 - progress)));
+
+    gameState.pointsCountdownValue = current;
+    gameState.pointsCountdownBase = gameState.pointsCountdownInitial;
+
+    valueEl.textContent = current;
+    barEl.style.width = `${(1 - progress) * 100}%`;
+    container.classList.add('show');
+
+    const tick = (now) => {
+        if (!gameState.pointsCountdownActive) return;
+        const elapsed = now - gameState.pointsCountdownStartTime;
+        const prog = Math.min(1, elapsed / totalDurationMs);
+        const cur = Math.max(0, Math.round(gameState.pointsCountdownInitial * (1 - prog)));
+        gameState.pointsCountdownValue = cur;
+        valueEl.textContent = cur;
+        barEl.style.width = `${(1 - prog) * 100}%`;
+        if (prog < 1) {
+            gameState.pointsCountdownTimer = requestAnimationFrame(tick);
+        } else {
+            stopPointsCountdown(false);
+        }
+    };
+
+    // Nur einen Timer laufen lassen
+    if (!gameState.pointsCountdownTimer) {
+        gameState.pointsCountdownTimer = requestAnimationFrame(tick);
+    }
+}
+
+// Countdown stoppen und optional ausblenden
+function stopPointsCountdown(hide = true) {
+    if (gameState.pointsCountdownTimer) {
+        cancelAnimationFrame(gameState.pointsCountdownTimer);
+        gameState.pointsCountdownTimer = null;
+    }
+    gameState.pointsCountdownActive = false;
+    gameState.pointsCountdownValue = 0;
+    gameState.pointsCountdownInitial = 0;
+    gameState.pointsCountdownStartTime = null;
+
+    const container = document.getElementById('pointsCountdown');
+    const barEl = document.getElementById('pointsCountdownBar');
+    const valueEl = document.getElementById('pointsCountdownValue');
+    if (barEl) barEl.style.width = '0%';
+    if (valueEl) valueEl.textContent = '0';
+    if (container && hide) {
+        container.classList.remove('show');
+    }
 }
 
 // Spiele "Katching" Sound ab
@@ -1267,6 +1403,9 @@ function playPreview() {
     audio.src = safeSrc;
     audio.currentTime = 0;
     audio.load();
+
+    // Setze Flags zurück
+    gameState.previewFinished = false;
     
     console.log('Versuche Preview abzuspielen:', gameState.currentSong.previewUrl);
     debugLog(`▶️ Starte Preview...`);
@@ -1295,6 +1434,7 @@ function playPreview() {
             if (audio.currentTime < duration && !audio.paused) {
                 gameState.progressInterval = requestAnimationFrame(updateProgress);
             } else if (audio.currentTime >= duration) {
+                gameState.previewFinished = true;
                 audio.pause();
                 stopPreview();
             }
@@ -1302,6 +1442,7 @@ function playPreview() {
 
         // Stoppe nach Preview-Duration
         gameState.stopTimeout = setTimeout(() => {
+            gameState.previewFinished = true;
             audio.pause();
             stopPreview();
         }, gameState.previewDuration * 1000);
@@ -1343,6 +1484,12 @@ function stopPreview() {
     stopBtn.classList.remove('active');
     document.getElementById('progressFill').style.width = '0%';
     updateTimeDisplay(0);
+
+    // Starte Punkte-Countdown nur nach vollständig abgespielter Preview (kein Reverse)
+    if (gameState.previewFinished && !gameState.currentPlayedReverse && !gameState.isAnswered) {
+        const basePoints = calculatePoints();
+        startPointsCountdown(basePoints);
+    }
 }
 
 // Helper: Duration-Buttons aktivieren/deaktivieren
@@ -1359,6 +1506,10 @@ async function playPreviewReverse() {
 
     const stopBtn = document.getElementById('stopBtn');
     const audio = document.getElementById('audioPlayer');
+
+    // Reverse-Modus: Countdown ausblenden und Flags zurücksetzen
+    stopPointsCountdown();
+    gameState.previewFinished = false;
 
     // Stoppe normales Preview und laufende Reverse-Instanzen
     audio.pause();
@@ -1405,9 +1556,9 @@ async function playPreviewReverse() {
             document.getElementById('progressFill').style.width = progress + '%';
             updateTimeDisplay(elapsed);
 
-            // Zähle jede volle Sekunde
+            // Zähle jede volle Sekunde, aber maximal 2 Sekunden anrechnen
             const currentSecond = Math.floor(elapsed);
-            if (currentSecond > lastSecondCounted && currentSecond <= duration) {
+            if (currentSecond > lastSecondCounted && currentSecond <= duration && currentSecond <= 2) {
                 gameState.totalPlayTime += 1;
                 updatePlayTimeDisplay();
                 lastSecondCounted = currentSecond;
@@ -1504,6 +1655,8 @@ function updateStats() {
 
 // Spiel beenden
 function endGame() {
+    stopPointsCountdown();
+
     const total = gameState.correctAnswers + gameState.wrongAnswers;
     const percentage = total > 0 ? Math.round((gameState.correctAnswers / total) * 100) : 0;
 
