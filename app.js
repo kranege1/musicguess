@@ -1374,6 +1374,7 @@ async function playPreviewReverse() {
 
         const duration = 5; // Reverse spielt immer 5 Sekunden ab
         const startTime = reverseCtx.currentTime;
+        let lastSecondCounted = 0; // Zähler für Sekunden
 
         // Progress Update für Reverse
         const updateReverseProgress = () => {
@@ -1382,6 +1383,14 @@ async function playPreviewReverse() {
             const progress = Math.min((elapsed / duration) * 100, 100);
             document.getElementById('progressFill').style.width = progress + '%';
             updateTimeDisplay(elapsed);
+
+            // Zähle jede volle Sekunde
+            const currentSecond = Math.floor(elapsed);
+            if (currentSecond > lastSecondCounted && currentSecond <= duration) {
+                gameState.totalPlayTime += 1;
+                updatePlayTimeDisplay();
+                lastSecondCounted = currentSecond;
+            }
 
             if (elapsed < duration && reversePlaying) {
                 requestAnimationFrame(updateReverseProgress);
