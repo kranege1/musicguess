@@ -1152,15 +1152,14 @@ function playPreviewStaccato() {
     const duration = 5; // Staccato spielt immer 5 Sekunden
     let currentSecond = 0;
     let staccatoInterval = null;
+    let lastSecondCounted = -1; // Zähler für gezählte Sekunden
 
     // Starte Audio
     audio.play().then(() => {
         console.log('Staccato Playback gestartet');
         
-        // Tracking: Staccato zählt nur 3 Sekunden zur Abspielzeit (obwohl 5 Sekunden gespielt werden)
+        // Tracking: Staccato markiert Play-Count
         gameState.currentPlayCount++;
-        gameState.totalPlayTime += 3;
-        updatePlayTimeDisplay();
 
         const startTime = Date.now();
 
@@ -1176,6 +1175,13 @@ function playPreviewStaccato() {
             }
 
             currentSecond = Math.floor(elapsed);
+            
+            // Zähle jede volle Sekunde als 2 Sekunden zur Abspielzeit
+            if (currentSecond > lastSecondCounted && currentSecond < duration) {
+                gameState.totalPlayTime += 2;
+                updatePlayTimeDisplay();
+                lastSecondCounted = currentSecond;
+            }
             
             // Gerade Sekunden (0, 2, 4, ...): Musik (Lautstärke 1)
             // Ungerade Sekunden (1, 3, ...): Stille (Lautstärke 0)
