@@ -12,12 +12,6 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Static files FIRST - must come before catch-all route
-app.use(express.static(path.join(__dirname), {
-    etag: false,
-    maxAge: 0 // No client-side caching
-}));
-
 // In-memory cache for iTunes previews
 const previewCache = {};
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
@@ -237,6 +231,12 @@ app.get('/api/leaderboard-global', (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// Static files (AFTER API routes to avoid conflicts)
+app.use(express.static(path.join(__dirname), {
+    etag: false,
+    maxAge: 0 // No client-side caching
+}));
 
 // Error handling
 app.use((err, req, res, next) => {
