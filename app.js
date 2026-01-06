@@ -1095,13 +1095,26 @@ function playKatchingSound() {
 
 // Spiele Preview mit gewählter Dauer ab
 function playPreviewWithDuration(duration) {
-    // Wenn bereits einmal abgespielt wurde, spiele "Katching" Sound
-    if (gameState.currentPlayCount > 0) {
-        playKatchingSound();
-    }
+    // Spiele immer Katching-Sound wenn Button gedrückt wird
+    playKatchingSound();
     
     // Setze die gewählte Dauer für diese Frage
     gameState.previewDuration = duration;
+    
+    // Triggere Animation bei der Abspielzeit-Anzeige
+    const timeDisplay = document.getElementById('totalPlayTimeDisplay');
+    if (timeDisplay) {
+        // Entferne Animation falls noch aktiv
+        timeDisplay.classList.remove('pulse-animation');
+        // Erzwinge Reflow für Animation Restart
+        void timeDisplay.offsetWidth;
+        // Füge Animation hinzu
+        timeDisplay.classList.add('pulse-animation');
+        // Entferne Klasse nach Animation
+        setTimeout(() => {
+            timeDisplay.classList.remove('pulse-animation');
+        }, 400);
+    }
     
     // Rufe die normale playPreview Funktion auf
     playPreview();
