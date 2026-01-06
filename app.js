@@ -34,7 +34,8 @@ let gameState = {
     lastError: '',
     // Tracking für aktuelle Frage
     currentPlayCount: 0,
-    currentPlayedReverse: false
+    currentPlayedReverse: false,
+    totalPlayTime: 0  // Gesamt-Abspielzeit in Sekunden für aktuelle Frage
 };
 
 // Lade verfügbare Genres beim Seitenstart
@@ -684,7 +685,7 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
             artist: song.artistName,
             album: song.collectionName || 'Unbekannt',
             previewUrl: safePreview,
-            image: song.artworkUrl100 || song.artworkUrl60 || '',
+            image: song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60 || '',
             genre: song.primaryGenreName || 'Unbekannt'
         };
     } catch (error) {
@@ -729,7 +730,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 artist: song.artistName,
                 album: song.collectionName,
                 previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
-                image: song.artworkUrl100 || song.artworkUrl60,
+                image: song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60,
                 genre: song.primaryGenreName || 'Unbekannt'
             }));
 
@@ -755,6 +756,7 @@ async function nextQuestion() {
     gameState.isAnswered = false;
     gameState.currentPlayCount = 0;
     gameState.currentPlayedReverse = false;
+    gameState.totalPlayTime = 0;
     let idx = gameState.currentQuestion;
 
     console.log('nextQuestion start, index:', idx, 'song:', gameState.songs[idx]);
@@ -801,6 +803,7 @@ async function nextQuestion() {
 
     // UI aktualisieren
     updateStats();
+    updatePlayTimeDisplay(); // Setze Abspielzeit-Anzeige auf 0
     displayAlbumCover();
     displayAnswers();
 
@@ -822,10 +825,20 @@ function displayAlbumCover() {
     const song = gameState.currentSong;
 
     if (song.image) {
-        albumCover.innerHTML = `<img src="${song.image}" alt="Album Cover" onerror="this.parentElement.innerHTML='<div class=\"cover-placeholder\">🎵</div>'">`;
+        albumCover.innerHTML = `<img src="${song.image}" alt="Album Cover" onerror="this.parentElement.innerHTML='<div class=&quot;cover-placeholder&quot;></div>'">`;
     } else {
-        albumCover.innerHTML = '<div class="cover-placeholder">🎵</div>';
+        albumCover.innerHTML = '<div class="cover-placeholder"></div>';
     }
+    
+    // Click-to-Zoom Funktionalität
+    albumCover.removeEventListener('click', toggleAlbumZoom);
+    albumCover.addEventListener('click', toggleAlbumZoom);
+}
+
+// Toggle Funktion für Album Cover Zoom
+function toggleAlbumZoom(e) {
+    const albumCover = document.getElementById('albumCover');
+    albumCover.classList.toggle('expanded');
 }
 
 // Zeige Antworten an
@@ -1039,26 +1052,10 @@ function showSongInfo() {
 
 // Berechne Punkte für richtige Antwort
 function calculatePoints() {
-    let points = 100; // Basispunkte
-    
-    // Multiplikator für Preview-Dauer
-    const duration = gameState.previewDuration;
-    let durationMultiplier = 1;
-    
-    if (duration === 3) {
-        durationMultiplier = 2;
-    } else if (duration === 7) {
-        durationMultiplier = 0.8;
-    } else if (duration === 10) {
-        durationMultiplier = 0.7;
-    }
-    // Bei 5 Sekunden bleibt der Multiplikator 1
-    
-    points *= durationMultiplier;
-    
-    // Division durch Anzahl der Abspielvorgänge
-    const playCount = Math.max(1, gameState.currentPlayCount); // Mindestens 1
-    points /= playCount;
+    // Basispunkte basierend auf Gesamt-Abspielzeit
+    // Formel: 100 * (5 / totalPlayTime)
+    const playTime = Math.max(1, gameState.totalPlayTime); // Mindestens 1 Sekunde
+    let points = 100 * (5 / playTime);
     
     // Multiplikator für Rückwärts-Abspielen
     if (gameState.currentPlayedReverse) {
@@ -1069,13 +1066,134 @@ function calculatePoints() {
     return Math.round(points);
 }
 
+// Spiele "Katching" Sound ab
+function playKatchingSound() {
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Erzeuge einen einfachen "Cash Register" / "Katching" Sound
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // Frequenz-Sweep für "Katching" Effekt
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+        
+        // Lautstärke-Envelope
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.15);
+    } catch (err) {
+        console.log('Katching sound error:', err);
+    }
+}
+
 // Spiele Preview mit gewählter Dauer ab
 function playPreviewWithDuration(duration) {
+    // Wenn bereits einmal abgespielt wurde, spiele "Katching" Sound
+    if (gameState.currentPlayCount > 0) {
+        playKatchingSound();
+    }
+    
     // Setze die gewählte Dauer für diese Frage
     gameState.previewDuration = duration;
     
     // Rufe die normale playPreview Funktion auf
     playPreview();
+}
+
+// Spiele Preview im Staccato-Modus (jede 2. Sekunde Pause)
+function playPreviewStaccato() {
+    if (!gameState.currentSong || !gameState.currentSong.previewUrl) {
+        alert('Für diesen Song ist keine Preview verfügbar.');
+        return;
+    }
+
+    const audio = document.getElementById('audioPlayer');
+    const stopBtn = document.getElementById('stopBtn');
+
+    // Stoppe evtl. laufende Playbacks
+    stopReversePlayback();
+    stopPreview();
+
+    // iOS-Sicherheit
+    audio.setAttribute('playsinline', 'true');
+    audio.setAttribute('webkit-playsinline', 'true');
+    audio.setAttribute('preload', 'none');
+    audio.crossOrigin = 'anonymous';
+
+    const safeSrc = gameState.currentSong.previewUrl.replace(/^http:/, 'https:');
+    audio.src = safeSrc;
+    audio.currentTime = 0;
+    audio.load();
+
+    // Deaktiviere Duration-Buttons während Staccato-Playback
+    disableDurationButtons(true);
+    stopBtn.classList.add('active');
+
+    const duration = 5; // Staccato spielt immer 5 Sekunden
+    let currentSecond = 0;
+    let staccatoInterval = null;
+
+    // Starte Audio
+    audio.play().then(() => {
+        console.log('Staccato Playback gestartet');
+        
+        // Tracking: Staccato zählt nur 3 Sekunden zur Abspielzeit (obwohl 5 Sekunden gespielt werden)
+        gameState.currentPlayCount++;
+        gameState.totalPlayTime += 3;
+        updatePlayTimeDisplay();
+
+        const startTime = Date.now();
+
+        // Interval für Staccato-Effekt (jede Sekunde)
+        staccatoInterval = setInterval(() => {
+            const elapsed = (Date.now() - startTime) / 1000;
+            
+            if (elapsed >= duration) {
+                clearInterval(staccatoInterval);
+                audio.pause();
+                stopPreview();
+                return;
+            }
+
+            currentSecond = Math.floor(elapsed);
+            
+            // Gerade Sekunden (0, 2, 4, ...): Musik (Lautstärke 1)
+            // Ungerade Sekunden (1, 3, ...): Stille (Lautstärke 0)
+            if (currentSecond % 2 === 0) {
+                audio.volume = 1;
+            } else {
+                audio.volume = 0;
+            }
+
+            // Update Progress
+            const progress = Math.min((elapsed / duration) * 100, 100);
+            document.getElementById('progressFill').style.width = progress + '%';
+            updateTimeDisplay(elapsed);
+        }, 100); // Alle 100ms checken für genauere Steuerung
+
+        // Stoppe nach Dauer
+        gameState.stopTimeout = setTimeout(() => {
+            if (staccatoInterval) clearInterval(staccatoInterval);
+            audio.pause();
+            audio.volume = 1; // Lautstärke zurücksetzen
+            stopPreview();
+        }, duration * 1000);
+
+    }).catch(error => {
+        console.error('Staccato Playback error:', error);
+        if (staccatoInterval) clearInterval(staccatoInterval);
+        audio.volume = 1;
+        disableDurationButtons(false);
+        stopBtn.classList.remove('active');
+        alert('Fehler beim Abspielen im Staccato-Modus.');
+    });
 }
 
 // Spiele Preview ab (iOS-kompatibel)
@@ -1124,8 +1242,10 @@ function playPreview() {
         console.log('Playback gestartet');
         debugLog(`🔊 Playback läuft`);
         
-        // Tracking: Erhöhe Play-Count
+        // Tracking: Erhöhe Play-Count und addiere Abspielzeit
         gameState.currentPlayCount++;
+        gameState.totalPlayTime += gameState.previewDuration;
+        updatePlayTimeDisplay();
         
         // Deaktiviere alle Duration-Buttons während Playback
         disableDurationButtons(true);
@@ -1236,10 +1356,10 @@ async function playPreviewReverse() {
         reverseSource = source;
         reversePlaying = true;
         
-        // Tracking: Markiere, dass rückwärts abgespielt wurde (erhöht NICHT den playCount)
+        // Tracking: Markiere, dass rückwärts abgespielt wurde (erhöht NICHT den playCount und NICHT die totalPlayTime)
         gameState.currentPlayedReverse = true;
 
-        const duration = gameState.previewDuration;
+        const duration = 5; // Reverse spielt immer 5 Sekunden ab
         const startTime = reverseCtx.currentTime;
 
         // Progress Update für Reverse
@@ -1261,6 +1381,9 @@ async function playPreviewReverse() {
             stopBtn.classList.remove('active');
             document.getElementById('progressFill').style.width = '0%';
             updateTimeDisplay(0);
+            
+            // Aktiviere Duration-Buttons wieder
+            disableDurationButtons(false);
         };
 
         // Stoppe nach Preview-Dauer
@@ -1275,6 +1398,9 @@ async function playPreviewReverse() {
                 stopBtn.classList.remove('active');
                 document.getElementById('progressFill').style.width = '0%';
                 updateTimeDisplay(0);
+                
+                // Aktiviere Duration-Buttons wieder
+                disableDurationButtons(false);
             }
         }, duration * 1000);
 
@@ -1283,6 +1409,10 @@ async function playPreviewReverse() {
     } catch (err) {
         console.error('Reverse playback error:', err);
         stopBtn.classList.remove('active');
+        
+        // Aktiviere Duration-Buttons wieder
+        disableDurationButtons(false);
+        
         alert('Konnte Reverse-Preview nicht abspielen.');
     }
 }
@@ -1294,6 +1424,14 @@ function updateTimeDisplay(seconds) {
     const duration = gameState.previewDuration;
     document.getElementById('timeDisplay').textContent = 
         `${mins}:${String(secs).padStart(2, '0')} / 0:${String(duration).padStart(2, '0')}`;
+}
+
+// Update Gesamt-Abspielzeit-Anzeige
+function updatePlayTimeDisplay() {
+    const playTimeEl = document.getElementById('totalPlayTimeDisplay');
+    if (playTimeEl) {
+        playTimeEl.textContent = `${gameState.totalPlayTime}s`;
+    }
 }
 
 // Update Statistiken
