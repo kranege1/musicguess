@@ -1101,19 +1101,19 @@ function playPreviewWithDuration(duration) {
     // Setze die gewählte Dauer für diese Frage
     gameState.previewDuration = duration;
     
-    // Triggere Animation bei der Abspielzeit-Anzeige
-    const timeDisplay = document.getElementById('totalPlayTimeDisplay');
-    if (timeDisplay) {
+    // Triggere Animation bei der Abspielzeit-Anzeige (animiere das parent stat-line Element)
+    const timeDisplayContainer = document.querySelector('.stat-line[style*="color: #667eea"]');
+    if (timeDisplayContainer) {
         // Entferne Animation falls noch aktiv
-        timeDisplay.classList.remove('pulse-animation');
+        timeDisplayContainer.classList.remove('pulse-animation');
         // Erzwinge Reflow für Animation Restart
-        void timeDisplay.offsetWidth;
+        void timeDisplayContainer.offsetWidth;
         // Füge Animation hinzu
-        timeDisplay.classList.add('pulse-animation');
+        timeDisplayContainer.classList.add('pulse-animation');
         // Entferne Klasse nach Animation
         setTimeout(() => {
-            timeDisplay.classList.remove('pulse-animation');
-        }, 400);
+            timeDisplayContainer.classList.remove('pulse-animation');
+        }, 500);
     }
     
     // Rufe die normale playPreview Funktion auf
