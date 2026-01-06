@@ -382,6 +382,9 @@ function toggleGameMode() {
         searchSelection.style.display = 'flex';
         startArtistBubbles();
     }
+    
+    // Update Leaderboard bei Modus-Wechsel
+    showSetupLeaderboard();
 }
 
 // Starte das Spiel
@@ -396,6 +399,7 @@ async function startGame() {
     gameState.correctAnswers = 0;
     gameState.wrongAnswers = 0;
     gameState.totalPoints = 0;
+    gameState.currentGameMode = getSelectedGameMode(); // Speichere Game Mode für Leaderboard
 
     // UI aktualisieren
     document.getElementById('setupScreen').style.display = 'none';
@@ -455,6 +459,11 @@ async function startGame() {
 
         // Starte erste Frage
         nextQuestion();
+        
+        // Lade Motivations-Leaderboard
+        setTimeout(() => {
+            showGameLeaderboard();
+        }, 500);
     } catch (error) {
         console.error('Fehler beim Laden der Songs:', error);
         showError('Fehler beim Laden der Songs. Bitte versuchen Sie es erneut!');
@@ -1499,6 +1508,11 @@ function endGame() {
     document.getElementById('finalPoints').textContent = `🏆 ${gameState.totalPoints} Punkte`;
 
     stopPreview();
+    
+    // Speichere Score nach kurzer Verzögerung (UI-Update zuerst)
+    setTimeout(() => {
+        saveGameScore();
+    }, 500);
 }
 
 // Helper-Funktionen
@@ -1537,4 +1551,212 @@ document.addEventListener('visibilitychange', function() {
     if (document.hidden) {
         stopPreview();
     }
+});
+
+/**
+ * HIGHSCORE SYSTEM
+ */
+
+// Lade Spieler-Name aus localStorage oder vom Server
+async function initializePlayerName() {
+    let playerName = localStorage.getItem('playerName');
+    
+    if (!playerName) {
+        // Versuche vom Server zu laden
+        try {
+            const res = await fetch('/api/player');
+            const data = await res.json();
+            if (data.username) {
+                playerName = data.username;
+                localStorage.setItem('playerName', playerName);
+            } else {
+                playerName = 'Anon';
+            }
+        } catch (err) {
+            playerName = 'Anon';
+        }
+    }
+    
+    updatePlayerNameDisplay(playerName);
+}
+
+// Update Player-Name Button im Header
+function updatePlayerNameDisplay(name) {
+    const btn = document.getElementById('playerNameBtn');
+    if (btn) {
+        btn.textContent = `👤 ${name}`;
+    }
+}
+
+// Öffne Player-Name Modal
+function openPlayerNameModal() {
+    const modal = document.getElementById('playerNameModal');
+    const input = document.getElementById('playerNameInput');
+    const currentName = localStorage.getItem('playerName') || 'Anon';
+    
+    if (currentName !== 'Anon') {
+        input.value = currentName;
+    }
+    input.focus();
+    modal.classList.add('show');
+}
+
+// Schließe Player-Name Modal
+function closePlayerNameModal() {
+    const modal = document.getElementById('playerNameModal');
+    modal.classList.remove('show');
+}
+
+// Speichere Player-Name
+function savePlayerName() {
+    const input = document.getElementById('playerNameInput');
+    const name = input.value.trim();
+    
+    if (!name || name.length < 2) {
+        alert('Bitte geben Sie einen Namen ein (min. 2 Zeichen)');
+        return;
+    }
+    
+    localStorage.setItem('playerName', name);
+    updatePlayerNameDisplay(name);
+    closePlayerNameModal();
+}
+
+// Lade Leaderboard für einen Spielmodus
+async function loadLeaderboard(gameMode) {
+    try {
+        const encodedMode = encodeURIComponent(gameMode);
+        const res = await fetch(`/api/leaderboard/${encodedMode}`);
+        const data = await res.json();
+        return data.scores || [];
+    } catch (err) {
+        console.error('Fehler beim Laden des Leaderboards:', err);
+        return [];
+    }
+}
+
+// Zeige Leaderboard im Setup-Screen
+async function showSetupLeaderboard() {
+    const leaderboardDiv = document.getElementById('setupLeaderboard');
+    const listDiv = document.getElementById('setupLeaderboardList');
+    
+    if (!leaderboardDiv) return;
+    
+    // Lade Leaderboard für aktuellen Modus
+    const gameMode = getSelectedGameMode();
+    const scores = await loadLeaderboard(gameMode);
+    
+    if (!scores || scores.length === 0) {
+        listDiv.innerHTML = '<div style="color: #999; font-size: 0.85em; text-align: center;">Keine Scores vorhanden</div>';
+        leaderboardDiv.classList.add('show');
+        return;
+    }
+    
+    // Render Top 10
+    const html = scores.slice(0, 10).map((score, index) => `
+        <div class="leaderboard-item">
+            <span class="leaderboard-rank">#${index + 1}</span>
+            <span class="leaderboard-name">${score.username}</span>
+            <span class="leaderboard-points">🏆 ${score.totalPoints}</span>
+        </div>
+    `).join('');
+    
+    listDiv.innerHTML = html;
+    leaderboardDiv.classList.add('show');
+}
+
+// Zeige Top 3 während des Spiels (Motivation)
+async function showGameLeaderboard() {
+    const leaderboardDiv = document.getElementById('quizLeaderboard');
+    const listDiv = document.getElementById('quizLeaderboardList');
+    
+    if (!leaderboardDiv) return;
+    
+    const gameMode = gameState.currentGameMode || 'Genre';
+    const scores = await loadLeaderboard(gameMode);
+    
+    if (!scores || scores.length === 0) {
+        leaderboardDiv.classList.remove('show');
+        return;
+    }
+    
+    // Render Top 3
+    const html = scores.slice(0, 3).map((score, index) => `
+        <div class="leaderboard-item">
+            <span class="leaderboard-rank">#${index + 1}</span>
+            <span class="leaderboard-name">${score.username}</span>
+            <span class="leaderboard-points">🏆 ${score.totalPoints}</span>
+        </div>
+    `).join('');
+    
+    listDiv.innerHTML = html;
+    leaderboardDiv.classList.add('show');
+}
+
+// Speichere Score nach Spielende
+async function saveGameScore() {
+    const playerName = localStorage.getItem('playerName') || 'Anon';
+    const gameMode = gameState.currentGameMode || 'Genre';
+    const points = gameState.totalPoints || 0;
+    const totalQuestions = gameState.songs ? gameState.songs.length : 0;
+    const correctAnswers = gameState.correctCount || 0;
+    
+    try {
+        const res = await fetch('/api/score', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: playerName,
+                gameMode: gameMode,
+                points: Math.round(points),
+                totalQuestions: totalQuestions,
+                correctAnswers: correctAnswers
+            })
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+            console.log('✅ Score gespeichert:', data.score);
+            return true;
+        } else {
+            console.error('Score-Speichern fehlgeschlagen:', data.error);
+            return false;
+        }
+    } catch (err) {
+        console.error('Fehler beim Speichern des Scores:', err);
+        return false;
+    }
+}
+
+// Hole aktuell ausgewählten Spielmodus
+function getSelectedGameMode() {
+    const selected = document.querySelector('input[name="gameMode"]:checked');
+    
+    if (!selected) return 'Genre';
+    
+    const value = selected.value;
+    
+    if (value === 'genre') {
+        const genreSelect = document.getElementById('genreSelect');
+        const genre = genreSelect ? genreSelect.value : 'Alle';
+        return `Genre: ${genre}`;
+    } else if (value === 'billboard') {
+        return 'Billboard Hot 100';
+    } else if (value === 'search') {
+        return 'Freie Wahl (iTunes Suche)';
+    }
+    
+    return 'Genre';
+}
+
+// Rufe initializePlayerName beim Laden auf
+document.addEventListener('DOMContentLoaded', function() {
+    initializePlayerName();
+    // Initial Leaderboard laden
+    setTimeout(() => {
+        showSetupLeaderboard();
+    }, 300);
 });

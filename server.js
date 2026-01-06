@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const http = require('http');
 const path = require('path');
+const { saveScore, getLeaderboard, getPlayerByIP, getClientIP } = require('./highscoreManager');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -146,6 +147,90 @@ app.get('/*', (req, res) => {
         return res.status(404).json({ error: 'Not found' });
     }
     res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+/**
+ * HIGHSCORE API ENDPOINTS
+ */
+
+// GET /api/player - Spieler-Info basierend auf IP
+app.get('/api/player', (req, res) => {
+    const ip = getClientIP(req);
+    const player = getPlayerByIP(ip);
+    
+    if (player) {
+        res.json({
+            username: player.username,
+            ip: ip,
+            totalScores: player.scores.length
+        });
+    } else {
+        res.json({
+            username: null,
+            ip: ip,
+            totalScores: 0
+        });
+    }
+});
+
+// POST /api/score - Neuen Score speichern
+app.post('/api/score', (req, res) => {
+    try {
+        const { username, gameMode, points, totalQuestions, correctAnswers } = req.body;
+        
+        if (!username || !gameMode || points === undefined || !totalQuestions || correctAnswers === undefined) {
+            return res.status(400).json({ error: 'Unvollständige Daten' });
+        }
+
+        const scoreEntry = saveScore(req, {
+            username,
+            gameMode,
+            points,
+            totalQuestions,
+            correctAnswers
+        });
+
+        res.json({
+            success: true,
+            score: scoreEntry
+        });
+    } catch (err) {
+        console.error('Fehler beim Speichern des Scores:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// GET /api/leaderboard/:mode - Top 10 für einen Modus
+app.get('/api/leaderboard/:mode', (req, res) => {
+    try {
+        const mode = decodeURIComponent(req.params.mode);
+        const leaderboard = getLeaderboard(mode);
+        
+        res.json({
+            mode: mode,
+            count: leaderboard.length,
+            scores: leaderboard
+        });
+    } catch (err) {
+        console.error('Fehler beim Laden des Leaderboards:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// GET /api/leaderboard-global - Globales Leaderboard
+app.get('/api/leaderboard-global', (req, res) => {
+    try {
+        const leaderboard = getLeaderboard('Global');
+        
+        res.json({
+            mode: 'Global',
+            count: leaderboard.length,
+            scores: leaderboard
+        });
+    } catch (err) {
+        console.error('Fehler beim Laden des globalen Leaderboards:', err);
+        res.status(500).json({ error: err.message });
+    }
 });
 
 // Error handling
