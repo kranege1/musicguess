@@ -399,7 +399,7 @@ async function startGame() {
     gameState.correctAnswers = 0;
     gameState.wrongAnswers = 0;
     gameState.totalPoints = 0;
-    gameState.currentGameMode = getSelectedGameMode(); // Speichere Game Mode für Leaderboard
+    // currentGameMode wird nach Subtitle-Set pro Modus gesetzt
 
     // UI aktualisieren
     document.getElementById('setupScreen').style.display = 'none';
@@ -418,7 +418,9 @@ async function startGame() {
             await loadSongsFromGenre(selectedGenre, songCount);
             // Update Subtitle
             const genreText = selectedGenre === 'Alle' ? 'Alle Genres' : selectedGenre;
-            document.getElementById('gameSubtitle').textContent = `Genre: ${genreText}`;
+            const subtitleText = `Genre: ${genreText}`;
+            document.getElementById('gameSubtitle').textContent = subtitleText;
+            gameState.currentGameMode = subtitleText;
         } else if (gameMode === 'billboard') {
             // Billboard-Modus: Lade Songs nach Jahr
             const selectedYear = document.getElementById('yearSelect').value;
@@ -431,7 +433,9 @@ async function startGame() {
             }
             await loadSongsFromBillboard(selectedYear, songCount);
             // Update Subtitle
-            document.getElementById('gameSubtitle').textContent = `Billboard Charts aus ${selectedYear}`;
+            const subtitleText = `Billboard Charts aus ${selectedYear}`;
+            document.getElementById('gameSubtitle').textContent = subtitleText;
+            gameState.currentGameMode = subtitleText;
         } else {
             // iTunes Suchmodus
             const searchQuery = document.getElementById('searchQuery').value.trim();
@@ -444,7 +448,9 @@ async function startGame() {
             }
             await loadSongsFromItunes(searchQuery, songCount);
             // Update Subtitle
-            document.getElementById('gameSubtitle').textContent = `Songs von ${searchQuery}`;
+            const subtitleText = `Songs von ${searchQuery}`;
+            document.getElementById('gameSubtitle').textContent = subtitleText;
+            gameState.currentGameMode = subtitleText;
         }
 
         // Verstecke Loading-Indicator
@@ -1752,9 +1758,11 @@ function getSelectedGameMode() {
         const genre = genreSelect ? genreSelect.value : 'Alle';
         return `Genre: ${genre}`;
     } else if (value === 'billboard') {
-        return 'Billboard Hot 100';
+        const selectedYear = document.getElementById('yearSelect')?.value;
+        return selectedYear ? `Billboard Charts aus ${selectedYear}` : 'Billboard Hot 100';
     } else if (value === 'search') {
-        return 'Freie Wahl (iTunes Suche)';
+        const searchQuery = document.getElementById('searchQuery')?.value?.trim();
+        return searchQuery ? `Songs von ${searchQuery}` : 'Freie Wahl (iTunes Suche)';
     }
     
     return 'Genre';
