@@ -1078,7 +1078,7 @@ function selectAnswer(answer, index) {
         const countdownPoints = countdownActive ? Math.max(0, Math.round(gameState.pointsCountdownValue)) : null;
         const guessedWithoutPlay = gameState.totalPlayTime <= 0 && gameState.currentPlayCount === 0;
         const basePoints = guessedWithoutPlay
-            ? 150
+            ? 1500
             : (countdownPoints !== null ? countdownPoints : calculatePoints());
         const awardedPoints = basePoints;
 
@@ -1131,9 +1131,10 @@ function showSongInfo() {
 // Berechne Punkte für richtige Antwort
 function calculatePoints() {
     // Basispunkte basierend auf Gesamt-Abspielzeit
-    // Formel: 100 * (5 / totalPlayTime)
+    // Formel: 1000 * (5 / totalPlayTime)
     const playTime = Math.max(1, gameState.totalPlayTime); // Mindestens 1 Sekunde
-    let points = 100 * (5 / playTime);
+    const basePoints = 1000;
+    let points = basePoints * (5 / playTime);
     
     // Multiplikator für Rückwärts-Abspielen
     if (gameState.currentPlayedReverse) {
@@ -1142,6 +1143,13 @@ function calculatePoints() {
     
     // Runde auf ganze Zahl
     return Math.round(points);
+}
+
+// Finale Punkte: Durchschnitt pro Frage
+function calculateFinalScore() {
+    const totalQuestions = gameState.songs ? gameState.songs.length : 0;
+    if (totalQuestions === 0) return 0;
+    return Math.round(gameState.totalPoints / totalQuestions);
 }
 
 // Punkte-Countdown für aktuelle Frage anzeigen und langsam abbauen
@@ -1659,12 +1667,13 @@ function endGame() {
 
     const total = gameState.correctAnswers + gameState.wrongAnswers;
     const percentage = total > 0 ? Math.round((gameState.correctAnswers / total) * 100) : 0;
+    const finalScore = calculateFinalScore();
 
     document.getElementById('quizScreen').style.display = 'none';
     document.getElementById('gameOverScreen').classList.add('show');
     document.getElementById('finalScore').textContent = `${gameState.correctAnswers}/${total}`;
     document.getElementById('scorePercentage').textContent = `${percentage}%`;
-    document.getElementById('finalPoints').textContent = `🏆 ${gameState.totalPoints} Punkte`;
+    document.getElementById('finalPoints').textContent = `🏆 ${finalScore} Punkte`;
 
     stopPreview();
     
@@ -1844,7 +1853,15 @@ function renderLeaderboardTicker(scores, gameMode) {
         return;
     }
 
-    const items = scores.map((score, idx) => {
+    // Sortiere nach Punkten (fallback auf totalPoints) und zeige nur Top 10
+    const sorted = [...scores].sort((a, b) => {
+        const ap = (a.points ?? a.totalPoints ?? 0);
+        const bp = (b.points ?? b.totalPoints ?? 0);
+        return bp - ap; // absteigend
+    });
+    const topScores = sorted.slice(0, 10);
+
+    const items = topScores.map((score, idx) => {
         const points = score.points ?? score.totalPoints ?? 0; // show per-score points, avoid summed totals
         const modeLabel = score.gameMode || gameMode || 'Modus';
         return `
@@ -1862,7 +1879,7 @@ function renderLeaderboardTicker(scores, gameMode) {
     track.innerHTML = repeated.join('<span style="width: 32px;"></span>');
 
     // Geschwindigkeit abhängig von Anzahl Elemente
-    const durationSec = Math.max(12, scores.length * 3);
+    const durationSec = Math.max(12, topScores.length * 3);
     track.style.setProperty('--ticker-duration', `${durationSec}s`);
 }
 
@@ -1974,15 +1991,15 @@ async function saveGameScore() {
     const playerName = localStorage.getItem('playerName') || 'Anon';
     const playerId = getOrCreatePlayerID();
     const gameMode = gameState.currentGameMode || 'Genre';
-    const points = gameState.totalPoints || 0;
     const totalQuestions = gameState.songs ? gameState.songs.length : 0;
     const correctAnswers = gameState.correctAnswers || 0;
+    const finalScore = calculateFinalScore();
     
     console.log('💾 Speichere Score:', {
         playerName,
         playerId,
         gameMode,
-        points,
+        points: finalScore,
         totalQuestions,
         correctAnswers
     });
@@ -1997,7 +2014,7 @@ async function saveGameScore() {
                 username: playerName,
                 playerId: playerId,
                 gameMode: gameMode,
-                points: Math.round(points),
+                points: finalScore,
                 totalQuestions: totalQuestions,
                 correctAnswers: correctAnswers
             })

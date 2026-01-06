@@ -54,47 +54,11 @@
         {
           "id": "score-1767700537562",
           "gameMode": "Songs von Dire Straits",
-          "points": 1336,
+          "points": 136,
           "totalQuestions": 10,
           "correctAnswers": 8,
           "accuracy": 80,
           "date": "2026-01-06T11:55:37.562Z"
-        }
-      ]
-    },
-    "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0": {
-      "username": "Karl",
-      "ip": "::1",
-      "playerId": "2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
-      "firstSeen": "2026-01-06T11:59:50.756Z",
-      "lastSeen": "2026-01-06T12:05:46.597Z",
-      "scores": [
-        {
-          "id": "score-1767700790756",
-          "gameMode": "Songs von Chicago",
-          "points": 167,
-          "totalQuestions": 10,
-          "correctAnswers": 1,
-          "accuracy": 10,
-          "date": "2026-01-06T11:59:50.756Z"
-        },
-        {
-          "id": "score-1767700934668",
-          "gameMode": "Songs von Rod Stewart",
-          "points": 1207,
-          "totalQuestions": 10,
-          "correctAnswers": 8,
-          "accuracy": 80,
-          "date": "2026-01-06T12:02:14.668Z"
-        },
-        {
-          "id": "score-1767701146597",
-          "gameMode": "Billboard Charts aus 2020",
-          "points": 834,
-          "totalQuestions": 10,
-          "correctAnswers": 3,
-          "accuracy": 30,
-          "date": "2026-01-06T12:05:46.597Z"
         }
       ]
     },
@@ -113,15 +77,6 @@
           "correctAnswers": 2,
           "accuracy": 20,
           "date": "2026-01-06T13:19:41.982Z"
-        },
-        {
-          "id": "score-1767705712377",
-          "gameMode": "Songs von Jennifer Lopez",
-          "points": 1169,
-          "totalQuestions": 10,
-          "correctAnswers": 7,
-          "accuracy": 70,
-          "date": "2026-01-06T13:21:52.377Z"
         }
       ]
     },
@@ -130,70 +85,43 @@
       "ip": "::1",
       "playerId": "eb16b498-959e-43a8-b676-d7f6bd1a004c",
       "firstSeen": "2026-01-06T13:24:30.544Z",
-      "lastSeen": "2026-01-06T15:16:39.747Z",
+      "lastSeen": "2026-01-06T20:20:41.838Z",
       "scores": [
         {
-          "id": "score-1767705870544",
-          "gameMode": "Songs von Gladys Knight & the Pips",
-          "points": 1002,
-          "totalQuestions": 10,
-          "correctAnswers": 6,
-          "accuracy": 60,
-          "date": "2026-01-06T13:24:30.544Z"
-        },
-        {
-          "id": "score-1767710499091",
-          "gameMode": "Songs von Hubert von Goisern",
-          "points": 1169,
-          "totalQuestions": 10,
-          "correctAnswers": 7,
-          "accuracy": 70,
-          "date": "2026-01-06T14:41:39.091Z"
-        },
-        {
-          "id": "score-1767710766768",
-          "gameMode": "Genre: Alle Genres",
-          "points": 835,
+          "id": "score-1767728971560",
+          "gameMode": "Songs von Van Morrison",
+          "points": 554,
           "totalQuestions": 10,
           "correctAnswers": 5,
           "accuracy": 50,
-          "date": "2026-01-06T14:46:06.768Z"
+          "date": "2026-01-06T19:49:31.560Z"
         },
         {
-          "id": "score-1767711304381",
-          "gameMode": "Billboard Charts aus 1982",
-          "points": 1002,
+          "id": "score-1767729104537",
+          "gameMode": "Songs von Dolly Parton",
+          "points": 629,
           "totalQuestions": 10,
-          "correctAnswers": 6,
-          "accuracy": 60,
-          "date": "2026-01-06T14:55:04.381Z"
+          "correctAnswers": 5,
+          "accuracy": 50,
+          "date": "2026-01-06T19:51:44.537Z"
         },
         {
-          "id": "score-1767711755037",
-          "gameMode": "Songs von Britney Spears",
-          "points": 730,
-          "totalQuestions": 5,
-          "correctAnswers": 3,
-          "accuracy": 60,
-          "date": "2026-01-06T15:02:35.037Z"
-        },
-        {
-          "id": "score-1767712042725",
-          "gameMode": "Songs von Sarah Connor",
-          "points": 583,
+          "id": "score-1767730640381",
+          "gameMode": "Songs von Eros Ramazzotti",
+          "points": 1143,
           "totalQuestions": 10,
-          "correctAnswers": 4,
-          "accuracy": 40,
-          "date": "2026-01-06T15:07:22.725Z"
+          "correctAnswers": 7,
+          "accuracy": 70,
+          "date": "2026-01-06T20:17:20.381Z"
         },
         {
-          "id": "score-1767712599747",
-          "gameMode": "Songs von Scorpions",
-          "points": 1162,
+          "id": "score-1767730841838",
+          "gameMode": "Songs von Vanessa Mai",
+          "points": 317,
           "totalQuestions": 10,
-          "correctAnswers": 8,
-          "accuracy": 80,
-          "date": "2026-01-06T15:16:39.747Z"
+          "correctAnswers": 2,
+          "accuracy": 20,
+          "date": "2026-01-06T20:20:41.838Z"
         }
       ]
     }
@@ -264,47 +192,11 @@
         "ip": "::1",
         "username": "Hias",
         "gameMode": "Songs von Dire Straits",
-        "points": 1336,
-        "totalPoints": 1336,
+        "points": 136,
+        "totalPoints": 136,
         "avgAccuracy": 80,
         "gamesPlayed": 1,
         "lastScore": "2026-01-06T11:55:37.562Z"
-      }
-    ],
-    "Songs von Chicago": [
-      {
-        "ip": "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
-        "username": "Karl",
-        "gameMode": "Songs von Chicago",
-        "points": 167,
-        "totalPoints": 167,
-        "avgAccuracy": 10,
-        "gamesPlayed": 1,
-        "lastScore": "2026-01-06T11:59:50.756Z"
-      }
-    ],
-    "Songs von Rod Stewart": [
-      {
-        "ip": "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
-        "username": "Karl",
-        "gameMode": "Songs von Rod Stewart",
-        "points": 1207,
-        "totalPoints": 1207,
-        "avgAccuracy": 80,
-        "gamesPlayed": 1,
-        "lastScore": "2026-01-06T12:02:14.668Z"
-      }
-    ],
-    "Billboard Charts aus 2020": [
-      {
-        "ip": "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
-        "username": "Karl",
-        "gameMode": "Billboard Charts aus 2020",
-        "points": 834,
-        "totalPoints": 834,
-        "avgAccuracy": 30,
-        "gamesPlayed": 1,
-        "lastScore": "2026-01-06T12:05:46.597Z"
       }
     ],
     "Billboard Charts aus 1990": [
@@ -319,165 +211,63 @@
         "lastScore": "2026-01-06T13:19:41.982Z"
       }
     ],
-    "Songs von Jennifer Lopez": [
-      {
-        "ip": "::1_c801801b-3a27-4df2-89ae-b9c6d62164a1",
-        "username": "Jochen",
-        "gameMode": "Songs von Jennifer Lopez",
-        "points": 1169,
-        "totalPoints": 1169,
-        "avgAccuracy": 70,
-        "gamesPlayed": 1,
-        "lastScore": "2026-01-06T13:21:52.377Z"
-      }
-    ],
-    "Songs von Gladys Knight & the Pips": [
+    "Songs von Van Morrison": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
         "username": "Benno",
-        "gameMode": "Songs von Gladys Knight & the Pips",
-        "points": 1002,
-        "totalPoints": 1002,
-        "avgAccuracy": 60,
-        "gamesPlayed": 1,
-        "lastScore": "2026-01-06T13:24:30.544Z"
-      }
-    ],
-    "Songs von Hubert von Goisern": [
-      {
-        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
-        "gameMode": "Songs von Hubert von Goisern",
-        "points": 1169,
-        "totalPoints": 1169,
-        "avgAccuracy": 70,
-        "gamesPlayed": 1,
-        "lastScore": "2026-01-06T14:41:39.091Z"
-      }
-    ],
-    "Genre: Alle Genres": [
-      {
-        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
-        "gameMode": "Genre: Alle Genres",
-        "points": 835,
-        "totalPoints": 835,
+        "gameMode": "Songs von Van Morrison",
+        "points": 554,
+        "totalPoints": 554,
         "avgAccuracy": 50,
         "gamesPlayed": 1,
-        "lastScore": "2026-01-06T14:46:06.768Z"
+        "lastScore": "2026-01-06T19:49:31.560Z"
       }
     ],
-    "Billboard Charts aus 1982": [
+    "Songs von Dolly Parton": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
         "username": "Benno",
-        "gameMode": "Billboard Charts aus 1982",
-        "points": 1002,
-        "totalPoints": 1002,
-        "avgAccuracy": 60,
+        "gameMode": "Songs von Dolly Parton",
+        "points": 629,
+        "totalPoints": 629,
+        "avgAccuracy": 50,
         "gamesPlayed": 1,
-        "lastScore": "2026-01-06T14:55:04.381Z"
+        "lastScore": "2026-01-06T19:51:44.537Z"
       }
     ],
-    "Songs von Britney Spears": [
+    "Songs von Eros Ramazzotti": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
         "username": "Benno",
-        "gameMode": "Songs von Britney Spears",
-        "points": 730,
-        "totalPoints": 730,
-        "avgAccuracy": 60,
+        "gameMode": "Songs von Eros Ramazzotti",
+        "points": 1143,
+        "totalPoints": 1143,
+        "avgAccuracy": 70,
         "gamesPlayed": 1,
-        "lastScore": "2026-01-06T15:02:35.037Z"
+        "lastScore": "2026-01-06T20:17:20.381Z"
       }
     ],
-    "Songs von Sarah Connor": [
+    "Songs von Vanessa Mai": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
         "username": "Benno",
-        "gameMode": "Songs von Sarah Connor",
-        "points": 583,
-        "totalPoints": 583,
-        "avgAccuracy": 40,
+        "gameMode": "Songs von Vanessa Mai",
+        "points": 317,
+        "totalPoints": 317,
+        "avgAccuracy": 20,
         "gamesPlayed": 1,
-        "lastScore": "2026-01-06T15:07:22.725Z"
-      }
-    ],
-    "Songs von Scorpions": [
-      {
-        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
-        "gameMode": "Songs von Scorpions",
-        "points": 1162,
-        "totalPoints": 1162,
-        "avgAccuracy": 80,
-        "gamesPlayed": 1,
-        "lastScore": "2026-01-06T15:16:39.747Z"
+        "lastScore": "2026-01-06T20:20:41.838Z"
       }
     ],
     "Global": [
       {
-        "ip": "::1",
-        "username": "Hias",
-        "gameMode": "Songs von Dire Straits",
-        "points": 1336,
-        "totalPoints": 1336,
-        "accuracy": 80,
-        "date": "2026-01-06T11:55:37.562Z"
-      },
-      {
-        "ip": "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
-        "username": "Karl",
-        "gameMode": "Songs von Rod Stewart",
-        "points": 1207,
-        "totalPoints": 1207,
-        "accuracy": 80,
-        "date": "2026-01-06T12:02:14.668Z"
-      },
-      {
-        "ip": "::1_c801801b-3a27-4df2-89ae-b9c6d62164a1",
-        "username": "Jochen",
-        "gameMode": "Songs von Jennifer Lopez",
-        "points": 1169,
-        "totalPoints": 1169,
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Benno",
+        "gameMode": "Songs von Eros Ramazzotti",
+        "points": 1143,
+        "totalPoints": 1143,
         "accuracy": 70,
-        "date": "2026-01-06T13:21:52.377Z"
-      },
-      {
-        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
-        "gameMode": "Songs von Hubert von Goisern",
-        "points": 1169,
-        "totalPoints": 1169,
-        "accuracy": 70,
-        "date": "2026-01-06T14:41:39.091Z"
-      },
-      {
-        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
-        "gameMode": "Songs von Scorpions",
-        "points": 1162,
-        "totalPoints": 1162,
-        "accuracy": 80,
-        "date": "2026-01-06T15:16:39.747Z"
-      },
-      {
-        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
-        "gameMode": "Songs von Gladys Knight & the Pips",
-        "points": 1002,
-        "totalPoints": 1002,
-        "accuracy": 60,
-        "date": "2026-01-06T13:24:30.544Z"
-      },
-      {
-        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
-        "gameMode": "Billboard Charts aus 1982",
-        "points": 1002,
-        "totalPoints": 1002,
-        "accuracy": 60,
-        "date": "2026-01-06T14:55:04.381Z"
+        "date": "2026-01-06T20:17:20.381Z"
       },
       {
         "ip": "::1",
@@ -498,33 +288,6 @@
         "date": "2026-01-06T08:31:32.638Z"
       },
       {
-        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
-        "gameMode": "Genre: Alle Genres",
-        "points": 835,
-        "totalPoints": 835,
-        "accuracy": 50,
-        "date": "2026-01-06T14:46:06.768Z"
-      },
-      {
-        "ip": "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
-        "username": "Karl",
-        "gameMode": "Billboard Charts aus 2020",
-        "points": 834,
-        "totalPoints": 834,
-        "accuracy": 30,
-        "date": "2026-01-06T12:05:46.597Z"
-      },
-      {
-        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
-        "gameMode": "Songs von Britney Spears",
-        "points": 730,
-        "totalPoints": 730,
-        "accuracy": 60,
-        "date": "2026-01-06T15:02:35.037Z"
-      },
-      {
         "ip": "::1",
         "username": "Hias",
         "gameMode": "Songs von Kraftwerk",
@@ -532,6 +295,15 @@
         "totalPoints": 667,
         "accuracy": 20,
         "date": "2026-01-06T08:28:33.648Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Benno",
+        "gameMode": "Songs von Dolly Parton",
+        "points": 629,
+        "totalPoints": 629,
+        "accuracy": 50,
+        "date": "2026-01-06T19:51:44.537Z"
       },
       {
         "ip": "::1",
@@ -545,11 +317,11 @@
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
         "username": "Benno",
-        "gameMode": "Songs von Sarah Connor",
-        "points": 583,
-        "totalPoints": 583,
-        "accuracy": 40,
-        "date": "2026-01-06T15:07:22.725Z"
+        "gameMode": "Songs von Van Morrison",
+        "points": 554,
+        "totalPoints": 554,
+        "accuracy": 50,
+        "date": "2026-01-06T19:49:31.560Z"
       },
       {
         "ip": "::1",
@@ -561,6 +333,15 @@
         "date": "2026-01-06T09:30:12.976Z"
       },
       {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Benno",
+        "gameMode": "Songs von Vanessa Mai",
+        "points": 317,
+        "totalPoints": 317,
+        "accuracy": 20,
+        "date": "2026-01-06T20:20:41.838Z"
+      },
+      {
         "ip": "::1_c801801b-3a27-4df2-89ae-b9c6d62164a1",
         "username": "Jochen",
         "gameMode": "Billboard Charts aus 1990",
@@ -570,15 +351,15 @@
         "date": "2026-01-06T13:19:41.982Z"
       },
       {
-        "ip": "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
-        "username": "Karl",
-        "gameMode": "Songs von Chicago",
-        "points": 167,
-        "totalPoints": 167,
-        "accuracy": 10,
-        "date": "2026-01-06T11:59:50.756Z"
+        "ip": "::1",
+        "username": "Hias",
+        "gameMode": "Songs von Dire Straits",
+        "points": 136,
+        "totalPoints": 136,
+        "accuracy": 80,
+        "date": "2026-01-06T11:55:37.562Z"
       }
     ]
   },
-  "lastUpdated": "2026-01-06T15:16:39.747Z"
+  "lastUpdated": "2026-01-06T20:20:41.838Z"
 }
