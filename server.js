@@ -132,18 +132,6 @@ app.get('/api/health', (req, res) => {
 });
 
 /**
- * Serve index.html for any unknown routes (SPA routing)
- * MUST be AFTER all other routes and static files!
- */
-app.get('/*', (req, res) => {
-    // Don't serve index.html for API calls or real files
-    if (req.path.includes('/api') || req.path.includes('.')) {
-        return res.status(404).json({ error: 'Not found' });
-    }
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-/**
  * HIGHSCORE API ENDPOINTS
  */
 
@@ -237,6 +225,18 @@ app.use(express.static(path.join(__dirname), {
     etag: false,
     maxAge: 0 // No client-side caching
 }));
+
+/**
+ * Serve index.html for any unknown routes (SPA routing)
+ * MUST be AFTER all other routes and static files!
+ */
+app.get('/*', (req, res) => {
+    // Don't serve index.html for API calls or real files
+    if (req.path.includes('/api') || req.path.includes('.')) {
+        return res.status(404).json({ error: 'Not found' });
+    }
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Error handling
 app.use((err, req, res, next) => {
