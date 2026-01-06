@@ -1,10 +1,404 @@
 {
-  "players": {},
-  "leaderboard": {
-    "Genre": [],
-    "Billboard Hot 100": [],
-    "Freie Wahl (iTunes Suche)": [],
-    "Global": []
+  "players": {
+    "::1": {
+      "username": "Hias",
+      "ip": "::1",
+      "firstSeen": "2026-01-06T08:18:05.386Z",
+      "lastSeen": "2026-01-06T11:55:37.562Z",
+      "scores": [
+        {
+          "id": "score-1767688113648",
+          "gameMode": "Songs von Kraftwerk",
+          "points": 667,
+          "totalQuestions": 10,
+          "correctAnswers": 2,
+          "accuracy": 20,
+          "date": "2026-01-06T08:28:33.648Z"
+        },
+        {
+          "id": "score-1767688292638",
+          "gameMode": "Songs von Fleetwood Mac",
+          "points": 918,
+          "totalQuestions": 10,
+          "correctAnswers": 6,
+          "accuracy": 60,
+          "date": "2026-01-06T08:31:32.638Z"
+        },
+        {
+          "id": "score-1767688357223",
+          "gameMode": "Billboard Charts aus 2009",
+          "points": 1000,
+          "totalQuestions": 10,
+          "correctAnswers": 2,
+          "accuracy": 20,
+          "date": "2026-01-06T08:32:37.223Z"
+        },
+        {
+          "id": "score-1767691642845",
+          "gameMode": "Genre: 1970er",
+          "points": 584,
+          "totalQuestions": 10,
+          "correctAnswers": 4,
+          "accuracy": 40,
+          "date": "2026-01-06T09:27:22.845Z"
+        },
+        {
+          "id": "score-1767691812976",
+          "gameMode": "Songs von Luciano Pavarotti",
+          "points": 500,
+          "totalQuestions": 10,
+          "correctAnswers": 1,
+          "accuracy": 10,
+          "date": "2026-01-06T09:30:12.976Z"
+        },
+        {
+          "id": "score-1767700537562",
+          "gameMode": "Songs von Dire Straits",
+          "points": 1336,
+          "totalQuestions": 10,
+          "correctAnswers": 8,
+          "accuracy": 80,
+          "date": "2026-01-06T11:55:37.562Z"
+        }
+      ]
+    },
+    "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0": {
+      "username": "Karl",
+      "ip": "::1",
+      "playerId": "2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
+      "firstSeen": "2026-01-06T11:59:50.756Z",
+      "lastSeen": "2026-01-06T12:05:46.597Z",
+      "scores": [
+        {
+          "id": "score-1767700790756",
+          "gameMode": "Songs von Chicago",
+          "points": 167,
+          "totalQuestions": 10,
+          "correctAnswers": 1,
+          "accuracy": 10,
+          "date": "2026-01-06T11:59:50.756Z"
+        },
+        {
+          "id": "score-1767700934668",
+          "gameMode": "Songs von Rod Stewart",
+          "points": 1207,
+          "totalQuestions": 10,
+          "correctAnswers": 8,
+          "accuracy": 80,
+          "date": "2026-01-06T12:02:14.668Z"
+        },
+        {
+          "id": "score-1767701146597",
+          "gameMode": "Billboard Charts aus 2020",
+          "points": 834,
+          "totalQuestions": 10,
+          "correctAnswers": 3,
+          "accuracy": 30,
+          "date": "2026-01-06T12:05:46.597Z"
+        }
+      ]
+    },
+    "::1_c801801b-3a27-4df2-89ae-b9c6d62164a1": {
+      "username": "Jochen",
+      "ip": "::1",
+      "playerId": "c801801b-3a27-4df2-89ae-b9c6d62164a1",
+      "firstSeen": "2026-01-06T13:19:41.982Z",
+      "lastSeen": "2026-01-06T13:21:52.377Z",
+      "scores": [
+        {
+          "id": "score-1767705581982",
+          "gameMode": "Billboard Charts aus 1990",
+          "points": 250,
+          "totalQuestions": 10,
+          "correctAnswers": 2,
+          "accuracy": 20,
+          "date": "2026-01-06T13:19:41.982Z"
+        },
+        {
+          "id": "score-1767705712377",
+          "gameMode": "Songs von Jennifer Lopez",
+          "points": 1169,
+          "totalQuestions": 10,
+          "correctAnswers": 7,
+          "accuracy": 70,
+          "date": "2026-01-06T13:21:52.377Z"
+        }
+      ]
+    },
+    "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c": {
+      "username": "Benno",
+      "ip": "::1",
+      "playerId": "eb16b498-959e-43a8-b676-d7f6bd1a004c",
+      "firstSeen": "2026-01-06T13:24:30.544Z",
+      "lastSeen": "2026-01-06T13:24:30.544Z",
+      "scores": [
+        {
+          "id": "score-1767705870544",
+          "gameMode": "Songs von Gladys Knight & the Pips",
+          "points": 1002,
+          "totalQuestions": 10,
+          "correctAnswers": 6,
+          "accuracy": 60,
+          "date": "2026-01-06T13:24:30.544Z"
+        }
+      ]
+    }
   },
-  "lastUpdated": "2026-01-06T00:00:00Z"
+  "leaderboard": {
+    "Songs von Kraftwerk": [
+      {
+        "ip": "::1",
+        "username": "Hias",
+        "gameMode": "Songs von Kraftwerk",
+        "points": 667,
+        "totalPoints": 667,
+        "avgAccuracy": 20,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-06T08:28:33.648Z"
+      }
+    ],
+    "Songs von Fleetwood Mac": [
+      {
+        "ip": "::1",
+        "username": "Hias",
+        "gameMode": "Songs von Fleetwood Mac",
+        "points": 918,
+        "totalPoints": 918,
+        "avgAccuracy": 60,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-06T08:31:32.638Z"
+      }
+    ],
+    "Billboard Charts aus 2009": [
+      {
+        "ip": "::1",
+        "username": "Hias",
+        "gameMode": "Billboard Charts aus 2009",
+        "points": 1000,
+        "totalPoints": 1000,
+        "avgAccuracy": 20,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-06T08:32:37.223Z"
+      }
+    ],
+    "Genre: 1970er": [
+      {
+        "ip": "::1",
+        "username": "Hias",
+        "gameMode": "Genre: 1970er",
+        "points": 584,
+        "totalPoints": 584,
+        "avgAccuracy": 40,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-06T09:27:22.845Z"
+      }
+    ],
+    "Songs von Luciano Pavarotti": [
+      {
+        "ip": "::1",
+        "username": "Hias",
+        "gameMode": "Songs von Luciano Pavarotti",
+        "points": 500,
+        "totalPoints": 500,
+        "avgAccuracy": 10,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-06T09:30:12.976Z"
+      }
+    ],
+    "Songs von Dire Straits": [
+      {
+        "ip": "::1",
+        "username": "Hias",
+        "gameMode": "Songs von Dire Straits",
+        "points": 1336,
+        "totalPoints": 1336,
+        "avgAccuracy": 80,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-06T11:55:37.562Z"
+      }
+    ],
+    "Songs von Chicago": [
+      {
+        "ip": "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
+        "username": "Karl",
+        "gameMode": "Songs von Chicago",
+        "points": 167,
+        "totalPoints": 167,
+        "avgAccuracy": 10,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-06T11:59:50.756Z"
+      }
+    ],
+    "Songs von Rod Stewart": [
+      {
+        "ip": "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
+        "username": "Karl",
+        "gameMode": "Songs von Rod Stewart",
+        "points": 1207,
+        "totalPoints": 1207,
+        "avgAccuracy": 80,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-06T12:02:14.668Z"
+      }
+    ],
+    "Billboard Charts aus 2020": [
+      {
+        "ip": "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
+        "username": "Karl",
+        "gameMode": "Billboard Charts aus 2020",
+        "points": 834,
+        "totalPoints": 834,
+        "avgAccuracy": 30,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-06T12:05:46.597Z"
+      }
+    ],
+    "Billboard Charts aus 1990": [
+      {
+        "ip": "::1_c801801b-3a27-4df2-89ae-b9c6d62164a1",
+        "username": "Jochen",
+        "gameMode": "Billboard Charts aus 1990",
+        "points": 250,
+        "totalPoints": 250,
+        "avgAccuracy": 20,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-06T13:19:41.982Z"
+      }
+    ],
+    "Songs von Jennifer Lopez": [
+      {
+        "ip": "::1_c801801b-3a27-4df2-89ae-b9c6d62164a1",
+        "username": "Jochen",
+        "gameMode": "Songs von Jennifer Lopez",
+        "points": 1169,
+        "totalPoints": 1169,
+        "avgAccuracy": 70,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-06T13:21:52.377Z"
+      }
+    ],
+    "Songs von Gladys Knight & the Pips": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Benno",
+        "gameMode": "Songs von Gladys Knight & the Pips",
+        "points": 1002,
+        "totalPoints": 1002,
+        "avgAccuracy": 60,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-06T13:24:30.544Z"
+      }
+    ],
+    "Global": [
+      {
+        "ip": "::1",
+        "username": "Hias",
+        "gameMode": "Songs von Dire Straits",
+        "points": 1336,
+        "totalPoints": 1336,
+        "accuracy": 80,
+        "date": "2026-01-06T11:55:37.562Z"
+      },
+      {
+        "ip": "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
+        "username": "Karl",
+        "gameMode": "Songs von Rod Stewart",
+        "points": 1207,
+        "totalPoints": 1207,
+        "accuracy": 80,
+        "date": "2026-01-06T12:02:14.668Z"
+      },
+      {
+        "ip": "::1_c801801b-3a27-4df2-89ae-b9c6d62164a1",
+        "username": "Jochen",
+        "gameMode": "Songs von Jennifer Lopez",
+        "points": 1169,
+        "totalPoints": 1169,
+        "accuracy": 70,
+        "date": "2026-01-06T13:21:52.377Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Benno",
+        "gameMode": "Songs von Gladys Knight & the Pips",
+        "points": 1002,
+        "totalPoints": 1002,
+        "accuracy": 60,
+        "date": "2026-01-06T13:24:30.544Z"
+      },
+      {
+        "ip": "::1",
+        "username": "Hias",
+        "gameMode": "Billboard Charts aus 2009",
+        "points": 1000,
+        "totalPoints": 1000,
+        "accuracy": 20,
+        "date": "2026-01-06T08:32:37.223Z"
+      },
+      {
+        "ip": "::1",
+        "username": "Hias",
+        "gameMode": "Songs von Fleetwood Mac",
+        "points": 918,
+        "totalPoints": 918,
+        "accuracy": 60,
+        "date": "2026-01-06T08:31:32.638Z"
+      },
+      {
+        "ip": "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
+        "username": "Karl",
+        "gameMode": "Billboard Charts aus 2020",
+        "points": 834,
+        "totalPoints": 834,
+        "accuracy": 30,
+        "date": "2026-01-06T12:05:46.597Z"
+      },
+      {
+        "ip": "::1",
+        "username": "Hias",
+        "gameMode": "Songs von Kraftwerk",
+        "points": 667,
+        "totalPoints": 667,
+        "accuracy": 20,
+        "date": "2026-01-06T08:28:33.648Z"
+      },
+      {
+        "ip": "::1",
+        "username": "Hias",
+        "gameMode": "Genre: 1970er",
+        "points": 584,
+        "totalPoints": 584,
+        "accuracy": 40,
+        "date": "2026-01-06T09:27:22.845Z"
+      },
+      {
+        "ip": "::1",
+        "username": "Hias",
+        "gameMode": "Songs von Luciano Pavarotti",
+        "points": 500,
+        "totalPoints": 500,
+        "accuracy": 10,
+        "date": "2026-01-06T09:30:12.976Z"
+      },
+      {
+        "ip": "::1_c801801b-3a27-4df2-89ae-b9c6d62164a1",
+        "username": "Jochen",
+        "gameMode": "Billboard Charts aus 1990",
+        "points": 250,
+        "totalPoints": 250,
+        "accuracy": 20,
+        "date": "2026-01-06T13:19:41.982Z"
+      },
+      {
+        "ip": "::1_2f5fab99-6cfe-42d9-9b28-82d292e2fde0",
+        "username": "Karl",
+        "gameMode": "Songs von Chicago",
+        "points": 167,
+        "totalPoints": 167,
+        "accuracy": 10,
+        "date": "2026-01-06T11:59:50.756Z"
+      }
+    ]
+  },
+  "lastUpdated": "2026-01-06T13:24:30.544Z"
 }

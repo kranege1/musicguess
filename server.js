@@ -158,17 +158,18 @@ app.get('/api/player', (req, res) => {
 // POST /api/score - Neuen Score speichern
 app.post('/api/score', (req, res) => {
     try {
-        const { username, gameMode, points, totalQuestions, correctAnswers } = req.body;
+        const { username, playerId, gameMode, points, totalQuestions, correctAnswers } = req.body;
         
-        console.log('📨 Score-Request erhalten:', { username, gameMode, points, totalQuestions, correctAnswers });
+        console.log('📨 Score-Request erhalten:', { username, playerId, gameMode, points, totalQuestions, correctAnswers });
         
         if (!username || !gameMode || points === undefined || !totalQuestions || correctAnswers === undefined) {
-            console.error('❌ Unvollständige Daten:', { username, gameMode, points, totalQuestions, correctAnswers });
+            console.error('❌ Unvollständige Daten:', { username, playerId, gameMode, points, totalQuestions, correctAnswers });
             return res.status(400).json({ error: 'Unvollständige Daten' });
         }
 
         const scoreEntry = saveScore(req, {
             username,
+            playerId,
             gameMode,
             points,
             totalQuestions,

@@ -1563,8 +1563,31 @@ document.addEventListener('visibilitychange', function() {
  * HIGHSCORE SYSTEM
  */
 
+// Generiere UUID v4
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+// Lade oder erstelle Spieler-ID
+function getOrCreatePlayerID() {
+    let playerId = localStorage.getItem('playerId');
+    if (!playerId) {
+        playerId = generateUUID();
+        localStorage.setItem('playerId', playerId);
+        console.log('Neue Spieler-ID erstellt:', playerId);
+    }
+    return playerId;
+}
+
 // Lade Spieler-Name aus localStorage oder vom Server
 async function initializePlayerName() {
+    // Stelle sicher, dass Spieler-ID existiert
+    getOrCreatePlayerID();
+    
     let playerName = localStorage.getItem('playerName');
     
     if (!playerName) {
@@ -1628,6 +1651,21 @@ function savePlayerName() {
     closePlayerNameModal();
 }
 
+// Neuer Spieler: Lösche localStorage und erstelle neue ID
+function startNewPlayer() {
+    if (confirm('Neuen Spieler starten? Dein aktueller Name wird zurückgesetzt.')) {
+        localStorage.removeItem('playerId');
+        localStorage.removeItem('playerName');
+        const newId = generateUUID();
+        localStorage.setItem('playerId', newId);
+        localStorage.setItem('playerName', 'Anon');
+        updatePlayerNameDisplay('Anon');
+        console.log('Neuer Spieler gestartet. ID:', newId);
+        alert('Neuer Spieler erstellt! Bitte Namen festlegen.');
+        openPlayerNameModal();
+    }
+}
+
 // Lade Leaderboard für einen Spielmodus
 async function loadLeaderboard(gameMode) {
     try {
@@ -1641,33 +1679,108 @@ async function loadLeaderboard(gameMode) {
     }
 }
 
+// Lauftext mit Scores anzeigen
+function renderLeaderboardTicker(scores, gameMode) {
+    const ticker = document.getElementById('leaderboardTicker');
+    const track = document.getElementById('leaderboardTickerTrack');
+    if (!ticker || !track) return;
+
+    if (!scores || scores.length === 0) {
+        track.innerHTML = '<span class="ticker-empty">Keine Scores vorhanden</span>';
+        track.style.setProperty('--ticker-duration', '18s');
+        return;
+    }
+
+    const items = scores.map((score, idx) => {
+        const points = score.points ?? score.totalPoints ?? 0; // show per-score points, avoid summed totals
+        const modeLabel = score.gameMode || gameMode || 'Modus';
+        return `
+            <span class="ticker-item">
+                <span class="leaderboard-rank">#${idx + 1}</span>
+                <span class="leaderboard-name">${score.username}</span>
+                <span class="ticker-mode">${modeLabel}</span>
+                <span class="ticker-points">🏆 ${points}</span>
+            </span>
+        `;
+    });
+
+    // Dupliziere Items für endlosen Scroll
+    const repeated = items.concat(items);
+    track.innerHTML = repeated.join('<span style="width: 32px;"></span>');
+
+    // Geschwindigkeit abhängig von Anzahl Elemente
+    const durationSec = Math.max(12, scores.length * 3);
+    track.style.setProperty('--ticker-duration', `${durationSec}s`);
+}
+
+async function openLeaderboardModal(gameMode) {
+    const modal = document.getElementById('leaderboardModal');
+    const titleEl = document.getElementById('leaderboardModalTitle');
+    const listEl = document.getElementById('leaderboardModalList');
+    if (!modal || !listEl) return;
+
+    const scores = await loadLeaderboard(gameMode);
+    if (titleEl) {
+        titleEl.textContent = `Highscores – ${gameMode}`;
+    }
+
+    if (!scores || scores.length === 0) {
+        listEl.innerHTML = '<li class="leaderboard-modal-item" style="border-bottom:none; color:#888;">Keine Scores vorhanden</li>';
+    } else {
+        const html = scores
+            .map((score, idx) => {
+                const points = score.points ?? score.totalPoints ?? 0; // show per-score points
+                const modeLabel = score.gameMode || gameMode || 'Modus';
+                return `
+                    <li class="leaderboard-modal-item">
+                        <span class="leaderboard-modal-rank">#${idx + 1}</span>
+                        <div>
+                            <div class="leaderboard-modal-name">${score.username}</div>
+                            <div class="leaderboard-modal-meta">${modeLabel}</div>
+                        </div>
+                        <span class="leaderboard-modal-points">🏆 ${points}</span>
+                    </li>
+                `;
+            })
+            .join('');
+        listEl.innerHTML = html;
+    }
+
+    modal.classList.add('show');
+}
+
+function closeLeaderboardModal(event) {
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+    const modal = document.getElementById('leaderboardModal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+}
+
 // Zeige Leaderboard im Setup-Screen
 async function showSetupLeaderboard() {
     const leaderboardDiv = document.getElementById('setupLeaderboard');
-    const listDiv = document.getElementById('setupLeaderboardList');
+    const titleEl = document.querySelector('#setupLeaderboard .leaderboard-title');
     
     if (!leaderboardDiv) return;
     
-    // Lade Leaderboard für aktuellen Modus
-    const gameMode = getSelectedGameMode();
+    // Lade Global Leaderboard (alle Scores)
+    const gameMode = 'Global';
+    if (titleEl) {
+        titleEl.textContent = `🏆 Highscores – ${gameMode}`;
+    }
     const scores = await loadLeaderboard(gameMode);
-    
-    if (!scores || scores.length === 0) {
-        listDiv.innerHTML = '<div style="color: #999; font-size: 0.85em; text-align: center;">Keine Scores vorhanden</div>';
-        leaderboardDiv.classList.add('show');
-        return;
+    renderLeaderboardTicker(scores, gameMode);
+    if (leaderboardDiv && !leaderboardDiv.dataset.clickBound) {
+        leaderboardDiv.addEventListener('click', () => {
+            openLeaderboardModal('Global');
+        });
+        leaderboardDiv.dataset.clickBound = 'true';
     }
     
-    // Render Top 10
-    const html = scores.slice(0, 10).map((score, index) => `
-        <div class="leaderboard-item">
-            <span class="leaderboard-rank">#${index + 1}</span>
-            <span class="leaderboard-name">${score.username}</span>
-            <span class="leaderboard-points">🏆 ${score.totalPoints}</span>
-        </div>
-    `).join('');
-    
-    listDiv.innerHTML = html;
     leaderboardDiv.classList.add('show');
 }
 
@@ -1675,10 +1788,14 @@ async function showSetupLeaderboard() {
 async function showGameLeaderboard() {
     const leaderboardDiv = document.getElementById('quizLeaderboard');
     const listDiv = document.getElementById('quizLeaderboardList');
+    const titleEl = document.querySelector('#quizLeaderboard .leaderboard-title');
     
     if (!leaderboardDiv) return;
     
     const gameMode = gameState.currentGameMode || 'Genre';
+    if (titleEl) {
+        titleEl.textContent = `🏆 Top 3 – ${gameMode}`;
+    }
     const scores = await loadLeaderboard(gameMode);
     
     if (!scores || scores.length === 0) {
@@ -1702,6 +1819,7 @@ async function showGameLeaderboard() {
 // Speichere Score nach Spielende
 async function saveGameScore() {
     const playerName = localStorage.getItem('playerName') || 'Anon';
+    const playerId = getOrCreatePlayerID();
     const gameMode = gameState.currentGameMode || 'Genre';
     const points = gameState.totalPoints || 0;
     const totalQuestions = gameState.songs ? gameState.songs.length : 0;
@@ -1709,6 +1827,7 @@ async function saveGameScore() {
     
     console.log('💾 Speichere Score:', {
         playerName,
+        playerId,
         gameMode,
         points,
         totalQuestions,
@@ -1723,6 +1842,7 @@ async function saveGameScore() {
             },
             body: JSON.stringify({
                 username: playerName,
+                playerId: playerId,
                 gameMode: gameMode,
                 points: Math.round(points),
                 totalQuestions: totalQuestions,

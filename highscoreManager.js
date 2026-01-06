@@ -66,30 +66,34 @@ function getClientIP(req) {
  */
 function saveScore(req, gameData) {
     const ip = getClientIP(req);
-    const { username, gameMode, points, totalQuestions, correctAnswers } = gameData;
+    const { username, playerId, gameMode, points, totalQuestions, correctAnswers } = gameData;
     
     if (!username || !gameMode || points === undefined) {
         throw new Error('Unvollständige Daten: username, gameMode, points erforderlich');
     }
 
+    // Verwende playerId wenn vorhanden, sonst IP
+    const playerKey = playerId ? `${ip}_${playerId}` : ip;
+
     let scores = loadScores();
     const now = new Date().toISOString();
     
     // Wenn noch nicht vorhanden, initialisiere Player
-    if (!scores.players[ip]) {
-        scores.players[ip] = {
+    if (!scores.players[playerKey]) {
+        scores.players[playerKey] = {
             username: username,
             ip: ip,
+            playerId: playerId || null,
             firstSeen: now,
             lastSeen: now,
             scores: []
         };
     } else {
         // Update username falls geändert
-        if (username !== scores.players[ip].username) {
-            scores.players[ip].username = username;
+        if (username !== scores.players[playerKey].username) {
+            scores.players[playerKey].username = username;
         }
-        scores.players[ip].lastSeen = now;
+        scores.players[playerKey].lastSeen = now;
     }
 
     // Neuer Score-Eintrag
@@ -104,13 +108,13 @@ function saveScore(req, gameData) {
     };
 
     // Zu Player hinzufügen (max 100)
-    scores.players[ip].scores.push(scoreEntry);
-    if (scores.players[ip].scores.length > MAX_SCORES_PER_PLAYER) {
-        scores.players[ip].scores = scores.players[ip].scores.slice(-MAX_SCORES_PER_PLAYER);
+    scores.players[playerKey].scores.push(scoreEntry);
+    if (scores.players[playerKey].scores.length > MAX_SCORES_PER_PLAYER) {
+        scores.players[playerKey].scores = scores.players[playerKey].scores.slice(-MAX_SCORES_PER_PLAYER);
     }
 
-    // Update Leaderboards
-    updateLeaderboards(scores, ip, username, scoreEntry);
+    // Rebuild Leaderboards from all player scores (no summing per mode; keep best per mode)
+    rebuildLeaderboards(scores);
     
     // Speichern
     scores.lastUpdated = now;
@@ -122,73 +126,70 @@ function saveScore(req, gameData) {
 /**
  * Update Leaderboard für Modus und Global
  */
-function updateLeaderboards(scores, ip, username, scoreEntry) {
-    const gameMode = scoreEntry.gameMode;
-    
-    // Überprüfe ob Modus existiert, wenn nicht, erstelle ihn
-    if (!scores.leaderboard[gameMode]) {
-        scores.leaderboard[gameMode] = [];
-    }
+function rebuildLeaderboards(scores) {
+    const leaderboard = {};
 
-    // Berechne durchschnittliche Stats für Player
-    const playerScores = scores.players[ip].scores;
-    const totalPoints = playerScores.reduce((sum, s) => sum + s.points, 0);
-    const avgAccuracy = Math.round(
-        playerScores.reduce((sum, s) => sum + s.accuracy, 0) / playerScores.length
-    );
-    const gamesPlayed = playerScores.length;
+    // Sammle pro Spieler und Modus: bestes Punkte-Ergebnis + Stats
+    Object.keys(scores.players).forEach(playerIp => {
+        const player = scores.players[playerIp];
+        const modeGroups = {};
 
-    const leaderboardEntry = {
-        ip: ip,
-        username: username,
-        points: scoreEntry.points,
-        totalPoints: totalPoints,
-        avgAccuracy: avgAccuracy,
-        gamesPlayed: gamesPlayed,
-        lastScore: scoreEntry.date
-    };
+        player.scores.forEach(s => {
+            if (!modeGroups[s.gameMode]) {
+                modeGroups[s.gameMode] = [];
+            }
+            modeGroups[s.gameMode].push(s);
+        });
 
-    // Entferne alte Entry falls vorhanden (für diesen IP)
-    scores.leaderboard[gameMode] = scores.leaderboard[gameMode].filter(e => e.ip !== ip);
-    scores.leaderboard[gameMode].push(leaderboardEntry);
+        Object.keys(modeGroups).forEach(mode => {
+            const arr = modeGroups[mode];
+            if (!leaderboard[mode]) leaderboard[mode] = [];
 
-    // Sortiere und limitiere auf TOP 10
-    scores.leaderboard[gameMode].sort((a, b) => b.totalPoints - a.totalPoints);
-    scores.leaderboard[gameMode] = scores.leaderboard[gameMode].slice(0, MAX_SCORES_PER_MODE);
+            const bestPoints = Math.max(...arr.map(s => s.points));
+            const avgAccuracy = Math.round(arr.reduce((sum, s) => sum + s.accuracy, 0) / arr.length);
+            const lastScoreDate = arr[arr.length - 1].date;
 
-    // Global Leaderboard (alle Modi combined)
-    scores.leaderboard['Global'] = scores.leaderboard[gameMode].filter(e => e.ip !== ip);
-    
-    // Sammle beste Scores von allen Modi für Global
-    const globalEntries = {};
-    Object.keys(scores.leaderboard).forEach(mode => {
-        if (mode !== 'Global') {
-            scores.leaderboard[mode].forEach(entry => {
-                if (!globalEntries[entry.ip]) {
-                    globalEntries[entry.ip] = {
-                        ip: entry.ip,
-                        username: entry.username,
-                        totalPoints: 0,
-                        avgAccuracy: 0,
-                        gamesPlayed: 0,
-                        modesPlayed: 0
-                    };
-                }
-                globalEntries[entry.ip].totalPoints += entry.totalPoints;
-                globalEntries[entry.ip].avgAccuracy += entry.avgAccuracy;
-                globalEntries[entry.ip].gamesPlayed += entry.gamesPlayed;
-                globalEntries[entry.ip].modesPlayed++;
+            leaderboard[mode].push({
+                ip: playerIp,
+                username: player.username,
+                gameMode: mode,
+                points: bestPoints,
+                totalPoints: bestPoints,
+                avgAccuracy,
+                gamesPlayed: arr.length,
+                lastScore: lastScoreDate
             });
-        }
+        });
     });
 
-    scores.leaderboard['Global'] = Object.values(globalEntries)
-        .map(e => ({
-            ...e,
-            avgAccuracy: Math.round(e.avgAccuracy / e.modesPlayed)
-        }))
-        .sort((a, b) => b.totalPoints - a.totalPoints)
-        .slice(0, MAX_SCORES_PER_MODE);
+    // Sortiere jede Modus-Liste nach Punkten
+    Object.keys(leaderboard).forEach(mode => {
+        leaderboard[mode].sort((a, b) => b.points - a.points);
+        leaderboard[mode] = leaderboard[mode].slice(0, MAX_SCORES_PER_MODE);
+    });
+
+    // Global: ALLE einzelnen Scores von allen Spielern, sortiert nach Punkten
+    const allScores = [];
+    Object.keys(scores.players).forEach(playerIp => {
+        const player = scores.players[playerIp];
+        if (!player.scores || player.scores.length === 0) return;
+        player.scores.forEach(score => {
+            allScores.push({
+                ip: playerIp,
+                username: player.username,
+                gameMode: score.gameMode,
+                points: score.points,
+                totalPoints: score.points,
+                accuracy: score.accuracy,
+                date: score.date
+            });
+        });
+    });
+
+    allScores.sort((a, b) => b.points - a.points);
+    leaderboard['Global'] = allScores.slice(0, 100); // Top 100
+
+    scores.leaderboard = leaderboard;
 }
 
 /**
@@ -227,5 +228,6 @@ module.exports = {
     getAllPlayers,
     getClientIP,
     loadScores,
-    saveScores
+    saveScores,
+    rebuildLeaderboards
 };
