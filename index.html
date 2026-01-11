@@ -536,12 +536,19 @@
         }
 
         .album-bubble {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4) !important;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 50%, #c92a2a 100%) !important;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4) !important;
         }
 
         .album-bubble:hover {
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6) !important;
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6) !important;
+        }
+
+        .start-game-btn {
+            height: 120px !important;
+            font-size: 1.5em !important;
+            font-weight: 700 !important;
+            margin: 20px 0 !important;
         }
 
         @keyframes slideLeftChain {
@@ -1202,6 +1209,8 @@
 
             <div class="error-message" id="errorMessage"></div>
 
+            <button onclick="startGame()" class="start-game-btn">🚀 Spiel Starten</button>
+
             <div class="leaderboard-widget" id="setupLeaderboard">
                 <div class="leaderboard-title" id="setupLeaderboardTitle">🏆 Highscores</div>
                 <div class="leaderboard-ticker" id="leaderboardTicker" title="Klicken für alle Scores">
@@ -1211,8 +1220,6 @@
                 </div>
                 <div class="leaderboard-caption">Tippe oder klicke, um alle Scores anzuzeigen</div>
             </div>
-
-            <button onclick="startGame()">🚀 Spiel Starten</button>
         </div>
 
         <!-- Quiz Screen -->
