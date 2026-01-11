@@ -433,22 +433,29 @@ function selectGameMode(mode) {
     const billboardSelection = document.getElementById('billboardSelection');
     const searchSelection = document.getElementById('searchSelection');
     const artistBubblesContainer = document.getElementById('artistBubblesContainer');
+    const subtitle = document.getElementById('gameSubtitle');
 
     if (mode === 'genre') {
         genreSelection.style.display = 'flex';
         billboardSelection.style.display = 'none';
         searchSelection.style.display = 'none';
         stopArtistBubbles();
+        // Setze Subtitle zurück
+        if (subtitle) subtitle.textContent = 'Erkenne das Lied und gewinne!';
     } else if (mode === 'billboard') {
         genreSelection.style.display = 'none';
         billboardSelection.style.display = 'flex';
         searchSelection.style.display = 'none';
         stopArtistBubbles();
+        // Setze Subtitle zurück
+        if (subtitle) subtitle.textContent = 'Erkenne das Lied und gewinne!';
     } else {
         genreSelection.style.display = 'none';
         billboardSelection.style.display = 'none';
         searchSelection.style.display = 'flex';
         startArtistBubbles();
+        // Setze Subtitle zurück
+        if (subtitle) subtitle.textContent = 'Erkenne das Lied und gewinne!';
     }
     
     // Update Leaderboard bei Modus-Wechsel
@@ -920,6 +927,16 @@ async function loadSongsFromItunes(searchQuery, limit) {
 
         gameState.songs = shuffleArray(songs);
         console.log(`${gameState.songs.length} Songs geladen aus: ${currentSearchType === 'album' ? 'Album' : 'Künstler/Titel'}`);
+        
+        // Aktualisiere Subtitle im Album-Modus
+        if (currentSearchType === 'album' && songs.length > 0) {
+            const albumName = songs[0].album;
+            const artistName = songs[0].artist;
+            const subtitle = document.getElementById('gameSubtitle');
+            if (subtitle) {
+                subtitle.textContent = `Album '${albumName}' von '${artistName}'`;
+            }
+        }
     } catch (error) {
         console.error('iTunes API Fehler:', error);
         throw error;
