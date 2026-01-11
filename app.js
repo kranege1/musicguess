@@ -902,13 +902,19 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 const localCover = getLocalAlbumCover(firstSong.collectionName);
                 if (localCover) {
                     albumArtwork = localCover;
+                    console.log('✅ Lokales Album-Cover gesetzt:', albumArtwork);
                 } else {
                     // Nutze iTunes Cover in hoher Auflösung
                     const iCover = firstSong.artworkUrl600 || firstSong.artworkUrl100 || firstSong.artworkUrl60;
                     albumArtwork = iCover ? iCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : iCover;
+                    console.log('✅ iTunes Album-Cover gesetzt:', albumArtwork);
                 }
-                console.log('Album-Cover gesetzt für alle Songs:', albumArtwork);
             }
+        }
+        
+        // Debug: Zeige albumArtwork Status
+        if (currentSearchType === 'album') {
+            console.log(`📀 Album-Modus: albumArtwork = ${albumArtwork || 'NULL'}`);
         }
 
         const songs = results
@@ -926,6 +932,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 if (currentSearchType === 'album') {
                     // Im Album-Modus: nutze das bereits gesetzte albumArtwork für ALLE Songs
                     coverUrl = albumArtwork;
+                    console.log(`🎵 Song ${index + 1}: ${song.trackName} - Cover: ${coverUrl ? 'SET' : 'NULL'}`);
                 } else {
                     // Bei normaler Suche: individuelles Song-Cover
                     coverUrl = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60;
