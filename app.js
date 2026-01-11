@@ -229,6 +229,7 @@ if (document.readyState === 'loading') {
         loadAvailableGenres();
         loadAvailableYears();
         loadArtistNames();
+        loadAlbumList();
         // Setze Standard auf "Freie Wahl" mit kurzer Verzögerung
         setTimeout(() => {
             selectGameMode('search');
@@ -240,6 +241,7 @@ if (document.readyState === 'loading') {
     loadAvailableGenres();
     loadAvailableYears();
     loadArtistNames();
+    loadAlbumList();
     // Setze Standard auf "Freie Wahl" mit kurzer Verzögerung
     setTimeout(() => {
         selectGameMode('search');
@@ -267,6 +269,27 @@ async function loadArtistNames() {
         console.log(`${artistNames.length} Künstler für Bubbles geladen`);
     } catch (error) {
         console.error('❌ Fehler beim Laden der Künstler:', error);
+    }
+}
+
+// Speichere Album- und Artist-Listen
+let albumListData = [];
+
+// Lade Alben aus AlbumList.json
+async function loadAlbumList() {
+    try {
+        const cacheBuster = new Date().getTime();
+        const response = await fetch(`AlbumList.json?v=${cacheBuster}`, { cache: 'no-store' });
+        
+        if (!response.ok) {
+            throw new Error('Fehler beim Laden der Alben');
+        }
+
+        albumListData = await response.json();
+        
+        console.log(`${albumListData.length} Alben geladen`);
+    } catch (error) {
+        console.warn('AlbumList.json konnte nicht geladen werden:', error);
     }
 }
 
@@ -332,20 +355,29 @@ function stopReversePlayback() {
     reversePlaying = false;
 }
 
-// Erstelle eine einzelne Artist Bubble
+// Erstelle eine einzelne Artist Bubble (oder Album Bubble im Album-Modus)
 function createArtistBubble() {
-    if (artistNames.length === 0) return;
-    
     const container = document.getElementById('artistBubblesContainer');
     if (!container || !container.classList.contains('active')) return;
     
-    // Wähle zufälligen Künstler
-    const randomArtist = artistNames[Math.floor(Math.random() * artistNames.length)];
+    let bubbleText = '';
+    
+    // Bestimme ob wir im Album-Modus sind
+    if (currentSearchType === 'album' && albumListData.length > 0) {
+        // Wähle zufälliges Album aus AlbumList
+        const randomAlbum = albumListData[Math.floor(Math.random() * albumListData.length)];
+        bubbleText = randomAlbum.album;
+    } else if (artistNames.length > 0) {
+        // Wähle zufälligen Künstler
+        bubbleText = artistNames[Math.floor(Math.random() * artistNames.length)];
+    } else {
+        return;
+    }
     
     // Erstelle Bubble
     const bubble = document.createElement('div');
     bubble.className = 'artist-bubble';
-    bubble.textContent = randomArtist;
+    bubble.textContent = bubbleText;
     
     // Starte immer rechts außerhalb (100%)
     bubble.style.left = '100%';
@@ -357,7 +389,7 @@ function createArtistBubble() {
     bubble.onclick = () => {
         const searchInput = document.getElementById('searchQuery');
         if (searchInput) {
-            searchInput.value = randomArtist;
+            searchInput.value = bubbleText;
             searchInput.focus();
         }
     };
@@ -652,10 +684,21 @@ async function fetchPreviewFromServer(artist, track) {
     }
 }
 
-async function fetchItunes(searchTerm, { limit = 10, country = 'DE' } = {}) {
-    const encodedQuery = encodeURIComponent(searchTerm);
-    const url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=${limit}&media=music&country=${country}&lang=de_DE`;
-    debugLog(`🔍 iTunes ${country}: "${searchTerm}"`);
+async function fetchItunes(searchTerm, { limit = 10, country = 'DE', entity = 'song', attribute = '', useLookup = false } = {}) {
+    let url;
+    
+    if (useLookup) {
+        // Lookup API für Album-Songs (collectionId)
+        url = `https://itunes.apple.com/lookup?id=${searchTerm}&entity=${entity}&limit=${limit}&country=${country}`;
+        debugLog(`🔍 iTunes Lookup ${country}: ID ${searchTerm}`);
+    } else {
+        // Search API
+        const encodedQuery = encodeURIComponent(searchTerm);
+        const attributeParam = attribute ? `&attribute=${attribute}` : '';
+        url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=${entity}&limit=${limit}&media=music&country=${country}&lang=de_DE${attributeParam}`;
+        debugLog(`🔍 iTunes ${country}: "${searchTerm}"`);
+    }
+    
     let response;
     try {
         response = await fetch(url, { cache: 'no-store', mode: 'cors' });
@@ -676,7 +719,7 @@ async function fetchItunes(searchTerm, { limit = 10, country = 'DE' } = {}) {
         return jsonpResults;
     }
     const data = await response.json();
-    console.log(`iTunes Suche ${country} für "${searchTerm}": ${data.results.length} Ergebnisse`);
+    console.log(`iTunes ${useLookup ? 'Lookup' : 'Suche'} ${country} für "${searchTerm}": ${data.results.length} Ergebnisse`);
     debugLog(`📦 ${data.results.length} Ergebnisse (${country})`);
     return data.results;
 }
@@ -762,6 +805,7 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
 async function loadSongsFromItunes(searchQuery, limit) {
     try {
         let results = [];
+        let albumArtwork = null;  // Speichere das Album-Cover
         
         if (currentSearchType === 'album') {
             // Album-Suche: Suche zuerst das Album selbst, dann alle Songs von diesem Album
@@ -774,12 +818,36 @@ async function loadSongsFromItunes(searchQuery, limit) {
                     const usAlbumResults = await fetchItunes(searchQuery, { limit: 1, country: 'US', entity: 'album' });
                     if (usAlbumResults.length > 0) {
                         const albumId = usAlbumResults[0].collectionId;
-                        results = await fetchItunes(`${albumId}`, { limit: 300, country: 'US', entity: 'song' });
+                        // Generiere hochauflösendes Cover (ersetze 100x100bb-85.jpg mit 600x600bb.jpg)
+                        const coverUrl = usAlbumResults[0].artworkUrl100 || '';
+                        albumArtwork = coverUrl.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2');
+                        console.log('Album Cover URL (US):', albumArtwork);
+                        // Schritt 2: Lookup API für alle Songs dieses Albums
+                        results = await fetchItunes(albumId, { limit: 300, country: 'US', entity: 'song', useLookup: true });
+                        // Filtere das Album selbst raus (wrapperType: "collection")
+                        results = results.filter(item => item.wrapperType === 'track');
+                    } else {
+                        // Fallback: Versuche Album mit Artist zu suchen (zuerst Artist, dann Album im Namen)
+                        console.log('Versuche Album+Artist Fallback für:', searchQuery);
+                        const albumArtistResults = await fetchItunes(searchQuery, { limit: 50, country: 'US', entity: 'album', attribute: 'albumTerm' });
+                        if (albumArtistResults.length > 0) {
+                            const albumId = albumArtistResults[0].collectionId;
+                            const coverUrl = albumArtistResults[0].artworkUrl100 || '';
+                            albumArtwork = coverUrl.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2');
+                            results = await fetchItunes(albumId, { limit: 300, country: 'US', entity: 'song', useLookup: true });
+                            results = results.filter(item => item.wrapperType === 'track');
+                        }
                     }
                 } else {
                     const albumId = albumResults[0].collectionId;
-                    // Schritt 2: Hole alle Songs von diesem Album
-                    results = await fetchItunes(`${albumId}`, { limit: 300, country: 'DE', entity: 'song' });
+                    // Generiere hochauflösendes Cover (ersetze 100x100bb-85.jpg mit 600x600bb.jpg)
+                    const coverUrl = albumResults[0].artworkUrl100 || '';
+                    albumArtwork = coverUrl.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2');
+                    console.log('Album Cover URL (DE):', albumArtwork);
+                    // Schritt 2: Lookup API für alle Songs dieses Albums
+                    results = await fetchItunes(albumId, { limit: 300, country: 'DE', entity: 'song', useLookup: true });
+                    // Filtere das Album selbst raus (wrapperType: "collection")
+                    results = results.filter(item => item.wrapperType === 'track');
                 }
             } catch (err) {
                 console.warn('Album-Suche fehlgeschlagen:', err);
@@ -814,7 +882,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 artist: song.artistName,
                 album: song.collectionName,
                 previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
-                image: song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60,
+                image: currentSearchType === 'album' && albumArtwork ? albumArtwork : (song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60),
                 genre: song.primaryGenreName || 'Unbekannt'
             }));
 
