@@ -386,6 +386,12 @@ function createArtistBubble() {
     // Erstelle Bubble
     const bubble = document.createElement('div');
     bubble.className = 'artist-bubble';
+    
+    // Füge album-bubble Klasse hinzu wenn im Album-Modus
+    if (currentSearchType === 'album') {
+        bubble.classList.add('album-bubble');
+    }
+    
     bubble.textContent = bubbleText;
     
     // Starte immer rechts außerhalb (100%)
