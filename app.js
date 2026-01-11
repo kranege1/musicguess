@@ -1272,7 +1272,7 @@ function playCorrectSound() {
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
-        // Aufsteigender fröhlicher Akkord
+        // Aufsteigender fröhlicher Akkord - LAUTER und LÄNGER
         const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5
         frequencies.forEach((freq, i) => {
             const oscillator = audioContext.createOscillator();
@@ -1286,11 +1286,11 @@ function playCorrectSound() {
             
             const startTime = audioContext.currentTime + (i * 0.08);
             gainNode.gain.setValueAtTime(0, startTime);
-            gainNode.gain.linearRampToValueAtTime(0.15, startTime + 0.02);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
+            gainNode.gain.linearRampToValueAtTime(0.35, startTime + 0.02); // 0.35 statt 0.15
+            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.5); // 0.5 statt 0.3
             
             oscillator.start(startTime);
-            oscillator.stop(startTime + 0.3);
+            oscillator.stop(startTime + 0.5);
         });
     } catch (err) {
         console.log('Correct sound error:', err);
@@ -1302,22 +1302,40 @@ function playWrongSound() {
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         
-        // Absteigender "Buzzer" Sound
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
+        // Zwei absteigendi Buzzer für mehr Deutlichkeit
+        // Erster Buzzer
+        const oscillator1 = audioContext.createOscillator();
+        const gainNode1 = audioContext.createGain();
         
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
+        oscillator1.connect(gainNode1);
+        gainNode1.connect(audioContext.destination);
         
-        oscillator.type = 'sawtooth';
-        oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
-        oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.3);
+        oscillator1.type = 'sawtooth';
+        oscillator1.frequency.setValueAtTime(400, audioContext.currentTime);
+        oscillator1.frequency.exponentialRampToValueAtTime(150, audioContext.currentTime + 0.4);
         
-        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        gainNode1.gain.setValueAtTime(0.35, audioContext.currentTime); // 0.35 statt 0.2
+        gainNode1.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
         
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.3);
+        oscillator1.start(audioContext.currentTime);
+        oscillator1.stop(audioContext.currentTime + 0.4);
+        
+        // Zweiter Buzzer (nach kurzer Pause)
+        const oscillator2 = audioContext.createOscillator();
+        const gainNode2 = audioContext.createGain();
+        
+        oscillator2.connect(gainNode2);
+        gainNode2.connect(audioContext.destination);
+        
+        oscillator2.type = 'sawtooth';
+        oscillator2.frequency.setValueAtTime(300, audioContext.currentTime + 0.25);
+        oscillator2.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.65);
+        
+        gainNode2.gain.setValueAtTime(0.3, audioContext.currentTime + 0.25);
+        gainNode2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.65);
+        
+        oscillator2.start(audioContext.currentTime + 0.25);
+        oscillator2.stop(audioContext.currentTime + 0.65);
     } catch (err) {
         console.log('Wrong sound error:', err);
     }
