@@ -275,6 +275,15 @@ async function loadArtistNames() {
 // Speichere Album- und Artist-Listen
 let albumListData = [];
 
+// Hilfsfunktion um lokales Album-Cover zu bekommen
+function getLocalAlbumCover(albumName) {
+    if (!albumName) return null;
+    // Generiere Dateiname (gleiche Logik wie im Download-Script)
+    const safeName = albumName.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.jpg';
+    const localPath = `/covers/${safeName}`;
+    return localPath;
+}
+
 // Lade Alben aus AlbumList.json
 async function loadAlbumList() {
     try {
@@ -876,15 +885,32 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 song.collectionName
             )
             .slice(0, limit)
-            .map(song => ({
-                id: song.trackId,
-                track: song.trackName,
-                artist: song.artistName,
-                album: song.collectionName,
-                previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
-                image: currentSearchType === 'album' && albumArtwork ? albumArtwork : (song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60),
-                genre: song.primaryGenreName || 'Unbekannt'
-            }));
+            .map(song => {
+                // Prüfe ob lokales Cover existiert
+                let coverUrl = null;
+                
+                if (currentSearchType === 'album' && albumArtwork) {
+                    // Bei Album-Suche: nutze gespeichertes Album-Cover
+                    coverUrl = albumArtwork;
+                } else if (currentSearchType === 'album') {
+                    // Bei Album-Suche ohne Cover-Artwork: suche lokales Cover nach Album-Name
+                    const localCover = getLocalAlbumCover(song.collectionName);
+                    coverUrl = localCover || (song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60);
+                } else {
+                    // Bei normaler Suche: iTunes URL
+                    coverUrl = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60;
+                }
+                
+                return {
+                    id: song.trackId,
+                    track: song.trackName,
+                    artist: song.artistName,
+                    album: song.collectionName,
+                    previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
+                    image: coverUrl,
+                    genre: song.primaryGenreName || 'Unbekannt'
+                };
+            });
 
         gameState.songs = shuffleArray(songs);
         console.log(`${gameState.songs.length} Songs geladen aus: ${currentSearchType === 'album' ? 'Album' : 'Künstler/Titel'}`);
