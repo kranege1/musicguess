@@ -216,6 +216,10 @@ async function loadVersion() {
             if (versionSpan) {
                 versionSpan.textContent = `v${data.version}`;
             }
+            const statsVersion = document.getElementById('statsVersion');
+            if (statsVersion) {
+                statsVersion.textContent = `v${data.version}`;
+            }
         }
     } catch (error) {
         console.log('Version konnte nicht geladen werden:', error);
@@ -232,7 +236,8 @@ if (document.readyState === 'loading') {
         loadAlbumList();
         // Setze Standard auf "Freie Wahl" mit kurzer Verzögerung
         setTimeout(() => {
-            selectGameMode('search');
+            const freieWahlBtn = document.querySelector('[data-mode="search"]');
+            if (freieWahlBtn) freieWahlBtn.click();
         }, 100);
     });
 } else {
@@ -244,7 +249,8 @@ if (document.readyState === 'loading') {
     loadAlbumList();
     // Setze Standard auf "Freie Wahl" mit kurzer Verzögerung
     setTimeout(() => {
-        selectGameMode('search');
+        const freieWahlBtn = document.querySelector('[data-mode="search"]');
+        if (freieWahlBtn) freieWahlBtn.click();
     }, 100);
 }
 
@@ -444,25 +450,33 @@ function selectGameMode(mode) {
         searchSelection.style.display = 'none';
         stopArtistBubbles();
         // Setze Subtitle zurück
-        if (subtitle) subtitle.textContent = 'Erkenne das Lied und gewinne!';
+        setSubtitle('Erkenne das Lied und gewinne!');
     } else if (mode === 'billboard') {
         genreSelection.style.display = 'none';
         billboardSelection.style.display = 'flex';
         searchSelection.style.display = 'none';
         stopArtistBubbles();
         // Setze Subtitle zurück
-        if (subtitle) subtitle.textContent = 'Erkenne das Lied und gewinne!';
+        setSubtitle('Erkenne das Lied und gewinne!');
     } else {
         genreSelection.style.display = 'none';
         billboardSelection.style.display = 'none';
         searchSelection.style.display = 'flex';
         startArtistBubbles();
         // Setze Subtitle zurück
-        if (subtitle) subtitle.textContent = 'Erkenne das Lied und gewinne!';
+        setSubtitle('Erkenne das Lied und gewinne!');
     }
     
     // Update Leaderboard bei Modus-Wechsel
     showSetupLeaderboard();
+}
+
+// Subtitle synchron halten (Header + Stats)
+function setSubtitle(text) {
+    const subtitle = document.getElementById('gameSubtitle');
+    if (subtitle) subtitle.textContent = text;
+    const statsSubtitle = document.getElementById('statsSubtitle');
+    if (statsSubtitle) statsSubtitle.textContent = text;
 }
 
 // Toggle zwischen Künstler/Titel und Album Suche
@@ -514,7 +528,7 @@ async function startGame() {
             // Update Subtitle
             const genreText = selectedGenre === 'Alle' ? 'Alle Genres' : selectedGenre;
             const subtitleText = `Genre: ${genreText}`;
-            document.getElementById('gameSubtitle').textContent = subtitleText;
+            setSubtitle(subtitleText);
             gameState.currentGameMode = subtitleText;
         } else if (gameMode === 'billboard') {
             // Billboard-Modus: Lade Songs nach Jahr
@@ -529,7 +543,7 @@ async function startGame() {
             await loadSongsFromBillboard(selectedYear, songCount);
             // Update Subtitle
             const subtitleText = `Billboard Charts aus ${selectedYear}`;
-            document.getElementById('gameSubtitle').textContent = subtitleText;
+            setSubtitle(subtitleText);
             gameState.currentGameMode = subtitleText;
         } else {
             // iTunes Suchmodus
@@ -544,7 +558,7 @@ async function startGame() {
             await loadSongsFromItunes(searchQuery, songCount);
             // Update Subtitle
             const subtitleText = `Songs von ${searchQuery}`;
-            document.getElementById('gameSubtitle').textContent = subtitleText;
+            setSubtitle(subtitleText);
             gameState.currentGameMode = subtitleText;
         }
 
@@ -799,6 +813,10 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
 
         const safePreview = (song.previewUrl || '').replace(/^http:/, 'https:');
         
+        // Nutze hochauflösendes Cover (600x600)
+        const originalCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60 || '';
+        const highResCover = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : '';
+        
         debugLog(`✅ Song geladen: "${song.trackName}" (${usedCountry})`);
         return {
             id: song.trackId,
@@ -806,7 +824,7 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
             artist: song.artistName,
             album: song.collectionName || 'Unbekannt',
             previewUrl: safePreview,
-            image: song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60 || '',
+            image: highResCover,
             genre: song.primaryGenreName || 'Unbekannt'
         };
     } catch (error) {
@@ -836,47 +854,129 @@ async function loadSongsFromItunes(searchQuery, limit) {
             // Album-Suche: Suche zuerst das Album selbst, dann alle Songs von diesem Album
             try {
                 // Schritt 1: Suche das Album
-                const albumResults = await fetchItunes(searchQuery, { limit: 1, country: 'DE', entity: 'album' });
+                const albumResults = await fetchItunes(searchQuery, { limit: 10, country: 'DE', entity: 'album' });
                 
-                if (albumResults.length === 0) {
+                // Finde das beste Match für die Suchanfrage
+                let bestMatch = null;
+                if (albumResults.length > 0) {
+                    const normalizedQuery = searchQuery.toLowerCase().trim();
+                    
+                    // 1. Priorität: Exaktes Match
+                    bestMatch = albumResults.find(album => 
+                        album.collectionName && album.collectionName.toLowerCase() === normalizedQuery
+                    );
+                    
+                    // 2. Priorität: Album beginnt mit Suchbegriff
+                    if (!bestMatch) {
+                        bestMatch = albumResults.find(album => 
+                            album.collectionName && album.collectionName.toLowerCase().startsWith(normalizedQuery)
+                        );
+                    }
+                    
+                    // 3. Priorität: Kürzestes Album das Suchbegriff enthält (vermeidet Compilations)
+                    if (!bestMatch) {
+                        const matches = albumResults.filter(album => 
+                            album.collectionName && album.collectionName.toLowerCase().includes(normalizedQuery)
+                        );
+                        if (matches.length > 0) {
+                            bestMatch = matches.reduce((shortest, current) => 
+                                current.collectionName.length < shortest.collectionName.length ? current : shortest
+                            );
+                        }
+                    }
+                    
+                    // 4. Fallback: erstes Ergebnis
+                    if (!bestMatch) {
+                        bestMatch = albumResults[0];
+                    }
+                }
+                
+                if (!bestMatch) {
                     console.warn('DE-Album nicht gefunden, versuche US:');
-                    const usAlbumResults = await fetchItunes(searchQuery, { limit: 1, country: 'US', entity: 'album' });
+                    const usAlbumResults = await fetchItunes(searchQuery, { limit: 10, country: 'US', entity: 'album' });
                     if (usAlbumResults.length > 0) {
-                        const albumId = usAlbumResults[0].collectionId;
-                        // Generiere hochauflösendes Cover (ersetze 100x100bb-85.jpg mit 600x600bb.jpg)
-                        const coverUrl = usAlbumResults[0].artworkUrl100 || '';
+                        const normalizedQuery = searchQuery.toLowerCase().trim();
+                        
+                        bestMatch = usAlbumResults.find(album => 
+                            album.collectionName && album.collectionName.toLowerCase() === normalizedQuery
+                        );
+                        
+                        if (!bestMatch) {
+                            bestMatch = usAlbumResults.find(album => 
+                                album.collectionName && album.collectionName.toLowerCase().startsWith(normalizedQuery)
+                            );
+                        }
+                        
+                        if (!bestMatch) {
+                            const matches = usAlbumResults.filter(album => 
+                                album.collectionName && album.collectionName.toLowerCase().includes(normalizedQuery)
+                            );
+                            if (matches.length > 0) {
+                                bestMatch = matches.reduce((shortest, current) => 
+                                    current.collectionName.length < shortest.collectionName.length ? current : shortest
+                                );
+                            }
+                        }
+                        
+                        if (!bestMatch) {
+                            bestMatch = usAlbumResults[0];
+                        }
+                        
+                        const albumId = bestMatch.collectionId;
+                        const coverUrl = bestMatch.artworkUrl100 || '';
                         albumArtwork = coverUrl.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2');
-                        console.log('Album Cover URL (US):', albumArtwork);
-                        // Schritt 2: Lookup API für alle Songs dieses Albums
+                        console.log('Album Cover URL (US):', albumArtwork, 'für:', bestMatch.collectionName);
                         results = await fetchItunes(albumId, { limit: 300, country: 'US', entity: 'song', useLookup: true });
-                        // Filtere das Album selbst raus (wrapperType: "collection")
                         results = results.filter(item => item.wrapperType === 'track');
                     } else {
-                        // Fallback: Versuche Album mit Artist zu suchen (zuerst Artist, dann Album im Namen)
                         console.log('Versuche Album+Artist Fallback für:', searchQuery);
                         const albumArtistResults = await fetchItunes(searchQuery, { limit: 50, country: 'US', entity: 'album', attribute: 'albumTerm' });
                         if (albumArtistResults.length > 0) {
-                            const albumId = albumArtistResults[0].collectionId;
-                            const coverUrl = albumArtistResults[0].artworkUrl100 || '';
+                            const normalizedQuery = searchQuery.toLowerCase().trim();
+                            
+                            bestMatch = albumArtistResults.find(album => 
+                                album.collectionName && album.collectionName.toLowerCase() === normalizedQuery
+                            );
+                            
+                            if (!bestMatch) {
+                                bestMatch = albumArtistResults.find(album => 
+                                    album.collectionName && album.collectionName.toLowerCase().startsWith(normalizedQuery)
+                                );
+                            }
+                            
+                            if (!bestMatch) {
+                                const matches = albumArtistResults.filter(album => 
+                                    album.collectionName && album.collectionName.toLowerCase().includes(normalizedQuery)
+                                );
+                                if (matches.length > 0) {
+                                    bestMatch = matches.reduce((shortest, current) => 
+                                        current.collectionName.length < shortest.collectionName.length ? current : shortest
+                                    );
+                                }
+                            }
+                            
+                            if (!bestMatch) {
+                                bestMatch = albumArtistResults[0];
+                            }
+                            
+                            const albumId = bestMatch.collectionId;
+                            const coverUrl = bestMatch.artworkUrl100 || '';
                             albumArtwork = coverUrl.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2');
+                            console.log('Album Cover URL (Fallback):', albumArtwork, 'für:', bestMatch.collectionName);
                             results = await fetchItunes(albumId, { limit: 300, country: 'US', entity: 'song', useLookup: true });
                             results = results.filter(item => item.wrapperType === 'track');
                         }
                     }
                 } else {
-                    const albumId = albumResults[0].collectionId;
-                    // Generiere hochauflösendes Cover (ersetze 100x100bb-85.jpg mit 600x600bb.jpg)
-                    const coverUrl = albumResults[0].artworkUrl100 || '';
+                    const albumId = bestMatch.collectionId;
+                    const coverUrl = bestMatch.artworkUrl100 || '';
                     albumArtwork = coverUrl.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2');
-                    console.log('Album Cover URL (DE):', albumArtwork);
-                    // Schritt 2: Lookup API für alle Songs dieses Albums
+                    console.log('Album Cover URL (DE):', albumArtwork, 'für:', bestMatch.collectionName);
                     results = await fetchItunes(albumId, { limit: 300, country: 'DE', entity: 'song', useLookup: true });
-                    // Filtere das Album selbst raus (wrapperType: "collection")
                     results = results.filter(item => item.wrapperType === 'track');
                 }
             } catch (err) {
                 console.warn('Album-Suche fehlgeschlagen:', err);
-                // Fallback: Versuche normale Suche
                 try {
                     results = await fetchItunes(searchQuery, { limit: 200, country: 'US', entity: 'song', attribute: 'albumTerm' });
                 } catch (err2) {
@@ -934,8 +1034,9 @@ async function loadSongsFromItunes(searchQuery, limit) {
                     coverUrl = albumArtwork;
                     console.log(`🎵 Song ${index + 1}: ${song.trackName} - Cover: ${coverUrl ? 'SET' : 'NULL'}`);
                 } else {
-                    // Bei normaler Suche: individuelles Song-Cover
-                    coverUrl = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60;
+                    // Bei normaler Suche: individuelles Song-Cover in hoher Auflösung
+                    const originalCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60;
+                    coverUrl = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : originalCover;
                 }
                 
                 return {
@@ -956,10 +1057,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
         if (currentSearchType === 'album' && songs.length > 0) {
             const albumName = songs[0].album;
             const artistName = songs[0].artist;
-            const subtitle = document.getElementById('gameSubtitle');
-            if (subtitle) {
-                subtitle.textContent = `Album '${albumName}' von '${artistName}'`;
-            }
+            setSubtitle(`Album '${albumName}' von '${artistName}'`);
         }
     } catch (error) {
         console.error('iTunes API Fehler:', error);
@@ -1052,6 +1150,7 @@ async function nextQuestion() {
 // Zeige Albumcover an
 function displayAlbumCover() {
     const albumCover = document.getElementById('albumCover');
+    const container = document.querySelector('.container');
     const song = gameState.currentSong;
 
     if (song.image) {
@@ -1059,6 +1158,12 @@ function displayAlbumCover() {
     } else {
         albumCover.innerHTML = '<div class="cover-placeholder"></div>';
     }
+
+    // Enable fullscreen cover by default
+    if (!container.classList.contains('cover-filled') && song.image) {
+        container.classList.add('cover-filled');
+    }
+    applyContainerCoverBackground(song.image);
     
     // Click-to-Zoom Funktionalität
     albumCover.removeEventListener('click', toggleAlbumZoom);
@@ -1067,8 +1172,31 @@ function displayAlbumCover() {
 
 // Toggle Funktion für Album Cover Zoom
 function toggleAlbumZoom(e) {
-    const albumCover = document.getElementById('albumCover');
-    albumCover.classList.toggle('expanded');
+    const container = document.querySelector('.container');
+    const song = gameState.currentSong;
+    if (!container || !song || !song.image) return;
+
+    const shouldFill = !container.classList.contains('cover-filled');
+    container.classList.toggle('cover-filled', shouldFill);
+    applyContainerCoverBackground(shouldFill ? song.image : null);
+}
+
+// Setzt oder entfernt das Cover als Hintergrund der weißen Box
+function applyContainerCoverBackground(imageUrl) {
+    const container = document.querySelector('.container');
+    if (!container) return;
+
+    const isActive = container.classList.contains('cover-filled');
+    if (isActive && imageUrl) {
+        container.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15)), url("${imageUrl}")`;
+        container.style.backgroundSize = 'cover';
+        container.style.backgroundPosition = 'center';
+    } else {
+        container.style.backgroundImage = '';
+        container.style.backgroundSize = '';
+        container.style.backgroundPosition = '';
+        container.classList.remove('cover-filled');
+    }
 }
 
 // Zeige Antworten an
@@ -1336,8 +1464,10 @@ function selectAnswer(answer, index) {
     // Zeige Song-Infos
     showSongInfo();
 
-    // Zeige nächste Frage Button
-    document.getElementById('nextBtn').classList.add('show');
+    // Zeige nächste Frage Button (deaktiviert während 3s Wartezeit)
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.classList.add('show');
+    nextBtn.disabled = true;
     updateStats();
 
     // Automatisch zur nächsten Frage nach 3 Sekunden
@@ -1347,6 +1477,7 @@ function selectAnswer(answer, index) {
         if (container) {
             container.classList.remove('show');
         }
+        nextBtn.disabled = false;
         nextQuestion();
     }, 3000);
 }
@@ -1564,101 +1695,7 @@ function playWrongSound() {
 
 // Entfernt: playPreviewWithDuration - nicht mehr benötigt
 
-// Spiele Preview im Staccato-Modus (jede 2. Sekunde Pause)
-function playPreviewStaccato() {
-    if (!gameState.currentSong || !gameState.currentSong.previewUrl) {
-        alert('Für diesen Song ist keine Preview verfügbar.');
-        return;
-    }
-
-    const audio = document.getElementById('audioPlayer');
-    const stopBtn = document.getElementById('stopBtn');
-
-    // Stoppe evtl. laufende Playbacks
-    stopReversePlayback();
-    stopPreview();
-
-    // iOS-Sicherheit
-    audio.setAttribute('playsinline', 'true');
-    audio.setAttribute('webkit-playsinline', 'true');
-    audio.setAttribute('preload', 'none');
-    audio.crossOrigin = 'anonymous';
-
-    const safeSrc = gameState.currentSong.previewUrl.replace(/^http:/, 'https:');
-    audio.src = safeSrc;
-    audio.currentTime = 0;
-    audio.load();
-
-    const playBtn = document.getElementById('playBtn');
-    if (playBtn) playBtn.disabled = true;
-    stopBtn.classList.add('active');
-
-    const duration = 5; // Staccato spielt immer 5 Sekunden
-    let currentSecond = 0;
-    let staccatoInterval = null;
-    let lastSecondCounted = -1; // Zähler für gezählte Sekunden
-
-    // Starte Audio
-    audio.play().then(() => {
-        console.log('Staccato Playback gestartet');
-        
-        // Tracking: Staccato markiert Play-Count
-        gameState.currentPlayCount++;
-
-        const startTime = Date.now();
-
-        // Interval für Staccato-Effekt (jede Sekunde)
-        staccatoInterval = setInterval(() => {
-            const elapsed = (Date.now() - startTime) / 1000;
-            
-            if (elapsed >= duration) {
-                clearInterval(staccatoInterval);
-                audio.pause();
-                stopPreview();
-                return;
-            }
-
-            currentSecond = Math.floor(elapsed);
-            
-            // Zähle jede volle Sekunde als 2 Sekunden zur Abspielzeit
-            if (currentSecond > lastSecondCounted && currentSecond < duration) {
-                gameState.totalPlayTime += 2;
-                updatePlayTimeDisplay();
-                lastSecondCounted = currentSecond;
-            }
-            
-            // Gerade Sekunden (0, 2, 4, ...): Musik (Lautstärke 1)
-            // Ungerade Sekunden (1, 3, ...): Stille (Lautstärke 0)
-            if (currentSecond % 2 === 0) {
-                audio.volume = 1;
-            } else {
-                audio.volume = 0;
-            }
-
-            // Update Progress
-            const progress = Math.min((elapsed / duration) * 100, 100);
-            document.getElementById('progressFill').style.width = progress + '%';
-            updateTimeDisplay(elapsed, duration);
-        }, 100); // Alle 100ms checken für genauere Steuerung
-
-        // Stoppe nach Dauer
-        gameState.stopTimeout = setTimeout(() => {
-            if (staccatoInterval) clearInterval(staccatoInterval);
-            audio.pause();
-            audio.volume = 1; // Lautstärke zurücksetzen
-            stopPreview();
-        }, duration * 1000);
-
-    }).catch(error => {
-        console.error('Staccato Playback error:', error);
-        if (staccatoInterval) clearInterval(staccatoInterval);
-        audio.volume = 1;
-        const playBtn = document.getElementById('playBtn');
-        if (playBtn) playBtn.disabled = false;
-        stopBtn.classList.remove('active');
-        alert('Fehler beim Abspielen im Staccato-Modus.');
-    });
-}
+// Staccato-Modus entfernt
 
 // Spiele Preview ab (iOS-kompatibel)
 function playPreview() {
@@ -1821,9 +1858,26 @@ async function playPreviewReverse() {
     const stopBtn = document.getElementById('stopBtn');
     const audio = document.getElementById('audioPlayer');
 
-    // Reverse-Modus: Countdown ausblenden und Flags zurücksetzen
-    stopPointsCountdown();
+    // Reverse-Modus: Punkte-Countdown/Strafen handhaben
     gameState.previewFinished = false;
+    if (gameState.firstPlayDone && !gameState.isAnswered && gameState.pointsCountdownActive) {
+        // Erneutes Reverse: -300 Punkte Abzug aus dem laufenden Countdown
+        const currentPoints = Math.max(0, Math.round(gameState.pointsCountdownValue));
+        const newPoints = Math.max(0, currentPoints - 300);
+
+        // Fortschritt neu berechnen relativ zur initialen Basis
+        const totalDurationMs = 60000;
+        const pointsLost = gameState.pointsCountdownInitial - newPoints;
+        const newProgress = pointsLost / gameState.pointsCountdownInitial;
+        const newElapsed = newProgress * totalDurationMs;
+        gameState.pointsCountdownStartTime = performance.now() - newElapsed;
+        gameState.pointsCountdownValue = newPoints;
+        console.log(`Reverse erneut: -300 Punkte (${currentPoints} → ${newPoints})`);
+    } else if (!gameState.firstPlayDone && !gameState.isAnswered) {
+        // Erstes Abspielen im Reverse: Countdown von 2200 starten (+200 Bonus)
+        gameState.firstPlayDone = true;
+        startPointsCountdown(2200);
+    }
 
     // Stoppe normales Preview und laufende Reverse-Instanzen
     audio.pause();
@@ -1959,7 +2013,8 @@ function updateStats() {
     
     const pointsEl = document.getElementById('pointsCount');
     if (pointsEl) {
-        pointsEl.textContent = gameState.totalPoints;
+        const avgPoints = totalQuestions > 0 ? Math.round(gameState.totalPoints / totalQuestions) : 0;
+        pointsEl.textContent = avgPoints;
     }
 }
 
@@ -1970,6 +2025,15 @@ function endGame() {
     const total = gameState.correctAnswers + gameState.wrongAnswers;
     const percentage = total > 0 ? Math.round((gameState.correctAnswers / total) * 100) : 0;
     const finalScore = calculateFinalScore();
+
+    // Remove cover background when showing game over screen
+    const container = document.querySelector('.container');
+    if (container) {
+        container.classList.remove('cover-filled');
+        container.style.backgroundImage = '';
+        container.style.backgroundSize = '';
+        container.style.backgroundPosition = '';
+    }
 
     document.getElementById('quizScreen').style.display = 'none';
     document.getElementById('gameOverScreen').classList.add('show');
@@ -2078,6 +2142,10 @@ function updatePlayerNameDisplay(name) {
     const btn = document.getElementById('playerNameBtn');
     if (btn) {
         btn.textContent = `👤 ${name}`;
+    }
+    const statsBtn = document.getElementById('statsPlayerNameBtn');
+    if (statsBtn) {
+        statsBtn.textContent = `👤 ${name}`;
     }
 }
 
@@ -2296,6 +2364,12 @@ async function saveGameScore() {
     const totalQuestions = gameState.songs ? gameState.songs.length : 0;
     const correctAnswers = gameState.correctAnswers || 0;
     const finalScore = calculateFinalScore();
+    
+    // Only save if more than 9 questions were answered
+    if (totalQuestions <= 9) {
+        console.log('⚠️ Score nicht gespeichert: Weniger als 10 Fragen beantwortet');
+        return false;
+    }
     
     console.log('💾 Speichere Score:', {
         playerName,

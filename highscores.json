@@ -81,11 +81,11 @@
       ]
     },
     "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c": {
-      "username": "Benno",
+      "username": "Geri",
       "ip": "::1",
       "playerId": "eb16b498-959e-43a8-b676-d7f6bd1a004c",
       "firstSeen": "2026-01-06T13:24:30.544Z",
-      "lastSeen": "2026-01-11T09:00:03.763Z",
+      "lastSeen": "2026-01-11T16:05:24.921Z",
       "scores": [
         {
           "id": "score-1767728971560",
@@ -176,6 +176,105 @@
           "correctAnswers": 0,
           "accuracy": 0,
           "date": "2026-01-11T09:00:03.763Z"
+        },
+        {
+          "id": "score-1768139541293",
+          "gameMode": "Billboard Charts aus 2011",
+          "points": 182,
+          "totalQuestions": 10,
+          "correctAnswers": 1,
+          "accuracy": 10,
+          "date": "2026-01-11T13:52:21.293Z"
+        },
+        {
+          "id": "score-1768139771896",
+          "gameMode": "Songs von Woman",
+          "points": 0,
+          "totalQuestions": 10,
+          "correctAnswers": 0,
+          "accuracy": 0,
+          "date": "2026-01-11T13:56:11.896Z"
+        },
+        {
+          "id": "score-1768143285760",
+          "gameMode": "Songs von Luciano",
+          "points": 0,
+          "totalQuestions": 10,
+          "correctAnswers": 0,
+          "accuracy": 0,
+          "date": "2026-01-11T14:54:45.760Z"
+        },
+        {
+          "id": "score-1768144102945",
+          "gameMode": "Songs von Elton John",
+          "points": 938,
+          "totalQuestions": 10,
+          "correctAnswers": 6,
+          "accuracy": 60,
+          "date": "2026-01-11T15:08:22.945Z"
+        },
+        {
+          "id": "score-1768144455894",
+          "gameMode": "Songs von If You're Reading This It's Too Late",
+          "points": 150,
+          "totalQuestions": 10,
+          "correctAnswers": 1,
+          "accuracy": 10,
+          "date": "2026-01-11T15:14:15.894Z"
+        },
+        {
+          "id": "score-1768144768081",
+          "gameMode": "Songs von Parallel Lines",
+          "points": 0,
+          "totalQuestions": 10,
+          "correctAnswers": 0,
+          "accuracy": 0,
+          "date": "2026-01-11T15:19:28.080Z"
+        },
+        {
+          "id": "score-1768146390673",
+          "gameMode": "Songs von Diana Ross",
+          "points": 112,
+          "totalQuestions": 10,
+          "correctAnswers": 1,
+          "accuracy": 10,
+          "date": "2026-01-11T15:46:30.673Z"
+        },
+        {
+          "id": "score-1768146606640",
+          "gameMode": "Songs von Little Richard",
+          "points": 681,
+          "totalQuestions": 10,
+          "correctAnswers": 4,
+          "accuracy": 40,
+          "date": "2026-01-11T15:50:06.640Z"
+        },
+        {
+          "id": "score-1768146693096",
+          "gameMode": "Songs von One Direction",
+          "points": 0,
+          "totalQuestions": 10,
+          "correctAnswers": 0,
+          "accuracy": 0,
+          "date": "2026-01-11T15:51:33.096Z"
+        },
+        {
+          "id": "score-1768146843284",
+          "gameMode": "Songs von NDW Hits",
+          "points": 1409,
+          "totalQuestions": 10,
+          "correctAnswers": 8,
+          "accuracy": 80,
+          "date": "2026-01-11T15:54:03.284Z"
+        },
+        {
+          "id": "score-1768147524921",
+          "gameMode": "Songs von Abba Gold",
+          "points": 1477,
+          "totalQuestions": 10,
+          "correctAnswers": 8,
+          "accuracy": 80,
+          "date": "2026-01-11T16:05:24.921Z"
         }
       ]
     }
@@ -268,7 +367,7 @@
     "Songs von Van Morrison": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Van Morrison",
         "points": 554,
         "totalPoints": 554,
@@ -280,7 +379,7 @@
     "Songs von Dolly Parton": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Dolly Parton",
         "points": 629,
         "totalPoints": 629,
@@ -292,7 +391,7 @@
     "Songs von Eros Ramazzotti": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Eros Ramazzotti",
         "points": 1143,
         "totalPoints": 1143,
@@ -304,7 +403,7 @@
     "Songs von Vanessa Mai": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Vanessa Mai",
         "points": 317,
         "totalPoints": 317,
@@ -316,7 +415,7 @@
     "Songs von Prince": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Prince",
         "points": 0,
         "totalPoints": 0,
@@ -328,7 +427,7 @@
     "Songs von Udo Jürgens": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Udo Jürgens",
         "points": 225,
         "totalPoints": 225,
@@ -340,7 +439,7 @@
     "Songs von Creedence Clearwater Revival": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Creedence Clearwater Revival",
         "points": 560,
         "totalPoints": 560,
@@ -352,7 +451,7 @@
     "Songs von Rihanna": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Rihanna",
         "points": 376,
         "totalPoints": 376,
@@ -364,7 +463,7 @@
     "Songs von Dschinghis Khan": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Dschinghis Khan",
         "points": 0,
         "totalPoints": 0,
@@ -376,7 +475,7 @@
     "Songs von Kuschelrock 8": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Kuschelrock 8",
         "points": 0,
         "totalPoints": 0,
@@ -385,10 +484,160 @@
         "lastScore": "2026-01-11T09:00:03.763Z"
       }
     ],
+    "Billboard Charts aus 2011": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Billboard Charts aus 2011",
+        "points": 182,
+        "totalPoints": 182,
+        "avgAccuracy": 10,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T13:52:21.293Z"
+      }
+    ],
+    "Songs von Woman": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Woman",
+        "points": 0,
+        "totalPoints": 0,
+        "avgAccuracy": 0,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T13:56:11.896Z"
+      }
+    ],
+    "Songs von Luciano": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Luciano",
+        "points": 0,
+        "totalPoints": 0,
+        "avgAccuracy": 0,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T14:54:45.760Z"
+      }
+    ],
+    "Songs von Elton John": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Elton John",
+        "points": 938,
+        "totalPoints": 938,
+        "avgAccuracy": 60,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T15:08:22.945Z"
+      }
+    ],
+    "Songs von If You're Reading This It's Too Late": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von If You're Reading This It's Too Late",
+        "points": 150,
+        "totalPoints": 150,
+        "avgAccuracy": 10,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T15:14:15.894Z"
+      }
+    ],
+    "Songs von Parallel Lines": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Parallel Lines",
+        "points": 0,
+        "totalPoints": 0,
+        "avgAccuracy": 0,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T15:19:28.080Z"
+      }
+    ],
+    "Songs von Diana Ross": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Diana Ross",
+        "points": 112,
+        "totalPoints": 112,
+        "avgAccuracy": 10,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T15:46:30.673Z"
+      }
+    ],
+    "Songs von Little Richard": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Little Richard",
+        "points": 681,
+        "totalPoints": 681,
+        "avgAccuracy": 40,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T15:50:06.640Z"
+      }
+    ],
+    "Songs von One Direction": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von One Direction",
+        "points": 0,
+        "totalPoints": 0,
+        "avgAccuracy": 0,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T15:51:33.096Z"
+      }
+    ],
+    "Songs von NDW Hits": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von NDW Hits",
+        "points": 1409,
+        "totalPoints": 1409,
+        "avgAccuracy": 80,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T15:54:03.284Z"
+      }
+    ],
+    "Songs von Abba Gold": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Abba Gold",
+        "points": 1477,
+        "totalPoints": 1477,
+        "avgAccuracy": 80,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T16:05:24.921Z"
+      }
+    ],
     "Global": [
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
+        "gameMode": "Songs von Abba Gold",
+        "points": 1477,
+        "totalPoints": 1477,
+        "accuracy": 80,
+        "date": "2026-01-11T16:05:24.921Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von NDW Hits",
+        "points": 1409,
+        "totalPoints": 1409,
+        "accuracy": 80,
+        "date": "2026-01-11T15:54:03.284Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
         "gameMode": "Songs von Eros Ramazzotti",
         "points": 1143,
         "totalPoints": 1143,
@@ -405,6 +654,15 @@
         "date": "2026-01-06T08:32:37.223Z"
       },
       {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Elton John",
+        "points": 938,
+        "totalPoints": 938,
+        "accuracy": 60,
+        "date": "2026-01-11T15:08:22.945Z"
+      },
+      {
         "ip": "::1",
         "username": "Hias",
         "gameMode": "Songs von Fleetwood Mac",
@@ -412,6 +670,15 @@
         "totalPoints": 918,
         "accuracy": 60,
         "date": "2026-01-06T08:31:32.638Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Little Richard",
+        "points": 681,
+        "totalPoints": 681,
+        "accuracy": 40,
+        "date": "2026-01-11T15:50:06.640Z"
       },
       {
         "ip": "::1",
@@ -424,7 +691,7 @@
       },
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Dolly Parton",
         "points": 629,
         "totalPoints": 629,
@@ -442,7 +709,7 @@
       },
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Creedence Clearwater Revival",
         "points": 560,
         "totalPoints": 560,
@@ -451,7 +718,7 @@
       },
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Van Morrison",
         "points": 554,
         "totalPoints": 554,
@@ -469,7 +736,7 @@
       },
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Rihanna",
         "points": 376,
         "totalPoints": 376,
@@ -478,7 +745,7 @@
       },
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Vanessa Mai",
         "points": 317,
         "totalPoints": 317,
@@ -496,12 +763,30 @@
       },
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Udo Jürgens",
         "points": 225,
         "totalPoints": 225,
         "accuracy": 20,
         "date": "2026-01-11T08:22:55.392Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Billboard Charts aus 2011",
+        "points": 182,
+        "totalPoints": 182,
+        "accuracy": 10,
+        "date": "2026-01-11T13:52:21.293Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von If You're Reading This It's Too Late",
+        "points": 150,
+        "totalPoints": 150,
+        "accuracy": 10,
+        "date": "2026-01-11T15:14:15.894Z"
       },
       {
         "ip": "::1",
@@ -514,7 +799,16 @@
       },
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
+        "gameMode": "Songs von Diana Ross",
+        "points": 112,
+        "totalPoints": 112,
+        "accuracy": 10,
+        "date": "2026-01-11T15:46:30.673Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
         "gameMode": "Songs von Prince",
         "points": 0,
         "totalPoints": 0,
@@ -523,7 +817,7 @@
       },
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Dschinghis Khan",
         "points": 0,
         "totalPoints": 0,
@@ -532,14 +826,50 @@
       },
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
-        "username": "Benno",
+        "username": "Geri",
         "gameMode": "Songs von Kuschelrock 8",
         "points": 0,
         "totalPoints": 0,
         "accuracy": 0,
         "date": "2026-01-11T09:00:03.763Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Woman",
+        "points": 0,
+        "totalPoints": 0,
+        "accuracy": 0,
+        "date": "2026-01-11T13:56:11.896Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Luciano",
+        "points": 0,
+        "totalPoints": 0,
+        "accuracy": 0,
+        "date": "2026-01-11T14:54:45.760Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Parallel Lines",
+        "points": 0,
+        "totalPoints": 0,
+        "accuracy": 0,
+        "date": "2026-01-11T15:19:28.080Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von One Direction",
+        "points": 0,
+        "totalPoints": 0,
+        "accuracy": 0,
+        "date": "2026-01-11T15:51:33.096Z"
       }
     ]
   },
-  "lastUpdated": "2026-01-11T09:00:03.763Z"
+  "lastUpdated": "2026-01-11T16:05:24.921Z"
 }
