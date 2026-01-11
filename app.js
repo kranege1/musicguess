@@ -1069,6 +1069,9 @@ function selectAnswer(answer, index) {
     if (isCorrect) {
         gameState.correctAnswers++;
         
+        // Spiele Erfolgs-Sound
+        playCorrectSound();
+        
         // Nutze aktiven Countdown (falls vorhanden), sonst Standardberechnung
         const countdownActive = gameState.pointsCountdownActive;
         const countdownPoints = countdownActive ? Math.max(0, Math.round(gameState.pointsCountdownValue)) : null;
@@ -1086,18 +1089,29 @@ function selectAnswer(answer, index) {
             selectedBtn.classList.add('stamp', 'stamp-correct');
         }
 
-        document.getElementById('resultMessage').textContent = `✅ Richtig! +${awardedPoints} Punkte`;
-        document.getElementById('resultMessage').classList.remove('incorrect');
-        document.getElementById('resultMessage').classList.add('correct');
+        const resultMsg = document.getElementById('resultMessage');
+        resultMsg.textContent = `✅ Richtig! +${awardedPoints} Punkte`;
+        resultMsg.classList.remove('incorrect');
+        resultMsg.classList.add('correct');
+        resultMsg.style.fontSize = '1.3em';
+        resultMsg.style.animation = 'bounce-in 0.5s ease-out';
     } else {
         gameState.wrongAnswers++;
+        
+        // Spiele Fehler-Sound
+        playWrongSound();
+        
         if (selectedBtn) {
             selectedBtn.dataset.stamp = '✕';
             selectedBtn.classList.add('stamp', 'stamp-wrong');
         }
-        document.getElementById('resultMessage').textContent = '❌ Falsch!';
-        document.getElementById('resultMessage').classList.remove('correct');
-        document.getElementById('resultMessage').classList.add('incorrect');
+        
+        const resultMsg = document.getElementById('resultMessage');
+        resultMsg.textContent = '❌ Falsch!';
+        resultMsg.classList.remove('correct');
+        resultMsg.classList.add('incorrect');
+        resultMsg.style.fontSize = '1.3em';
+        resultMsg.style.animation = 'shake 0.5s ease-out';
     }
 
     // Countdown stoppen (kein weiteres Abbauen nach Antwort)
@@ -1250,6 +1264,62 @@ function playKatchingSound() {
         oscillator.stop(audioContext.currentTime + 0.15);
     } catch (err) {
         console.log('Katching sound error:', err);
+    }
+}
+
+// Spiele "Richtig" Sound ab
+function playCorrectSound() {
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Aufsteigender fröhlicher Akkord
+        const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5
+        frequencies.forEach((freq, i) => {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+            oscillator.type = 'sine';
+            
+            const startTime = audioContext.currentTime + (i * 0.08);
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(0.15, startTime + 0.02);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.3);
+            
+            oscillator.start(startTime);
+            oscillator.stop(startTime + 0.3);
+        });
+    } catch (err) {
+        console.log('Correct sound error:', err);
+    }
+}
+
+// Spiele "Falsch" Sound ab
+function playWrongSound() {
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Absteigender "Buzzer" Sound
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.type = 'sawtooth';
+        oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.3);
+        
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+    } catch (err) {
+        console.log('Wrong sound error:', err);
     }
 }
 
