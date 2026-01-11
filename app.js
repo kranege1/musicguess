@@ -18,6 +18,7 @@ function debugLog(message, errorCode = null) {
 // Removed: debugLog display on page load
 
 // Globale Variablen
+let currentSearchType = 'track'; // 'track' oder 'album'
 let gameState = {
     songs: [],
     currentQuestion: 0,
@@ -407,6 +408,22 @@ function selectGameMode(mode) {
     showSetupLeaderboard();
 }
 
+// Toggle zwischen Künstler/Titel und Album Suche
+function toggleSearchType() {
+    const btn = document.getElementById('searchTypeBtn');
+    if (currentSearchType === 'track') {
+        currentSearchType = 'album';
+        btn.textContent = '💿 Album';
+        btn.classList.add('active');
+        document.getElementById('searchQuery').placeholder = "z.B. 'Kuschelrock 5' oder 'Abbey Road'";
+    } else {
+        currentSearchType = 'track';
+        btn.textContent = '🎤 Künstler/Titel';
+        btn.classList.remove('active');
+        document.getElementById('searchQuery').placeholder = "z.B. 'Taylor Swift' oder 'Bohemian Rhapsody'";
+    }
+}
+
 // Starte das Spiel
 async function startGame() {
     // Finde den aktiven Mode-Button statt Radio-Button
@@ -745,11 +762,23 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
 async function loadSongsFromItunes(searchQuery, limit) {
     try {
         let results = [];
-        try {
-            results = await fetchItunes(searchQuery, { limit: 50, country: 'DE' });
-        } catch (errDe) {
-            console.warn('DE-Suche fehlgeschlagen (Suchmodus), versuche US:', errDe);
-            results = await fetchItunes(searchQuery, { limit: 50, country: 'US' });
+        
+        if (currentSearchType === 'album') {
+            // Album-Suche
+            try {
+                results = await fetchItunes(searchQuery, { limit: 200, country: 'DE', entity: 'song', attribute: 'albumTerm' });
+            } catch (errDe) {
+                console.warn('DE-Album-Suche fehlgeschlagen, versuche US:', errDe);
+                results = await fetchItunes(searchQuery, { limit: 200, country: 'US', entity: 'song', attribute: 'albumTerm' });
+            }
+        } else {
+            // Standard Künstler/Titel Suche
+            try {
+                results = await fetchItunes(searchQuery, { limit: 50, country: 'DE' });
+            } catch (errDe) {
+                console.warn('DE-Suche fehlgeschlagen (Suchmodus), versuche US:', errDe);
+                results = await fetchItunes(searchQuery, { limit: 50, country: 'US' });
+            }
         }
 
         const songs = results

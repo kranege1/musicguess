@@ -431,6 +431,31 @@
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
         }
 
+        .search-type-toggle {
+            padding: 6px 12px !important;
+            background: #f0f0f0 !important;
+            border: 2px solid #999 !important;
+            border-radius: 6px !important;
+            cursor: pointer !important;
+            font-size: 0.85em !important;
+            font-weight: 600 !important;
+            color: #333 !important;
+            transition: all 0.3s !important;
+            white-space: nowrap !important;
+            min-width: 100px !important;
+        }
+
+        .search-type-toggle:hover {
+            background: #e0e0e0 !important;
+            border-color: #667eea !important;
+        }
+
+        .search-type-toggle.active {
+            background: #667eea !important;
+            color: white !important;
+            border-color: #667eea !important;
+        }
+
         label {
             font-weight: 600;
             color: #333;
@@ -1147,7 +1172,10 @@
             </div>
 
             <div class="input-group" id="searchSelection" style="display: none;">
-                <label for="searchQuery">🎤 Künstler oder Titel durchsuchen:</label>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <label for="searchQuery" style="margin: 0;">🎤 Künstler oder Titel durchsuchen:</label>
+                    <button type="button" class="search-type-toggle" id="searchTypeBtn" onclick="toggleSearchType()" title="Zwischen Künstler/Titel und Album wechseln">📀 Album</button>
+                </div>
                 <input type="text" id="searchQuery" placeholder="z.B. 'Taylor Swift' oder 'Bohemian Rhapsody'">
                 <!-- Artist Bubbles Container -->
                 <div class="artist-bubbles-container" id="artistBubblesContainer"></div>
