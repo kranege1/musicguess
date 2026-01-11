@@ -43,6 +43,7 @@ let gameState = {
     pointsCountdownActive: false,
     pointsCountdownInitial: 0,
     pointsCountdownStartTime: null,
+    firstPlayDone: false, // Flag ob bereits einmal abgespielt wurde
 };
 
 // Lade verfügbare Genres beim Seitenstart
@@ -1252,32 +1253,7 @@ function playKatchingSound() {
     }
 }
 
-// Spiele Preview mit gewählter Dauer ab
-function playPreviewWithDuration(duration) {
-    // Spiele immer Katching-Sound wenn Button gedrückt wird
-    playKatchingSound();
-    
-    // Setze die gewählte Dauer für diese Frage
-    gameState.previewDuration = duration;
-    
-    // Triggere Animation bei der Abspielzeit-Anzeige (animiere das parent stat-line Element)
-    const timeDisplayContainer = document.querySelector('.stat-line[style*="color: #667eea"]');
-    if (timeDisplayContainer) {
-        // Entferne Animation falls noch aktiv
-        timeDisplayContainer.classList.remove('pulse-animation');
-        // Erzwinge Reflow für Animation Restart
-        void timeDisplayContainer.offsetWidth;
-        // Füge Animation hinzu
-        timeDisplayContainer.classList.add('pulse-animation');
-        // Entferne Klasse nach Animation
-        setTimeout(() => {
-            timeDisplayContainer.classList.remove('pulse-animation');
-        }, 500);
-    }
-    
-    // Rufe die normale playPreview Funktion auf
-    playPreview();
-}
+// Entfernt: playPreviewWithDuration - nicht mehr benötigt
 
 // Spiele Preview im Staccato-Modus (jede 2. Sekunde Pause)
 function playPreviewStaccato() {
@@ -1304,8 +1280,8 @@ function playPreviewStaccato() {
     audio.currentTime = 0;
     audio.load();
 
-    // Deaktiviere Duration-Buttons während Staccato-Playback
-    disableDurationButtons(true);
+    const playBtn = document.getElementById('playBtn');
+    if (playBtn) playBtn.disabled = true;
     stopBtn.classList.add('active');
 
     const duration = 5; // Staccato spielt immer 5 Sekunden
@@ -1353,7 +1329,7 @@ function playPreviewStaccato() {
             // Update Progress
             const progress = Math.min((elapsed / duration) * 100, 100);
             document.getElementById('progressFill').style.width = progress + '%';
-            updateTimeDisplay(elapsed);
+            updateTimeDisplay(elapsed, duration);
         }, 100); // Alle 100ms checken für genauere Steuerung
 
         // Stoppe nach Dauer
@@ -1368,7 +1344,8 @@ function playPreviewStaccato() {
         console.error('Staccato Playback error:', error);
         if (staccatoInterval) clearInterval(staccatoInterval);
         audio.volume = 1;
-        disableDurationButtons(false);
+        const playBtn = document.getElementById('playBtn');
+        if (playBtn) playBtn.disabled = false;
         stopBtn.classList.remove('active');
         alert('Fehler beim Abspielen im Staccato-Modus.');
     });
@@ -1393,6 +1370,35 @@ function playPreview() {
         return;
     }
 
+    // Spiele Katching-Sound
+    playKatchingSound();
+
+    // Prüfe ob bereits abgespielt wurde
+    if (gameState.firstPlayDone && !gameState.isAnswered) {
+        // 300 Punkte Abzug bei erneutem Drücken
+        if (gameState.pointsCountdownActive) {
+            const currentPoints = Math.max(0, Math.round(gameState.pointsCountdownValue));
+            const newPoints = Math.max(0, currentPoints - 300);
+            
+            // Berechne neue Zeit basierend auf reduzierten Punkten
+            const elapsed = gameState.pointsCountdownStartTime ? (performance.now() - gameState.pointsCountdownStartTime) : 0;
+            const pointsLost = gameState.pointsCountdownInitial - newPoints;
+            const totalDurationMs = 60000;
+            const newProgress = pointsLost / gameState.pointsCountdownInitial;
+            const newElapsed = newProgress * totalDurationMs;
+            
+            // Setze neue Startzeit basierend auf reduzierten Punkten
+            gameState.pointsCountdownStartTime = performance.now() - newElapsed;
+            gameState.pointsCountdownValue = newPoints;
+            
+            console.log(`Erneutes Abspielen: -300 Punkte (${currentPoints} → ${newPoints})`);
+        }
+    } else if (!gameState.firstPlayDone && !gameState.isAnswered) {
+        // Erstes Abspielen: Starte Punkte-Countdown von 2000
+        gameState.firstPlayDone = true;
+        startPointsCountdown(2000);
+    }
+
     const audio = document.getElementById('audioPlayer');
     const playBtn = document.getElementById('playBtn');
     const stopBtn = document.getElementById('stopBtn');
@@ -1415,6 +1421,9 @@ function playPreview() {
     // Setze Flags zurück
     gameState.previewFinished = false;
     
+    // Feste Preview-Dauer: 15 Sekunden
+    const previewDuration = 15;
+    
     console.log('Versuche Preview abzuspielen:', gameState.currentSong.previewUrl);
     debugLog(`▶️ Starte Preview...`);
     
@@ -1425,35 +1434,34 @@ function playPreview() {
         
         // Tracking: Erhöhe Play-Count und addiere Abspielzeit
         gameState.currentPlayCount++;
-        gameState.totalPlayTime += gameState.previewDuration;
+        gameState.totalPlayTime += previewDuration;
         updatePlayTimeDisplay();
         
-        // Deaktiviere alle Duration-Buttons während Playback
-        disableDurationButtons(true);
+        // Deaktiviere Play-Button während Playback
+        if (playBtn) playBtn.disabled = true;
         stopBtn.classList.add('active');
 
         // Update Progress
         const updateProgress = () => {
-            const duration = gameState.previewDuration;
-            const progress = Math.min((audio.currentTime / duration) * 100, 100);
+            const progress = Math.min((audio.currentTime / previewDuration) * 100, 100);
             document.getElementById('progressFill').style.width = progress + '%';
-            updateTimeDisplay(audio.currentTime);
+            updateTimeDisplay(audio.currentTime, previewDuration);
 
-            if (audio.currentTime < duration && !audio.paused) {
+            if (audio.currentTime < previewDuration && !audio.paused) {
                 gameState.progressInterval = requestAnimationFrame(updateProgress);
-            } else if (audio.currentTime >= duration) {
+            } else if (audio.currentTime >= previewDuration) {
                 gameState.previewFinished = true;
                 audio.pause();
                 stopPreview();
             }
         };
 
-        // Stoppe nach Preview-Duration
+        // Stoppe nach Preview-Duration (15 Sekunden)
         gameState.stopTimeout = setTimeout(() => {
             gameState.previewFinished = true;
             audio.pause();
             stopPreview();
-        }, gameState.previewDuration * 1000);
+        }, previewDuration * 1000);
 
         updateProgress();
     }).catch(error => {
@@ -1468,6 +1476,7 @@ function playPreview() {
 function stopPreview() {
     const audio = document.getElementById('audioPlayer');
     const stopBtn = document.getElementById('stopBtn');
+    const playBtn = document.getElementById('playBtn');
 
     stopReversePlayback();
 
@@ -1487,26 +1496,14 @@ function stopPreview() {
         gameState.stopTimeout = null;
     }
 
-    // Aktiviere Duration-Buttons wieder
-    disableDurationButtons(false);
+    // Aktiviere Play-Button wieder
+    if (playBtn) playBtn.disabled = false;
     stopBtn.classList.remove('active');
     document.getElementById('progressFill').style.width = '0%';
-    updateTimeDisplay(0);
-
-    // Starte Punkte-Countdown nur nach vollständig abgespielter Preview (kein Reverse)
-    if (gameState.previewFinished && !gameState.currentPlayedReverse && !gameState.isAnswered) {
-        const basePoints = calculatePoints();
-        startPointsCountdown(basePoints);
-    }
+    updateTimeDisplay(0, 15);
 }
 
-// Helper: Duration-Buttons aktivieren/deaktivieren
-function disableDurationButtons(disabled) {
-    const buttons = document.querySelectorAll('.duration-btn');
-    buttons.forEach(btn => {
-        btn.disabled = disabled;
-    });
-}
+// Entfernt: disableDurationButtons - nicht mehr benötigt
 
 // Reverse Preview abspielen
 async function playPreviewReverse() {
@@ -1525,9 +1522,6 @@ async function playPreviewReverse() {
 
     const safeSrc = gameState.currentSong.previewUrl.replace(/^http:/, 'https:');
     stopBtn.classList.add('active');
-    
-    // Deaktiviere Duration-Buttons während Reverse-Playback
-    disableDurationButtons(true);
 
     try {
         if (!reverseCtx || reverseCtx.state === 'closed') {
@@ -1582,10 +1576,10 @@ async function playPreviewReverse() {
             reverseSource = null;
             stopBtn.classList.remove('active');
             document.getElementById('progressFill').style.width = '0%';
-            updateTimeDisplay(0);
+            updateTimeDisplay(0, 15);
             
-            // Aktiviere Duration-Buttons wieder
-            disableDurationButtons(false);
+            const playBtn = document.getElementById('playBtn');
+            if (playBtn) playBtn.disabled = false;
         };
 
         // Stoppe nach Preview-Dauer
@@ -1599,10 +1593,10 @@ async function playPreviewReverse() {
                 stopReversePlayback();
                 stopBtn.classList.remove('active');
                 document.getElementById('progressFill').style.width = '0%';
-                updateTimeDisplay(0);
+                updateTimeDisplay(0, 15);
                 
-                // Aktiviere Duration-Buttons wieder
-                disableDurationButtons(false);
+                const playBtn = document.getElementById('playBtn');
+                if (playBtn) playBtn.disabled = false;
             }
         }, duration * 1000);
 
@@ -1612,18 +1606,17 @@ async function playPreviewReverse() {
         console.error('Reverse playback error:', err);
         stopBtn.classList.remove('active');
         
-        // Aktiviere Duration-Buttons wieder
-        disableDurationButtons(false);
+        const playBtn = document.getElementById('playBtn');
+        if (playBtn) playBtn.disabled = false;
         
         alert('Konnte Reverse-Preview nicht abspielen.');
     }
 }
 
 // Update Zeit-Anzeige
-function updateTimeDisplay(seconds) {
+function updateTimeDisplay(seconds, duration = 15) {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    const duration = gameState.previewDuration;
     document.getElementById('timeDisplay').textContent = 
         `${mins}:${String(secs).padStart(2, '0')} / 0:${String(duration).padStart(2, '0')}`;
 }
