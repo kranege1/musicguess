@@ -1,19 +1,16 @@
-# Script zum automatischen Erhöhen der Versionsnummer
+# Script zum automatischen Speichern von Commit-Datum und -Zeit
 $versionFile = "version.json"
 
 if (Test-Path $versionFile) {
-    # Lade aktuelle Version
+    # Hole aktuelles Datum und Uhrzeit
+    $timestamp = Get-Date -Format "dd.MM.yyyy HH:mm"
+    
+    # Lade JSON und speichere Timestamp
     $json = Get-Content $versionFile -Raw | ConvertFrom-Json
-    $currentVersion = [decimal]($json.version -replace ',', '.')
-    
-    # Erhöhe Version um 1
-    $newVersion = [int]$currentVersion + 1
-    
-    # Speichere neue Version
-    $json.version = $newVersion.ToString()
+    $json.version = $timestamp
     $json | ConvertTo-Json | Set-Content $versionFile -Encoding UTF8
     
-    Write-Host "Version erhoeht: v$($json.version)" -ForegroundColor Green
+    Write-Host "Version aktualisiert: $timestamp" -ForegroundColor Green
     
     # Füge zur Staging Area hinzu
     git add $versionFile

@@ -1,4 +1,4 @@
-const APP_VERSION = 'v96';
+const APP_VERSION = '11.01.2026 00:00';
 window.APP_VERSION = APP_VERSION;
 
 // Detect if running on server or static hosting
