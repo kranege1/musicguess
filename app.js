@@ -901,19 +901,33 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 song.collectionName
             )
             .slice(0, limit)
-            .map(song => {
+            .map((song, index) => {
                 // Prüfe ob lokales Cover existiert
                 let coverUrl = null;
                 
-                if (currentSearchType === 'album' && albumArtwork) {
-                    // Bei Album-Suche: nutze gespeichertes Album-Cover
-                    coverUrl = albumArtwork;
-                } else if (currentSearchType === 'album') {
-                    // Bei Album-Suche ohne Cover-Artwork: suche lokales Cover nach Album-Name
-                    const localCover = getLocalAlbumCover(song.collectionName);
-                    coverUrl = localCover || (song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60);
+                if (currentSearchType === 'album') {
+                    // Im Album-Modus: IMMER das gleiche Cover für alle Songs
+                    if (albumArtwork) {
+                        // Nutze gespeichertes Album-Cover von iTunes
+                        coverUrl = albumArtwork;
+                    } else if (index === 0) {
+                        // Beim ersten Song: speichere Cover für alle nachfolgenden
+                        const localCover = getLocalAlbumCover(song.collectionName);
+                        if (localCover) {
+                            albumArtwork = localCover;
+                            coverUrl = localCover;
+                        } else {
+                            const iCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60;
+                            // Konvertiere zu hochauflösend
+                            albumArtwork = iCover ? iCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : iCover;
+                            coverUrl = albumArtwork;
+                        }
+                    } else {
+                        // Für alle nachfolgenden Songs: nutze gespeichertes Cover
+                        coverUrl = albumArtwork;
+                    }
                 } else {
-                    // Bei normaler Suche: iTunes URL
+                    // Bei normaler Suche: individuelles Song-Cover
                     coverUrl = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60;
                 }
                 
