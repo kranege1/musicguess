@@ -893,6 +893,24 @@ async function loadSongsFromItunes(searchQuery, limit) {
             }
         }
 
+        // Im Album-Modus: Stelle sicher dass albumArtwork gesetzt ist BEVOR wir die Songs mappen
+        if (currentSearchType === 'album' && !albumArtwork && results.length > 0) {
+            // Nutze das erste Ergebnis um das Album-Cover zu bestimmen
+            const firstSong = results[0];
+            if (firstSong.collectionName) {
+                // Versuche lokales Cover
+                const localCover = getLocalAlbumCover(firstSong.collectionName);
+                if (localCover) {
+                    albumArtwork = localCover;
+                } else {
+                    // Nutze iTunes Cover in hoher Auflösung
+                    const iCover = firstSong.artworkUrl600 || firstSong.artworkUrl100 || firstSong.artworkUrl60;
+                    albumArtwork = iCover ? iCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : iCover;
+                }
+                console.log('Album-Cover gesetzt für alle Songs:', albumArtwork);
+            }
+        }
+
         const songs = results
             .filter(song => 
                 song.previewUrl && 
@@ -902,30 +920,12 @@ async function loadSongsFromItunes(searchQuery, limit) {
             )
             .slice(0, limit)
             .map((song, index) => {
-                // Prüfe ob lokales Cover existiert
+                // Bestimme Cover-URL
                 let coverUrl = null;
                 
                 if (currentSearchType === 'album') {
-                    // Im Album-Modus: IMMER das gleiche Cover für alle Songs
-                    if (albumArtwork) {
-                        // Nutze gespeichertes Album-Cover von iTunes
-                        coverUrl = albumArtwork;
-                    } else if (index === 0) {
-                        // Beim ersten Song: speichere Cover für alle nachfolgenden
-                        const localCover = getLocalAlbumCover(song.collectionName);
-                        if (localCover) {
-                            albumArtwork = localCover;
-                            coverUrl = localCover;
-                        } else {
-                            const iCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60;
-                            // Konvertiere zu hochauflösend
-                            albumArtwork = iCover ? iCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : iCover;
-                            coverUrl = albumArtwork;
-                        }
-                    } else {
-                        // Für alle nachfolgenden Songs: nutze gespeichertes Cover
-                        coverUrl = albumArtwork;
-                    }
+                    // Im Album-Modus: nutze das bereits gesetzte albumArtwork für ALLE Songs
+                    coverUrl = albumArtwork;
                 } else {
                     // Bei normaler Suche: individuelles Song-Cover
                     coverUrl = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60;
