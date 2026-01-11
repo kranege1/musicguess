@@ -429,6 +429,9 @@ function selectGameMode(mode) {
     // Füge active Klasse zum gewählten Button hinzu
     document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
     
+    // Ändere Body-Klasse für Hintergrundfarbe
+    document.body.className = `mode-${mode}`;
+    
     const genreSelection = document.getElementById('genreSelection');
     const billboardSelection = document.getElementById('billboardSelection');
     const searchSelection = document.getElementById('searchSelection');

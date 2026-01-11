@@ -22,6 +22,22 @@
             justify-content: center;
             align-items: center;
             padding: 6px;
+            transition: background 0.5s ease;
+        }
+
+        /* Genre-Modus: Grün/Türkis */
+        body.mode-genre {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        /* Billboard-Modus: Orange/Rot */
+        body.mode-billboard {
+            background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%);
+        }
+
+        /* Freie Wahl-Modus: Lila (Standard) */
+        body.mode-search {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .container {
@@ -50,7 +66,7 @@
         }
 
         .player-name-btn {
-            background: #667eea;
+            background: rgba(102, 126, 234, 0.8);
             color: white;
             border: none;
             padding: 6px 12px;
@@ -58,8 +74,21 @@
             font-size: 0.85em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s;
             white-space: nowrap;
+            backdrop-filter: blur(10px);
+        }
+
+        body.mode-genre .player-name-btn {
+            background: rgba(17, 153, 142, 0.8);
+        }
+
+        body.mode-billboard .player-name-btn {
+            background: rgba(248, 87, 166, 0.8);
+        }
+
+        body.mode-search .player-name-btn {
+            background: rgba(102, 126, 234, 0.8);
         }
 
         .player-name-btn:hover {
@@ -414,13 +443,67 @@
             min-height: 70px !important;
         }
 
+        /* Genre-Button: Grün */
+        .mode-btn[data-mode="genre"] {
+            border-color: #11998e !important;
+            color: #11998e !important;
+        }
+
+        .mode-btn[data-mode="genre"]:hover {
+            background: #f0fffe !important;
+            border-color: #0d7d72 !important;
+        }
+
+        .mode-btn[data-mode="genre"].active {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+            color: white !important;
+            border-color: #38ef7d !important;
+            box-shadow: 0 6px 20px rgba(17, 153, 142, 0.3) !important;
+        }
+
+        /* Billboard-Button: Orange/Rot */
+        .mode-btn[data-mode="billboard"] {
+            border-color: #f857a6 !important;
+            color: #f857a6 !important;
+        }
+
+        .mode-btn[data-mode="billboard"]:hover {
+            background: #fff5fa !important;
+            border-color: #e63e8a !important;
+        }
+
+        .mode-btn[data-mode="billboard"].active {
+            background: linear-gradient(135deg, #f857a6 0%, #ff5858 100%) !important;
+            color: white !important;
+            border-color: #ff5858 !important;
+            box-shadow: 0 6px 20px rgba(248, 87, 166, 0.3) !important;
+        }
+
+        /* Freie Wahl-Button: Lila */
+        .mode-btn[data-mode="search"] {
+            border-color: #667eea !important;
+            color: #667eea !important;
+        }
+
         .mode-btn:hover {
             background: #f5f5ff !important;
             border-color: #764ba2 !important;
             transform: translateY(-2px) !important;
         }
 
+        .mode-btn[data-mode="search"]:hover {
+            background: #f5f5ff !important;
+            border-color: #764ba2 !important;
+        }
+
         .mode-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            border-color: #764ba2 !important;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
+        }
+
+        .mode-btn[data-mode="search"].active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
             color: white !important;
             border-color: #764ba2 !important;
