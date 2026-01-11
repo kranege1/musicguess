@@ -228,8 +228,10 @@ if (document.readyState === 'loading') {
         loadAvailableGenres();
         loadAvailableYears();
         loadArtistNames();
-        // Setze Standard auf "Freie Wahl"
-        selectGameMode('search');
+        // Setze Standard auf "Freie Wahl" mit kurzer Verzögerung
+        setTimeout(() => {
+            selectGameMode('search');
+        }, 100);
     });
 } else {
     // DOM ist bereits geladen
@@ -237,8 +239,10 @@ if (document.readyState === 'loading') {
     loadAvailableGenres();
     loadAvailableYears();
     loadArtistNames();
-    // Setze Standard auf "Freie Wahl"
-    selectGameMode('search');
+    // Setze Standard auf "Freie Wahl" mit kurzer Verzögerung
+    setTimeout(() => {
+        selectGameMode('search');
+    }, 100);
 }
 
 // Artist Bubbles Animation
