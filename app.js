@@ -781,6 +781,7 @@ async function nextQuestion() {
     gameState.currentPlayedReverse = false;
     gameState.totalPlayTime = 0;
     gameState.previewFinished = false;
+    gameState.firstPlayDone = false; // WICHTIG: Reset für nächsten Song
     stopPointsCountdown(); // Ensure countdown is stopped before starting a new question
     let idx = gameState.currentQuestion;
 
