@@ -837,11 +837,6 @@ async function nextQuestion() {
     document.getElementById('resultMessage').textContent = '';
     document.getElementById('errorMessage').classList.remove('show');
     document.getElementById('songInfo').classList.remove('show');
-    
-    // Aktiviere Duration-Buttons für neue Frage
-    disableDurationButtons(false);
-
-    gameState.currentQuestion++;
 }
 
 // Zeige Albumcover an
