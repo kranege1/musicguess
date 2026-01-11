@@ -228,6 +228,8 @@ if (document.readyState === 'loading') {
         loadAvailableGenres();
         loadAvailableYears();
         loadArtistNames();
+        // Setze Standard auf "Freie Wahl"
+        selectGameMode('search');
     });
 } else {
     // DOM ist bereits geladen
@@ -235,6 +237,8 @@ if (document.readyState === 'loading') {
     loadAvailableGenres();
     loadAvailableYears();
     loadArtistNames();
+    // Setze Standard auf "Freie Wahl"
+    selectGameMode('search');
 }
 
 // Artist Bubbles Animation
