@@ -1114,8 +1114,14 @@ function selectAnswer(answer, index) {
         resultMsg.style.animation = 'shake 0.5s ease-out';
     }
 
-    // Countdown stoppen (kein weiteres Abbauen nach Antwort)
-    stopPointsCountdown();
+    // Stoppe Countdown-Animation aber verstecke die Box NICHT - zeige Punkte für 3 Sekunden
+    if (gameState.pointsCountdownActive) {
+        if (gameState.pointsCountdownTimer) {
+            cancelAnimationFrame(gameState.pointsCountdownTimer);
+            gameState.pointsCountdownTimer = null;
+        }
+        gameState.pointsCountdownActive = false;
+    }
 
     // Zeige Song-Infos
     showSongInfo();
@@ -1126,6 +1132,11 @@ function selectAnswer(answer, index) {
 
     // Automatisch zur nächsten Frage nach 3 Sekunden
     setTimeout(() => {
+        // Verstecke Punkte-Countdown Box bevor nächste Frage geladen wird
+        const container = document.getElementById('pointsCountdown');
+        if (container) {
+            container.classList.remove('show');
+        }
         nextQuestion();
     }, 3000);
 }
