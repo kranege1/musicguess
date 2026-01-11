@@ -1002,6 +1002,13 @@ async function nextQuestion() {
                 showLoadingState();
                 // Lade alles live von iTunes API (kein Cache)
                 const fullSongData = await loadSongDataLive(candidate.artist, candidate.track);
+                
+                // WICHTIG: Bewahre das ursprüngliche Cover (besonders wichtig im Album-Modus!)
+                if (candidate.image) {
+                    fullSongData.image = candidate.image;
+                    console.log('🖼️ Album-Cover vom Original übernommen:', candidate.image);
+                }
+                
                 gameState.currentSong = fullSongData;
             } else {
                 gameState.currentSong = candidate;
