@@ -222,6 +222,14 @@ app.get('/api/leaderboard-global', (req, res) => {
 });
 
 // Static files (AFTER API routes to avoid conflicts)
+// Add no-cache headers to prevent browser caching
+app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    next();
+});
+
 app.use(express.static(path.join(__dirname), {
     etag: false,
     maxAge: 0 // No client-side caching
