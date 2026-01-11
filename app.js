@@ -1109,6 +1109,11 @@ function selectAnswer(answer, index) {
     // Zeige nächste Frage Button
     document.getElementById('nextBtn').classList.add('show');
     updateStats();
+
+    // Automatisch zur nächsten Frage nach 3 Sekunden
+    setTimeout(() => {
+        nextQuestion();
+    }, 3000);
 }
 
 // Zeige Song-Informationen
