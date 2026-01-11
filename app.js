@@ -220,6 +220,11 @@ async function loadVersion() {
             if (statsVersion) {
                 statsVersion.textContent = `v${data.version}`;
             }
+            // Update footer version
+            const versionFooter = document.getElementById('versionFooter');
+            if (versionFooter) {
+                versionFooter.textContent = `v${data.version}`;
+            }
         }
     } catch (error) {
         console.log('Version konnte nicht geladen werden:', error);
@@ -509,6 +514,9 @@ async function startGame() {
     gameState.wrongAnswers = 0;
     gameState.totalPoints = 0;
     // currentGameMode wird nach Subtitle-Set pro Modus gesetzt
+
+    // Blende Game-Over-Zustand aus (Footer wieder sichtbar)
+    document.body.classList.remove('game-over-active');
 
     // UI aktualisieren
     document.getElementById('setupScreen').style.display = 'none';
@@ -1410,14 +1418,11 @@ function selectAnswer(answer, index) {
         // Spiele Erfolgs-Sound
         playCorrectSound();
         
-        // Nutze aktiven Countdown (falls vorhanden), sonst Standardberechnung
+        // Nutze aktiven Countdown (falls vorhanden), ansonsten Basiswert abhängig vom Modus
         const countdownActive = gameState.pointsCountdownActive;
         const countdownPoints = countdownActive ? Math.max(0, Math.round(gameState.pointsCountdownValue)) : null;
-        const guessedWithoutPlay = gameState.totalPlayTime <= 0 && gameState.currentPlayCount === 0;
-        const basePoints = guessedWithoutPlay
-            ? 1500
-            : (countdownPoints !== null ? countdownPoints : calculatePoints());
-        const awardedPoints = basePoints;
+        const basePoints = gameState.currentPlayedReverse ? 2200 : 2000;
+        const awardedPoints = countdownPoints !== null ? countdownPoints : basePoints;
 
         gameState.totalPoints += awardedPoints;
         
@@ -1497,26 +1502,19 @@ function showSongInfo() {
 
 // Berechne Punkte für richtige Antwort
 function calculatePoints() {
-    // Basispunkte basierend auf Gesamt-Abspielzeit
-    // Formel: 1000 * (5 / totalPlayTime)
-    const playTime = Math.max(1, gameState.totalPlayTime); // Mindestens 1 Sekunde
-    const basePoints = 1000;
-    let points = basePoints * (5 / playTime);
-    
-    // Multiplikator für Rückwärts-Abspielen
-    if (gameState.currentPlayedReverse) {
-        points *= 2;
-    }
-    
-    // Runde auf ganze Zahl
-    return Math.round(points);
+    // Countdown ist führend; wenn nicht aktiv, nimm Basiswert je nach Richtung
+    const countdownActive = gameState.pointsCountdownActive;
+    const countdownPoints = countdownActive ? Math.max(0, Math.round(gameState.pointsCountdownValue)) : null;
+    const basePoints = gameState.currentPlayedReverse ? 2200 : 2000;
+    const points = countdownPoints !== null ? countdownPoints : basePoints;
+    return Math.max(0, Math.round(points));
 }
 
 // Finale Punkte: Durchschnitt pro Frage
 function calculateFinalScore() {
-    const totalQuestions = gameState.songs ? gameState.songs.length : 0;
-    if (totalQuestions === 0) return 0;
-    return Math.round(gameState.totalPoints / totalQuestions);
+    const answeredQuestions = (gameState.correctAnswers || 0) + (gameState.wrongAnswers || 0);
+    if (answeredQuestions === 0) return 0;
+    return Math.round(gameState.totalPoints / answeredQuestions);
 }
 
 // Punkte-Countdown für aktuelle Frage anzeigen und langsam abbauen
@@ -1569,6 +1567,59 @@ function startPointsCountdown(basePoints) {
     if (!gameState.pointsCountdownTimer) {
         gameState.pointsCountdownTimer = requestAnimationFrame(tick);
     }
+}
+
+// Wendet eine fixe Straf-Punktzahl auf den laufenden Countdown an (z.B. bei erneutem Abspielen)
+function applyReplayPenalty(penalty = 300) {
+    const penaltyValue = Math.max(0, Math.round(penalty));
+    const basePoints = gameState.currentPlayedReverse ? 2200 : 2000;
+
+    // Falls kein Countdown aktiv ist, neu starten
+    if (!gameState.pointsCountdownActive) {
+        startPointsCountdown(basePoints);
+    }
+
+    const valueEl = document.getElementById('pointsCountdownValue');
+    const barEl = document.getElementById('pointsCountdownBar');
+    const initial = gameState.pointsCountdownInitial || basePoints;
+    const currentPoints = Math.max(0, Math.round(gameState.pointsCountdownValue ?? initial));
+    const effectiveInitial = Math.max(initial, basePoints);
+    const newPoints = Math.max(0, currentPoints - penaltyValue);
+    const totalDurationMs = 60000;
+
+    // Passe Startzeit an, damit der lineare Verlauf zur neuen Punktzahl passt
+    const pointsLost = effectiveInitial - newPoints;
+    const newProgress = Math.min(1, pointsLost / effectiveInitial);
+    const newElapsed = newProgress * totalDurationMs;
+
+    gameState.pointsCountdownInitial = effectiveInitial;
+    gameState.pointsCountdownStartTime = performance.now() - newElapsed;
+    gameState.pointsCountdownValue = newPoints;
+    gameState.pointsCountdownActive = true;
+
+    if (valueEl) valueEl.textContent = newPoints;
+    if (barEl) barEl.style.width = `${(1 - newProgress) * 100}%`;
+
+    // Sicherstellen, dass der Timer läuft
+    if (!gameState.pointsCountdownTimer) {
+        const tick = (now) => {
+            if (!gameState.pointsCountdownActive) return;
+            const elapsed = now - gameState.pointsCountdownStartTime;
+            const prog = Math.min(1, elapsed / totalDurationMs);
+            const cur = Math.max(0, Math.round(gameState.pointsCountdownInitial * (1 - prog)));
+            gameState.pointsCountdownValue = cur;
+            if (valueEl) valueEl.textContent = cur;
+            if (barEl) barEl.style.width = `${(1 - prog) * 100}%`;
+            if (prog < 1) {
+                gameState.pointsCountdownTimer = requestAnimationFrame(tick);
+            } else {
+                stopPointsCountdown(false);
+            }
+        };
+        gameState.pointsCountdownTimer = requestAnimationFrame(tick);
+    }
+
+    console.log(`Replay penalty: -${penaltyValue} Punkte (${currentPoints} → ${newPoints})`);
 }
 
 // Countdown stoppen und optional ausblenden
@@ -1721,24 +1772,7 @@ function playPreview() {
 
     // Prüfe ob bereits abgespielt wurde
     if (gameState.firstPlayDone && !gameState.isAnswered) {
-        // 300 Punkte Abzug bei erneutem Drücken
-        if (gameState.pointsCountdownActive) {
-            const currentPoints = Math.max(0, Math.round(gameState.pointsCountdownValue));
-            const newPoints = Math.max(0, currentPoints - 300);
-            
-            // Berechne neue Zeit basierend auf reduzierten Punkten
-            const elapsed = gameState.pointsCountdownStartTime ? (performance.now() - gameState.pointsCountdownStartTime) : 0;
-            const pointsLost = gameState.pointsCountdownInitial - newPoints;
-            const totalDurationMs = 60000;
-            const newProgress = pointsLost / gameState.pointsCountdownInitial;
-            const newElapsed = newProgress * totalDurationMs;
-            
-            // Setze neue Startzeit basierend auf reduzierten Punkten
-            gameState.pointsCountdownStartTime = performance.now() - newElapsed;
-            gameState.pointsCountdownValue = newPoints;
-            
-            console.log(`Erneutes Abspielen: -300 Punkte (${currentPoints} → ${newPoints})`);
-        }
+        applyReplayPenalty(300);
     } else if (!gameState.firstPlayDone && !gameState.isAnswered) {
         // Erstes Abspielen: Starte Punkte-Countdown von 2000
         gameState.firstPlayDone = true;
@@ -1860,19 +1894,9 @@ async function playPreviewReverse() {
 
     // Reverse-Modus: Punkte-Countdown/Strafen handhaben
     gameState.previewFinished = false;
-    if (gameState.firstPlayDone && !gameState.isAnswered && gameState.pointsCountdownActive) {
+    if (gameState.firstPlayDone && !gameState.isAnswered) {
         // Erneutes Reverse: -300 Punkte Abzug aus dem laufenden Countdown
-        const currentPoints = Math.max(0, Math.round(gameState.pointsCountdownValue));
-        const newPoints = Math.max(0, currentPoints - 300);
-
-        // Fortschritt neu berechnen relativ zur initialen Basis
-        const totalDurationMs = 60000;
-        const pointsLost = gameState.pointsCountdownInitial - newPoints;
-        const newProgress = pointsLost / gameState.pointsCountdownInitial;
-        const newElapsed = newProgress * totalDurationMs;
-        gameState.pointsCountdownStartTime = performance.now() - newElapsed;
-        gameState.pointsCountdownValue = newPoints;
-        console.log(`Reverse erneut: -300 Punkte (${currentPoints} → ${newPoints})`);
+        applyReplayPenalty(300);
     } else if (!gameState.firstPlayDone && !gameState.isAnswered) {
         // Erstes Abspielen im Reverse: Countdown von 2200 starten (+200 Bonus)
         gameState.firstPlayDone = true;
@@ -1996,6 +2020,7 @@ function updatePlayTimeDisplay() {
 function updateStats() {
     const totalQuestions = gameState.songs ? gameState.songs.length : 0;
     const displayedQuestion = Math.min(gameState.currentQuestion + 1, totalQuestions);
+    const answeredQuestions = (gameState.correctAnswers || 0) + (gameState.wrongAnswers || 0);
     const totalEl = document.getElementById('totalProgress');
     if (totalEl) {
         totalEl.textContent = `${displayedQuestion} von ${totalQuestions} Fragen`;
@@ -2013,7 +2038,7 @@ function updateStats() {
     
     const pointsEl = document.getElementById('pointsCount');
     if (pointsEl) {
-        const avgPoints = totalQuestions > 0 ? Math.round(gameState.totalPoints / totalQuestions) : 0;
+        const avgPoints = answeredQuestions > 0 ? Math.round(gameState.totalPoints / answeredQuestions) : 0;
         pointsEl.textContent = avgPoints;
     }
 }
@@ -2025,6 +2050,9 @@ function endGame() {
     const total = gameState.correctAnswers + gameState.wrongAnswers;
     const percentage = total > 0 ? Math.round((gameState.correctAnswers / total) * 100) : 0;
     const finalScore = calculateFinalScore();
+
+    // Markiere Game-Over-Zustand, damit Footer ausgeblendet wird
+    document.body.classList.add('game-over-active');
 
     // Remove cover background when showing game over screen
     const container = document.querySelector('.container');
@@ -2361,12 +2389,12 @@ async function saveGameScore() {
     const playerName = localStorage.getItem('playerName') || 'Anon';
     const playerId = getOrCreatePlayerID();
     const gameMode = gameState.currentGameMode || 'Genre';
-    const totalQuestions = gameState.songs ? gameState.songs.length : 0;
+    const answeredQuestions = (gameState.correctAnswers || 0) + (gameState.wrongAnswers || 0);
     const correctAnswers = gameState.correctAnswers || 0;
     const finalScore = calculateFinalScore();
     
     // Only save if more than 9 questions were answered
-    if (totalQuestions <= 9) {
+    if (answeredQuestions <= 9) {
         console.log('⚠️ Score nicht gespeichert: Weniger als 10 Fragen beantwortet');
         return false;
     }
@@ -2376,7 +2404,7 @@ async function saveGameScore() {
         playerId,
         gameMode,
         points: finalScore,
-        totalQuestions,
+        totalQuestions: answeredQuestions,
         correctAnswers
     });
     
@@ -2391,7 +2419,7 @@ async function saveGameScore() {
                 playerId: playerId,
                 gameMode: gameMode,
                 points: finalScore,
-                totalQuestions: totalQuestions,
+                totalQuestions: answeredQuestions,
                 correctAnswers: correctAnswers
             })
         });
@@ -2441,4 +2469,38 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         showSetupLeaderboard();
     }, 300);
+    // Load saved font size
+    loadFontSize();
 });
+
+// Font size control functions
+function increaseFontSize() {
+    const root = document.documentElement;
+    const currentSize = getComputedStyle(root).getPropertyValue('--base-font-size').trim();
+    const numSize = parseFloat(currentSize);
+    const newSize = numSize + 1;
+    root.style.setProperty('--base-font-size', `${newSize}px`);
+    localStorage.setItem('fontSize', newSize);
+    console.log('Font size increased to:', newSize);
+}
+
+function decreaseFontSize() {
+    const root = document.documentElement;
+    const currentSize = getComputedStyle(root).getPropertyValue('--base-font-size').trim();
+    const numSize = parseFloat(currentSize);
+    const newSize = Math.max(12, numSize - 1); // Minimum 12px
+    root.style.setProperty('--base-font-size', `${newSize}px`);
+    localStorage.setItem('fontSize', newSize);
+    console.log('Font size decreased to:', newSize);
+}
+
+function loadFontSize() {
+    const savedSize = localStorage.getItem('fontSize');
+    if (savedSize) {
+        document.documentElement.style.setProperty('--base-font-size', `${savedSize}px`);
+        console.log('Font size loaded from storage:', savedSize);
+    } else {
+        // Initialize with default 18px
+        document.documentElement.style.setProperty('--base-font-size', '18px');
+    }
+}

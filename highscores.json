@@ -85,7 +85,7 @@
       "ip": "::1",
       "playerId": "eb16b498-959e-43a8-b676-d7f6bd1a004c",
       "firstSeen": "2026-01-06T13:24:30.544Z",
-      "lastSeen": "2026-01-11T16:05:24.921Z",
+      "lastSeen": "2026-01-11T18:02:29.647Z",
       "scores": [
         {
           "id": "score-1767728971560",
@@ -275,6 +275,78 @@
           "correctAnswers": 8,
           "accuracy": 80,
           "date": "2026-01-11T16:05:24.921Z"
+        },
+        {
+          "id": "score-1768151794806",
+          "gameMode": "Songs von Iron Maiden",
+          "points": 0,
+          "totalQuestions": 10,
+          "correctAnswers": 0,
+          "accuracy": 0,
+          "date": "2026-01-11T17:16:34.806Z"
+        },
+        {
+          "id": "score-1768151970801",
+          "gameMode": "Songs von Willie Nelson",
+          "points": 0,
+          "totalQuestions": 10,
+          "correctAnswers": 0,
+          "accuracy": 0,
+          "date": "2026-01-11T17:19:30.801Z"
+        },
+        {
+          "id": "score-1768152664164",
+          "gameMode": "Songs von Marvin Gaye",
+          "points": 0,
+          "totalQuestions": 10,
+          "correctAnswers": 0,
+          "accuracy": 0,
+          "date": "2026-01-11T17:31:04.164Z"
+        },
+        {
+          "id": "score-1768152750323",
+          "gameMode": "Songs von 808s & Heartbreak",
+          "points": 0,
+          "totalQuestions": 10,
+          "correctAnswers": 0,
+          "accuracy": 0,
+          "date": "2026-01-11T17:32:30.323Z"
+        },
+        {
+          "id": "score-1768152804208",
+          "gameMode": "Songs von Michael Jackson",
+          "points": 0,
+          "totalQuestions": 10,
+          "correctAnswers": 0,
+          "accuracy": 0,
+          "date": "2026-01-11T17:33:24.208Z"
+        },
+        {
+          "id": "score-1768153420866",
+          "gameMode": "Billboard Charts aus 1997",
+          "points": 568,
+          "totalQuestions": 10,
+          "correctAnswers": 3,
+          "accuracy": 30,
+          "date": "2026-01-11T17:43:40.866Z"
+        },
+        {
+          "id": "score-1768154377137",
+          "gameMode": "Genre: 1980er",
+          "points": 1946,
+          "totalQuestions": 10,
+          "correctAnswers": 10,
+          "accuracy": 100,
+          "date": "2026-01-11T17:59:37.137Z"
+        },
+        {
+          "id": "score-1768154549647",
+          "gameMode": "Songs von Kuschelrock 6",
+          "points": 1046,
+          "totalQuestions": 10,
+          "correctAnswers": 6,
+          "accuracy": 60,
+          "date": "2026-01-11T18:02:29.647Z"
         }
       ]
     }
@@ -616,7 +688,112 @@
         "lastScore": "2026-01-11T16:05:24.921Z"
       }
     ],
+    "Songs von Iron Maiden": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Iron Maiden",
+        "points": 0,
+        "totalPoints": 0,
+        "avgAccuracy": 0,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T17:16:34.806Z"
+      }
+    ],
+    "Songs von Willie Nelson": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Willie Nelson",
+        "points": 0,
+        "totalPoints": 0,
+        "avgAccuracy": 0,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T17:19:30.801Z"
+      }
+    ],
+    "Songs von Marvin Gaye": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Marvin Gaye",
+        "points": 0,
+        "totalPoints": 0,
+        "avgAccuracy": 0,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T17:31:04.164Z"
+      }
+    ],
+    "Songs von 808s & Heartbreak": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von 808s & Heartbreak",
+        "points": 0,
+        "totalPoints": 0,
+        "avgAccuracy": 0,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T17:32:30.323Z"
+      }
+    ],
+    "Songs von Michael Jackson": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Michael Jackson",
+        "points": 0,
+        "totalPoints": 0,
+        "avgAccuracy": 0,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T17:33:24.208Z"
+      }
+    ],
+    "Billboard Charts aus 1997": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Billboard Charts aus 1997",
+        "points": 568,
+        "totalPoints": 568,
+        "avgAccuracy": 30,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T17:43:40.866Z"
+      }
+    ],
+    "Genre: 1980er": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Genre: 1980er",
+        "points": 1946,
+        "totalPoints": 1946,
+        "avgAccuracy": 100,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T17:59:37.137Z"
+      }
+    ],
+    "Songs von Kuschelrock 6": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Kuschelrock 6",
+        "points": 1046,
+        "totalPoints": 1046,
+        "avgAccuracy": 60,
+        "gamesPlayed": 1,
+        "lastScore": "2026-01-11T18:02:29.647Z"
+      }
+    ],
     "Global": [
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Genre: 1980er",
+        "points": 1946,
+        "totalPoints": 1946,
+        "accuracy": 100,
+        "date": "2026-01-11T17:59:37.137Z"
+      },
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
         "username": "Geri",
@@ -643,6 +820,15 @@
         "totalPoints": 1143,
         "accuracy": 70,
         "date": "2026-01-06T20:17:20.381Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Kuschelrock 6",
+        "points": 1046,
+        "totalPoints": 1046,
+        "accuracy": 60,
+        "date": "2026-01-11T18:02:29.647Z"
       },
       {
         "ip": "::1",
@@ -706,6 +892,15 @@
         "totalPoints": 584,
         "accuracy": 40,
         "date": "2026-01-06T09:27:22.845Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Billboard Charts aus 1997",
+        "points": 568,
+        "totalPoints": 568,
+        "accuracy": 30,
+        "date": "2026-01-11T17:43:40.866Z"
       },
       {
         "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
@@ -868,8 +1063,53 @@
         "totalPoints": 0,
         "accuracy": 0,
         "date": "2026-01-11T15:51:33.096Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Iron Maiden",
+        "points": 0,
+        "totalPoints": 0,
+        "accuracy": 0,
+        "date": "2026-01-11T17:16:34.806Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Willie Nelson",
+        "points": 0,
+        "totalPoints": 0,
+        "accuracy": 0,
+        "date": "2026-01-11T17:19:30.801Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Marvin Gaye",
+        "points": 0,
+        "totalPoints": 0,
+        "accuracy": 0,
+        "date": "2026-01-11T17:31:04.164Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von 808s & Heartbreak",
+        "points": 0,
+        "totalPoints": 0,
+        "accuracy": 0,
+        "date": "2026-01-11T17:32:30.323Z"
+      },
+      {
+        "ip": "::1_eb16b498-959e-43a8-b676-d7f6bd1a004c",
+        "username": "Geri",
+        "gameMode": "Songs von Michael Jackson",
+        "points": 0,
+        "totalPoints": 0,
+        "accuracy": 0,
+        "date": "2026-01-11T17:33:24.208Z"
       }
     ]
   },
-  "lastUpdated": "2026-01-11T16:05:24.921Z"
+  "lastUpdated": "2026-01-11T18:02:29.647Z"
 }

@@ -8,14 +8,29 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <style>
+        :root {
+            --base-font-size: 18px;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* Global text outline for better readability on cover backgrounds */
+        body, h1, h2, h3, p, span, div, button, label, input, select, option {
+            text-shadow: 
+                -1px -1px 0 rgba(0, 0, 0, 0.5),
+                 1px -1px 0 rgba(0, 0, 0, 0.5),
+                -1px  1px 0 rgba(0, 0, 0, 0.5),
+                 1px  1px 0 rgba(0, 0, 0, 0.5),
+                 0    0   3px rgba(0, 0, 0, 0.3);
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: var(--base-font-size);
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -694,6 +709,34 @@
             border-radius: 10px;
         }
 
+        .font-size-controls {
+            display: flex;
+            gap: 4px;
+            justify-content: flex-end;
+            margin-top: 4px;
+        }
+
+        .font-size-btn {
+            background: linear-gradient(180deg, rgba(244, 244, 244, 0.55) 0%, rgba(216, 216, 216, 0.55) 100%);
+            border: 2px solid rgba(63, 63, 63, 0.55);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(8px);
+            color: #2f2f2f;
+        }
+
+        .font-size-btn:hover {
+            filter: brightness(1.05);
+        }
+
+        .font-size-btn:active {
+            transform: scale(0.95);
+        }
+
         .stats-head {
             width: 100%;
             display: grid;
@@ -821,17 +864,18 @@
             display: flex;
             gap: 8px;
             margin: 10px 0 6px;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+            justify-content: space-between;
         }
 
         .top-actions .control-btn {
-            max-width: 160px;
+            flex: 1;
             padding: 10px 14px;
         }
 
         .play-row {
             display: grid;
-            grid-template-columns: 1fr 1fr auto;
+            grid-template-columns: 7fr 3fr auto;
             gap: 8px;
             margin: 12px 0 10px;
             align-items: stretch;
@@ -841,7 +885,7 @@
             width: 100%;
             min-width: 0;
             padding: 12px 18px;
-            font-size: 14px;
+            font-size: calc(var(--base-font-size) - 4px);
             font-weight: 700;
             border-radius: 12px;
             cursor: pointer;
@@ -1155,6 +1199,29 @@
             display: block;
         }
 
+        .version-footer {
+            position: fixed;
+            bottom: 8px;
+            right: 12px;
+            font-size: 0.75em;
+            color: rgba(255, 255, 255, 0.6);
+            text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.8), 1px -1px 0 rgba(0, 0, 0, 0.8), -1px 1px 0 rgba(0, 0, 0, 0.8), 1px 1px 0 rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+            z-index: 10;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .game-over.show ~ .version-footer {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        body.game-over-active .version-footer {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
         .final-score {
             font-size: 2.4em;
             color: #667eea;
@@ -1426,6 +1493,10 @@
                     <div style="text-align: right;">
                         <div class="stat-line" style="color: #667eea; justify-content: flex-end;">⏱️ <span id="totalPlayTimeDisplay">0s</span></div>
                         <div class="stat-line" style="color: #667eea; justify-content: flex-end;">🏆 <span id="pointsCount">0</span> Punkte</div>
+                        <div class="font-size-controls">
+                            <button class="font-size-btn" onclick="decreaseFontSize()" title="Schrift kleiner">▼</button>
+                            <button class="font-size-btn" onclick="increaseFontSize()" title="Schrift größer">▲</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1520,6 +1591,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Version Footer -->
+    <div class="version-footer" id="versionFooter">v0.0.0</div>
 
     <audio id="audioPlayer" preload="none" playsinline webkit-playsinline crossOrigin="anonymous"></audio>
     <script src="app.js"></script>
