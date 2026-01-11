@@ -382,6 +382,55 @@
             gap: 4px;
         }
 
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .game-mode-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .mode-btn {
+            padding: 14px 12px !important;
+            background: white !important;
+            border: 2px solid #667eea !important;
+            border-radius: 9px !important;
+            cursor: pointer !important;
+            font-size: 0.95em !important;
+            font-weight: 600 !important;
+            color: #667eea !important;
+            transition: all 0.3s !important;
+            text-align: center !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+            min-height: 70px !important;
+        }
+
+        .mode-btn:hover {
+            background: #f5f5ff !important;
+            border-color: #764ba2 !important;
+            transform: translateY(-2px) !important;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            border-color: #764ba2 !important;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
+        }
+
+        .mode-btn.active:hover {
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
+        }
+
         label {
             font-weight: 600;
             color: #333;
@@ -1068,19 +1117,10 @@
         <div class="setup-screen" id="setupScreen">
             <div class="input-group">
                 <label>🎮 Spielmodus:</label>
-                <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
-                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
-                        <input type="radio" name="gameMode" value="genre" checked onchange="toggleGameMode()">
-                        <span>Genre auswählen</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
-                        <input type="radio" name="gameMode" value="billboard" onchange="toggleGameMode()">
-                        <span>Billboard Hot 100</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; cursor: pointer;">
-                        <input type="radio" name="gameMode" value="search" onchange="toggleGameMode()">
-                        <span>Freie Wahl (iTunes Suche)</span>
-                    </label>
+                <div class="game-mode-buttons">
+                    <button type="button" class="mode-btn" data-mode="genre" onclick="selectGameMode('genre')">🎸 Genre auswählen</button>
+                    <button type="button" class="mode-btn" data-mode="billboard" onclick="selectGameMode('billboard')">🔥 Billboard Hot 100</button>
+                    <button type="button" class="mode-btn active" data-mode="search" onclick="selectGameMode('search')">🎤 Freie Wahl</button>
                 </div>
             </div>
 

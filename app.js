@@ -364,11 +364,15 @@ function createArtistBubble() {
 
 
 // Toggle zwischen Genre-, Billboard- und Suchmodus
-function toggleGameMode() {
-    const selectedMode = document.querySelector('input[name="gameMode"]:checked');
-    if (!selectedMode) return;
+function selectGameMode(mode) {
+    // Entferne active Klasse von allen Buttons
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
     
-    const mode = selectedMode.value;
+    // Füge active Klasse zum gewählten Button hinzu
+    document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+    
     const genreSelection = document.getElementById('genreSelection');
     const billboardSelection = document.getElementById('billboardSelection');
     const searchSelection = document.getElementById('searchSelection');
@@ -397,8 +401,9 @@ function toggleGameMode() {
 
 // Starte das Spiel
 async function startGame() {
-    const selectedMode = document.querySelector('input[name="gameMode"]:checked');
-    const gameMode = selectedMode ? selectedMode.value : 'genre';
+    // Finde den aktiven Mode-Button statt Radio-Button
+    const activeButton = document.querySelector('.mode-btn.active');
+    const gameMode = activeButton ? activeButton.dataset.mode : 'search'; // Default zu 'search'
     const songCount = parseInt(document.getElementById('songCount').value);
 
     // State speichern (previewDuration wird während des Spiels per Button gewählt)
