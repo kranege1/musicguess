@@ -805,7 +805,7 @@ async function nextQuestion() {
             }
 
             if (gameState.currentSong && gameState.currentSong.previewUrl) {
-                gameState.currentQuestion = idx;
+                gameState.currentQuestion = idx + 1; // Nächster Song für den nächsten Aufruf
                 break;
             }
         } catch (error) {
