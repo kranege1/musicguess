@@ -764,12 +764,31 @@ async function loadSongsFromItunes(searchQuery, limit) {
         let results = [];
         
         if (currentSearchType === 'album') {
-            // Album-Suche
+            // Album-Suche: Suche zuerst das Album selbst, dann alle Songs von diesem Album
             try {
-                results = await fetchItunes(searchQuery, { limit: 200, country: 'DE', entity: 'song', attribute: 'albumTerm' });
-            } catch (errDe) {
-                console.warn('DE-Album-Suche fehlgeschlagen, versuche US:', errDe);
-                results = await fetchItunes(searchQuery, { limit: 200, country: 'US', entity: 'song', attribute: 'albumTerm' });
+                // Schritt 1: Suche das Album
+                const albumResults = await fetchItunes(searchQuery, { limit: 1, country: 'DE', entity: 'album' });
+                
+                if (albumResults.length === 0) {
+                    console.warn('DE-Album nicht gefunden, versuche US:');
+                    const usAlbumResults = await fetchItunes(searchQuery, { limit: 1, country: 'US', entity: 'album' });
+                    if (usAlbumResults.length > 0) {
+                        const albumId = usAlbumResults[0].collectionId;
+                        results = await fetchItunes(`${albumId}`, { limit: 300, country: 'US', entity: 'song' });
+                    }
+                } else {
+                    const albumId = albumResults[0].collectionId;
+                    // Schritt 2: Hole alle Songs von diesem Album
+                    results = await fetchItunes(`${albumId}`, { limit: 300, country: 'DE', entity: 'song' });
+                }
+            } catch (err) {
+                console.warn('Album-Suche fehlgeschlagen:', err);
+                // Fallback: Versuche normale Suche
+                try {
+                    results = await fetchItunes(searchQuery, { limit: 200, country: 'US', entity: 'song', attribute: 'albumTerm' });
+                } catch (err2) {
+                    console.error('Album-Fallback fehlgeschlagen:', err2);
+                }
             }
         } else {
             // Standard Künstler/Titel Suche
@@ -800,7 +819,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
             }));
 
         gameState.songs = shuffleArray(songs);
-        console.log(`${gameState.songs.length} Songs geladen`);
+        console.log(`${gameState.songs.length} Songs geladen aus: ${currentSearchType === 'album' ? 'Album' : 'Künstler/Titel'}`);
     } catch (error) {
         console.error('iTunes API Fehler:', error);
         throw error;
