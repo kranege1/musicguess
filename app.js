@@ -183,6 +183,43 @@ async function loadAvailableGenres() {
             console.log(`Genre hinzugefügt: ${genre}`);
         });
         
+        // Add Classical genre
+        const classicalOption = document.createElement('option');
+        classicalOption.value = 'Classical';
+        classicalOption.textContent = 'Classical';
+        genreSelect.appendChild(classicalOption);
+        console.log('Genre hinzugefügt: Classical');
+        
+        // Add individual countries from CountryList.json
+        try {
+            const countriesResponse = await fetch(`CountryList.json?v=${new Date().getTime()}`, { cache: 'no-store' });
+            if (countriesResponse.ok) {
+                const countryData = await countriesResponse.json();
+                const countryNames = {
+                    'de': 'Germany',
+                    'us': 'USA',
+                    'gb': 'UK',
+                    'it': 'Italy',
+                    'fr': 'France',
+                    'es': 'Spain',
+                    'jp': 'Japan',
+                    'kr': 'Korea',
+                    'br': 'Brazil'
+                };
+                
+                Object.keys(countryData).forEach(countryCode => {
+                    const countryName = countryNames[countryCode] || countryCode.toUpperCase();
+                    const countryOption = document.createElement('option');
+                    countryOption.value = `Country:${countryCode}`;
+                    countryOption.textContent = `🌍 ${countryName}`;
+                    genreSelect.appendChild(countryOption);
+                    console.log(`Genre hinzugefügt: ${countryName}`);
+                });
+            }
+        } catch (err) {
+            console.warn('CountryList.json konnte nicht geladen werden:', err);
+        }
+        
         console.log(`✅ ${genres.length} Genres erfolgreich geladen!`);
     } catch (error) {
         console.error('❌ Fehler beim Laden der Genres:', error);
@@ -683,7 +720,48 @@ async function startGame() {
 // Lade Songs aus songs.json basierend auf Genre
 async function loadSongsFromGenre(genre, limit) {
     try {
-        // Lade songs.json
+        // Handle Classical genre
+        if (genre === 'Classical') {
+            const cacheBuster = Date.now();
+            const response = await fetch(`classicalList.json?v=${cacheBuster}`, { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error('Fehler beim Laden von classicalList.json');
+            }
+            const classicalData = await response.json();
+            const composers = classicalData.international_classical || [];
+            
+            // Randomly select composers and load their works
+            const selectedComposers = composers.sort(() => 0.5 - Math.random()).slice(0, limit);
+            const searchPromises = selectedComposers.map(composer => 
+                loadSongFromItunes(composer, composer, 'classical')
+            );
+            const results = await Promise.all(searchPromises);
+            gameState.songs = results.filter(song => song !== null);
+            return;
+        }
+        
+        // Handle Country-based genres
+        if (genre.startsWith('Country:')) {
+            const countryCode = genre.replace('Country:', '');
+            const cacheBuster = Date.now();
+            const response = await fetch(`CountryList.json?v=${cacheBuster}`, { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error('Fehler beim Laden von CountryList.json');
+            }
+            const countryData = await response.json();
+            const artists = countryData[countryCode] || [];
+            
+            // Randomly select artists from country
+            const selectedArtists = artists.sort(() => 0.5 - Math.random()).slice(0, limit);
+            const searchPromises = selectedArtists.map(artist => 
+                loadSongFromItunes(artist, artist, `Country: ${countryCode.toUpperCase()}`)
+            );
+            const results = await Promise.all(searchPromises);
+            gameState.songs = results.filter(song => song !== null);
+            return;
+        }
+        
+        // Lade songs.json for regular genres
         const cacheBuster = Date.now();
         const response = await fetch(`songs.json?v=${cacheBuster}`, { cache: 'no-store' });
         if (!response.ok) {
