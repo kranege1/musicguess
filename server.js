@@ -4,6 +4,7 @@ require('dotenv').config();
 const http = require('http');
 const path = require('path');
 const { saveScore, getLeaderboard, getPlayerByIP, getClientIP } = require('./highscoreManager');
+const { db } = require('./firebaseConfig');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -155,8 +156,8 @@ app.get('/api/player', (req, res) => {
     }
 });
 
-// POST /api/score - Neuen Score speichern
-app.post('/api/score', (req, res) => {
+// POST /api/score - Neuen Score speichern (Firebase)
+app.post('/api/score', async (req, res) => {
     try {
         const { username, playerId, gameMode, points, totalQuestions, correctAnswers } = req.body;
         
@@ -164,35 +165,72 @@ app.post('/api/score', (req, res) => {
         
         if (!username || !gameMode || points === undefined || !totalQuestions || correctAnswers === undefined) {
             console.error('❌ Unvollständige Daten:', { username, playerId, gameMode, points, totalQuestions, correctAnswers });
-            return res.status(400).json({ error: 'Unvollständige Daten' });
+            return res.status(400).json({ error: 'Unvollständige Daten', success: false });
         }
 
-        const scoreEntry = saveScore(req, {
-            username,
-            playerId,
-            gameMode,
-            points,
-            totalQuestions,
-            correctAnswers
-        });
+        // Validate: minimum 10 questions required
+        if (totalQuestions < 10) {
+            console.log('⚠️  Score nicht gespeichert: Weniger als 10 Fragen beantwortet');
+            return res.json({
+                success: false,
+                message: 'Mindestens 10 Fragen erforderlich',
+                saved: false
+            });
+        }
 
-        console.log('✅ Score erfolgreich gespeichert:', scoreEntry);
+        // Save to Firestore
+        const scoreRef = db.collection('scores').doc();
+        const scoreData = {
+            userId: playerId,
+            username: username,
+            gameMode: gameMode,
+            points: points,
+            totalQuestions: totalQuestions,
+            correctAnswers: correctAnswers,
+            timestamp: new Date(),
+            documentId: scoreRef.id
+        };
+
+        await scoreRef.set(scoreData);
+        
+        console.log('✅ Score erfolgreich in Firestore gespeichert:', scoreData);
         
         res.json({
             success: true,
-            score: scoreEntry
+            message: 'Score gespeichert',
+            score: scoreData,
+            saved: true
         });
     } catch (err) {
         console.error('❌ Fehler beim Speichern des Scores:', err);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ 
+            error: err.message,
+            success: false,
+            saved: false
+        });
     }
 });
 
-// GET /api/leaderboard/:mode - Top 10 für einen Modus
-app.get('/api/leaderboard/:mode', (req, res) => {
+// GET /api/leaderboard/:mode - Top 10 für einen Modus (Firestore)
+app.get('/api/leaderboard/:mode', async (req, res) => {
     try {
         const mode = decodeURIComponent(req.params.mode);
-        const leaderboard = getLeaderboard(mode);
+        
+        let query = db.collection('scores').where('gameMode', '==', mode);
+        
+        const snapshot = await query
+            .orderBy('points', 'desc')
+            .orderBy('timestamp', 'asc')
+            .limit(10)
+            .get();
+        
+        const leaderboard = [];
+        snapshot.forEach((doc) => {
+            leaderboard.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
         
         res.json({
             mode: mode,
@@ -205,10 +243,22 @@ app.get('/api/leaderboard/:mode', (req, res) => {
     }
 });
 
-// GET /api/leaderboard-global - Globales Leaderboard
-app.get('/api/leaderboard-global', (req, res) => {
+// GET /api/leaderboard-global - Globales Leaderboard (Firestore)
+app.get('/api/leaderboard-global', async (req, res) => {
     try {
-        const leaderboard = getLeaderboard('Global');
+        const snapshot = await db.collection('scores')
+            .orderBy('points', 'desc')
+            .orderBy('timestamp', 'asc')
+            .limit(10)
+            .get();
+        
+        const leaderboard = [];
+        snapshot.forEach((doc) => {
+            leaderboard.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
         
         res.json({
             mode: 'Global',
