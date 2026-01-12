@@ -144,7 +144,7 @@ async function loadAvailableGenres() {
         
         if (!response.ok) {
             debugLog(`[F1] ❌ Songs HTTP ${response.status}`, 'F1');
-            throw new Error('Fehler beim Laden der Songs');
+            throw new Error(t('errorLoadingSongs'));
         }
 
         const songs = await response.json();
@@ -222,7 +222,7 @@ async function loadAvailableGenres() {
         
         console.log(`✅ ${genres.length} Genres erfolgreich geladen!`);
     } catch (error) {
-        console.error('❌ Fehler beim Laden der Genres:', error);
+        console.error(t('errorLoadingGenres') + ':', error);
         debugLog(`[F1] ❌ Load failed: ${error.message}`, 'F1');
     }
 }
@@ -271,7 +271,7 @@ async function loadAvailableYears() {
         
         console.log(`✅ ${years.length} Jahre erfolgreich geladen!`);
     } catch (error) {
-        console.error('❌ Fehler beim Laden der Jahre:', error);
+        console.error(t('errorLoadingYears') + ':', error);
     }
 }
 
@@ -392,7 +392,7 @@ async function loadArtistNames() {
         const response = await fetch(`ArtistsList.json?v=${cacheBuster}`, { cache: 'no-store' });
         
         if (!response.ok) {
-            throw new Error('Fehler beim Laden der Künstler');
+            throw new Error(t('errorLoadingArtists'));
         }
 
         const data = await response.json();
@@ -400,7 +400,7 @@ async function loadArtistNames() {
         
         console.log(`${artistNames.length} Künstler für Bubbles geladen`);
     } catch (error) {
-        console.error('❌ Fehler beim Laden der Künstler:', error);
+        console.error(t('errorLoadingArtists') + ':', error);
     }
 }
 
@@ -1934,13 +1934,13 @@ function playWrongSound() {
 function playPreview() {
     if (!gameState.currentSong) {
         debugLog('❌ Kein Song geladen', 'F8');
-        alert(`[F8] Kein Song geladen. ${gameState.lastError ? 'Letzter Fehler: ' + gameState.lastError : ''} Lade nächste Frage...`);
+        alert(`[F8] ${t('errorNoSongLoaded')} ${gameState.lastError ? t('errorLastError') + ' ' + gameState.lastError : ''} ${t('errorLoadingNextQuestion')}`);
         nextQuestion();
         return;
     }
     
     if (!gameState.currentSong.previewUrl) {
-        alert('Für diesen Song ist leider keine Preview verfügbar. Überspringe...');
+        alert(t('errorNoPreview'));
         // Automatisch nächsten Song laden
         setTimeout(() => {
             gameState.currentQuestion++;
@@ -2029,7 +2029,7 @@ function playPreview() {
     }).catch(error => {
         console.error('Playback error:', error);
         debugLog(`❌ Playback-Fehler: ${error.message}`, 'F7');
-        alert('[F7] Fehler beim Abspielen. Bitte tippe erneut auf Play oder überspringe den Song.');
+        alert('[F7] ' + t('errorPlayback'));
         stopPreview();
     });
 }
@@ -2178,7 +2178,7 @@ async function playPreviewReverse() {
         const playBtn = document.getElementById('playBtn');
         if (playBtn) playBtn.disabled = false;
         
-        alert('Konnte Reverse-Preview nicht abspielen.');
+        alert(t('errorReversePlayback'));
     }
 }
 

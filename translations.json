@@ -64,7 +64,18 @@
     "minQuestionsRequired": "⚠️ Mindestens 10 Fragen erforderlich",
     "scoreNotSaved": "Dein Score wurde nicht gespeichert",
     "scoreSavedSuccess": "✅ Score wurde gespeichert!",
-    "scoreInLeaderboard": "Dein Ergebnis ist im Highscore enthalten"
+    "scoreInLeaderboard": "Dein Ergebnis ist im Highscore enthalten",
+    "errorLoadingSongs": "⚠️ Fehler beim Laden der Songs. Bitte versuchen Sie es erneut!",
+    "errorLoadingGenres": "❌ Fehler beim Laden der Genres",
+    "errorLoadingBillboard": "Fehler beim Laden der Billboard Daten",
+    "errorLoadingYears": "❌ Fehler beim Laden der Jahre",
+    "errorLoadingArtists": "❌ Fehler beim Laden der Künstler",
+    "errorNoSongLoaded": "Kein Song geladen.",
+    "errorLastError": "Letzter Fehler:",
+    "errorLoadingNextQuestion": "Lade nächste Frage...",
+    "errorNoPreview": "Für diesen Song ist leider keine Preview verfügbar. Überspringe...",
+    "errorPlayback": "Fehler beim Abspielen. Bitte tippe erneut auf Play oder überspringe den Song.",
+    "errorReversePlayback": "Konnte Reverse-Preview nicht abspielen."
   },
   "en": {
     "title": "🎵 Music Quiz Game",
@@ -131,7 +142,18 @@
     "minQuestionsRequired": "⚠️ At least 10 questions required",
     "scoreNotSaved": "Your score was not saved",
     "scoreSavedSuccess": "✅ Score saved!",
-    "scoreInLeaderboard": "Your result is in the highscores"
+    "scoreInLeaderboard": "Your result is in the highscores",
+    "errorLoadingSongs": "⚠️ Error loading songs. Please try again!",
+    "errorLoadingGenres": "❌ Error loading genres",
+    "errorLoadingBillboard": "Error loading Billboard data",
+    "errorLoadingYears": "❌ Error loading years",
+    "errorLoadingArtists": "❌ Error loading artists",
+    "errorNoSongLoaded": "No song loaded.",
+    "errorLastError": "Last error:",
+    "errorLoadingNextQuestion": "Loading next question...",
+    "errorNoPreview": "Unfortunately, no preview is available for this song. Skipping...",
+    "errorPlayback": "Playback error. Please tap Play again or skip the song.",
+    "errorReversePlayback": "Could not play reverse preview."
   },
   "it": {
     "title": "🎵 Quiz Musicale",
@@ -198,6 +220,17 @@
     "minQuestionsRequired": "⚠️ Almeno 10 domande richieste",
     "scoreNotSaved": "Il tuo punteggio non è stato salvato",
     "scoreSavedSuccess": "✅ Punteggio salvato!",
-    "scoreInLeaderboard": "Il tuo risultato è nei punteggi"
+    "scoreInLeaderboard": "Il tuo risultato è nei punteggi",
+    "errorLoadingSongs": "⚠️ Errore nel caricamento delle canzoni. Per favore riprova!",
+    "errorLoadingGenres": "❌ Errore nel caricamento dei generi",
+    "errorLoadingBillboard": "Errore nel caricamento dei dati Billboard",
+    "errorLoadingYears": "❌ Errore nel caricamento degli anni",
+    "errorLoadingArtists": "❌ Errore nel caricamento degli artisti",
+    "errorNoSongLoaded": "Nessuna canzone caricata.",
+    "errorLastError": "Ultimo errore:",
+    "errorLoadingNextQuestion": "Caricamento prossima domanda...",
+    "errorNoPreview": "Purtroppo non è disponibile un'anteprima per questa canzone. Passando oltre...",
+    "errorPlayback": "Errore di riproduzione. Per favore premi di nuovo Play o salta la canzone.",
+    "errorReversePlayback": "Impossibile riprodurre l'anteprima inversa."
   }
 }
