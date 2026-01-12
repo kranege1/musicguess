@@ -18,14 +18,9 @@
             box-sizing: border-box;
         }
 
-        /* Global text outline for better readability on cover backgrounds */
+        /* Global bold font for better readability on cover backgrounds */
         body, h1, h2, h3, p, span, div, button, label, input, select, option {
-            text-shadow: 
-                -1px -1px 0 rgba(0, 0, 0, 0.5),
-                 1px -1px 0 rgba(0, 0, 0, 0.5),
-                -1px  1px 0 rgba(0, 0, 0, 0.5),
-                 1px  1px 0 rgba(0, 0, 0, 0.5),
-                 0    0   3px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
         }
 
         body {
@@ -67,7 +62,7 @@
         /* Cover-auf-Zoom: gesamte Box mit Cover füllen */
         .container.cover-filled {
             color: #fff;
-            background-color: rgba(255, 255, 255, 0.22);
+            background-color: rgba(255, 255, 255, 0.3);
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -860,6 +855,36 @@
             margin: 0 auto;
         }
 
+        .mid-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin: 12px 0;
+            align-items: stretch;
+        }
+
+        .mid-column {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: stretch;
+            justify-content: flex-start;
+        }
+
+        .mid-left, .mid-right {
+            justify-content: center;
+        }
+
+        .mid-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mid-center .album-cover {
+            margin: 0 !important;
+        }
+
         .top-actions {
             display: flex;
             gap: 8px;
@@ -1204,8 +1229,8 @@
             bottom: 8px;
             right: 12px;
             font-size: 0.75em;
-            color: rgba(255, 255, 255, 0.6);
-            text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.8), 1px -1px 0 rgba(0, 0, 0, 0.8), -1px 1px 0 rgba(0, 0, 0, 0.8), 1px 1px 0 rgba(0, 0, 0, 0.8);
+            color: #000;
+            font-weight: bold;
             pointer-events: none;
             z-index: 10;
             opacity: 1;
@@ -1396,7 +1421,7 @@
                     <button class="player-name-btn" id="playerNameBtn" onclick="openPlayerNameModal()">👤 Anon</button>
                     <button class="player-name-btn" onclick="startNewPlayer()" style="background: #764ba2;" title="Neuen Spieler starten">➕ Neu</button>
                 </div>
-                <h1>🎵 Musik Ratespiel <span id="version" style="font-size: 0.5em; color: #888;"></span></h1>
+                <h1>🎵 Musik Ratespiel</h1>
                 <p class="subtitle" id="gameSubtitle">Erkenne das Lied und gewinne!</p>
             </div>
             <div class="input-group">
@@ -1470,7 +1495,7 @@
             <div class="stats">
                 <div class="stats-head">
                     <div class="stats-title-block">
-                        <div class="stats-title">🎵 Musik Ratespiel <span class="stats-version" id="statsVersion"></span></div>
+                        <div class="stats-title">🎵 Musik Ratespiel</div>
                         <div class="stats-subtitle" id="statsSubtitle">Erkenne das Lied und gewinne!</div>
                     </div>
                     <div class="stats-actions">
@@ -1501,20 +1526,23 @@
                 </div>
             </div>
 
-            <div class="top-actions">
-                <button onclick="endGame()" class="control-btn btn-ghost-gray">🏁 Spiel Beenden</button>
-                <button class="next-btn control-btn btn-ghost-purple" id="nextBtn" onclick="nextQuestion()">⬜ Nächste Frage</button>
+            <div class="mid-section">
+                <div class="mid-column mid-left">
+                    <button onclick="endGame()" class="control-btn btn-ghost-gray">🏁 Spiel Beenden</button>
+                    <button class="play-btn control-btn btn-ghost-green" id="playBtn" onclick="playPreview()">▶️ Abspielen</button>
+                </div>
+                <div class="mid-column mid-center">
+                    <div class="album-cover" id="albumCover">
+                        <div class="cover-placeholder"></div>
+                    </div>
+                </div>
+                <div class="mid-column mid-right">
+                    <button class="next-btn control-btn btn-ghost-purple" id="nextBtn" onclick="nextQuestion()">⬜ Nächste Frage</button>
+                    <button class="reverse-btn control-btn btn-ghost-dark" id="reverseBtn" onclick="playPreviewReverse()">⏪ Revers</button>
+                </div>
             </div>
 
-            <div class="album-cover" id="albumCover">
-                <div class="cover-placeholder"></div>
-            </div>
-
-            <div class="play-row">
-                <button class="play-btn control-btn btn-ghost-green" id="playBtn" onclick="playPreview()">▶️ Abspielen</button>
-                <button class="reverse-btn control-btn btn-ghost-dark" id="reverseBtn" onclick="playPreviewReverse()">⏪ Revers</button>
-                <button class="stop-btn" id="stopBtn" onclick="stopPreview()">⏹️</button>
-            </div>
+            <button class="stop-btn" id="stopBtn" onclick="stopPreview()">⏹️</button>
 
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -1575,6 +1603,7 @@
             <div class="final-score" id="finalScore">0/10</div>
             <div class="score-percentage" id="scorePercentage">0%</div>
             <div class="final-score" id="finalPoints" style="font-size: 1.8em; margin: 10px 0;">🏆 0 Punkte</div>
+            <div id="highScoreMessage" style="font-size: 1.1em; margin: 12px 0; font-weight: 600; min-height: 32px;"></div>
             <button onclick="location.reload()">🔄 Neues Spiel</button>
         </div>
     </div>

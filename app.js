@@ -1196,7 +1196,7 @@ function applyContainerCoverBackground(imageUrl) {
 
     const isActive = container.classList.contains('cover-filled');
     if (isActive && imageUrl) {
-        container.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15)), url("${imageUrl}")`;
+        container.style.backgroundImage = `linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url("${imageUrl}")`;
         container.style.backgroundSize = 'cover';
         container.style.backgroundPosition = 'center';
     } else {
@@ -2068,6 +2068,16 @@ function endGame() {
     document.getElementById('finalScore').textContent = `${gameState.correctAnswers}/${total}`;
     document.getElementById('scorePercentage').textContent = `${percentage}%`;
     document.getElementById('finalPoints').textContent = `🏆 ${finalScore} Punkte`;
+
+    // Display high score message
+    const highScoreMessageEl = document.getElementById('highScoreMessage');
+    if (total < 10) {
+        highScoreMessageEl.innerHTML = '⚠️ Mindestens 10 Fragen erforderlich<br/><small style="font-size: 0.9em; font-weight: 500;">Dein Score wurde nicht gespeichert</small>';
+        highScoreMessageEl.style.color = '#ff9800';
+    } else {
+        highScoreMessageEl.innerHTML = '✅ Score wurde gespeichert!<br/><small style="font-size: 0.9em; font-weight: 500;">Dein Ergebnis ist im Highscore enthalten</small>';
+        highScoreMessageEl.style.color = '#2e7d32';
+    }
 
     stopPreview();
     
