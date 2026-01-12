@@ -730,11 +730,17 @@ async function loadSongsFromGenre(genre, limit) {
             const classicalData = await response.json();
             const composers = classicalData.international_classical || [];
             
-            // Randomly select composers and load their works
+            // Randomly select composers and search their works on iTunes
             const selectedComposers = composers.sort(() => 0.5 - Math.random()).slice(0, limit);
-            const searchPromises = selectedComposers.map(composer => 
-                loadSongFromItunes(composer, composer, 'classical')
-            );
+            const searchPromises = selectedComposers.map(async (composer) => {
+                try {
+                    const results = await fetchItunes(composer, { limit: 1, country: 'US', entity: 'song' });
+                    return results[0] || null;
+                } catch (err) {
+                    console.warn(`Failed to load composer ${composer}:`, err);
+                    return null;
+                }
+            });
             const results = await Promise.all(searchPromises);
             gameState.songs = results.filter(song => song !== null);
             return;
@@ -751,13 +757,27 @@ async function loadSongsFromGenre(genre, limit) {
             const countryData = await response.json();
             const artists = countryData[countryCode] || [];
             
-            // Randomly select artists from country
+            if (artists.length === 0) {
+                throw new Error(`Keine Künstler für Land ${countryCode} gefunden`);
+            }
+            
+            // Randomly select artists from country and search their songs
             const selectedArtists = artists.sort(() => 0.5 - Math.random()).slice(0, limit);
-            const searchPromises = selectedArtists.map(artist => 
-                loadSongFromItunes(artist, artist, `Country: ${countryCode.toUpperCase()}`)
-            );
+            const searchPromises = selectedArtists.map(async (artist) => {
+                try {
+                    const results = await fetchItunes(artist, { limit: 1, country: countryCode.toUpperCase(), entity: 'song' });
+                    return results[0] || null;
+                } catch (err) {
+                    console.warn(`Failed to load artist ${artist}:`, err);
+                    return null;
+                }
+            });
             const results = await Promise.all(searchPromises);
             gameState.songs = results.filter(song => song !== null);
+            
+            if (gameState.songs.length === 0) {
+                throw new Error(`Keine Songs für Land ${countryCode} gefunden`);
+            }
             return;
         }
         
