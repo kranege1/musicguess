@@ -216,11 +216,9 @@ app.get('/api/leaderboard/:mode', async (req, res) => {
     try {
         const mode = decodeURIComponent(req.params.mode);
         
-        let query = db.collection('scores').where('gameMode', '==', mode);
-        
-        const snapshot = await query
+        const snapshot = await db.collection('scores')
+            .where('gameMode', '==', mode)
             .orderBy('points', 'desc')
-            .orderBy('timestamp', 'asc')
             .limit(10)
             .get();
         
@@ -248,7 +246,6 @@ app.get('/api/leaderboard-global', async (req, res) => {
     try {
         const snapshot = await db.collection('scores')
             .orderBy('points', 'desc')
-            .orderBy('timestamp', 'asc')
             .limit(10)
             .get();
         
