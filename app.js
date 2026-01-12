@@ -128,7 +128,8 @@ let gameState = {
 let genresData = {
     decades: [],
     genres: [],
-    countries: []
+    countries: [],
+    classical: []
 };
 
 // Lade verfügbare Genres beim Seitenstart
@@ -136,65 +137,32 @@ async function loadAvailableGenres() {
     console.log('loadAvailableGenres() wird aufgerufen...');
     debugLog('🔄 Lade Genres...');
     try {
-        let response;
-        // Try server API first, fallback to direct songs.json
-        try {
-            response = await fetch(`${API_BASE}/api/songs`, { cache: 'no-store' });
-        } catch (apiErr) {
-            console.log('API nicht verfügbar, nutze direktes songs.json');
-            const cacheBuster = new Date().getTime();
-            response = await fetch(`songs.json?v=${cacheBuster}`, { cache: 'no-store' });
-        }
+        // Load consolidated genres.json
+        const cacheBuster = new Date().getTime();
+        const genresResponse = await fetch(`genres.json?v=${cacheBuster}`, { cache: 'no-store' });
         
-        console.log('Songs Response:', response.status);
-        debugLog(`📥 Songs geladen: ${response.status}`);
-        
-        if (!response.ok) {
-            debugLog(`[F1] ❌ Songs HTTP ${response.status}`, 'F1');
-            throw new Error(t('errorLoadingSongs'));
+        if (!genresResponse.ok) {
+            throw new Error(t('errorLoadingGenres'));
         }
 
-        const songs = await response.json();
-        console.log(`${songs.length} Songs geladen`);
-        debugLog(`✅ ${songs.length} Songs geladen`);
+        const genresFileData = await genresResponse.json();
         
-        // Extrahiere einzigartige Genres und kategorisiere sie
-        const allGenres = [...new Set(songs.map(song => song.genre))].sort();
-        console.log('Gefundene Genres:', allGenres);
-        debugLog(`🎵 Genres: ${allGenres.join(', ')}`);
+        // Populate genresData from consolidated file
+        genresData.decades = genresFileData.decades || [];
+        genresData.genres = genresFileData.genres || [];
+        genresData.classical = (genresFileData.classical && genresFileData.classical.composers) || [];
         
-        // Kategorisiere Genres: Decades vs regular genres
-        const decades = ['1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
-        genresData.decades = allGenres.filter(g => decades.includes(g));
-        genresData.genres = allGenres.filter(g => !decades.includes(g));
+        // Convert countries object to array format
+        genresData.countries = Object.keys(genresFileData.countries || {}).map(code => ({
+            code: code,
+            name: genresFileData.countries[code].name,
+            value: `Country:${code}`,
+            artists: genresFileData.countries[code].artists
+        }));
         
         console.log('📅 Decades found:', genresData.decades);
         console.log('🎵 Genres found:', genresData.genres);
-        
-        // Load countries from CountryList.json
-        try {
-            const countriesResponse = await fetch(`CountryList.json?v=${new Date().getTime()}`, { cache: 'no-store' });
-            if (countriesResponse.ok) {
-                const countryData = await countriesResponse.json();
-                const countryNames = {
-                    'de': 'Germany',
-                    'at': 'Austria',
-                    'us': 'USA',
-                    'gb': 'UK',
-                    'it': 'Italy',
-                    'fr': 'France',
-                    'es': 'Spain'
-                };
-                
-                genresData.countries = Object.keys(countryData).map(countryCode => ({
-                    code: countryCode,
-                    name: countryNames[countryCode] || countryCode.toUpperCase(),
-                    value: `Country:${countryCode}`
-                }));
-            }
-        } catch (err) {
-            console.warn('CountryList.json konnte nicht geladen werden:', err);
-        }
+        console.log('🌍 Countries found:', genresData.countries.map(c => c.name));
         
         // Initialize subcategory dropdown with "All Genres"
         updateSubcategoryDropdown();
@@ -259,11 +227,14 @@ function updateSubcategoryDropdown() {
             subcategorySelect.appendChild(option);
         });
     } else if (category === 'classical') {
-        // Classical
-        const option = document.createElement('option');
-        option.value = 'Classical';
-        option.textContent = 'Classical';
-        subcategorySelect.appendChild(option);
+        // Classical composers
+        console.log(`🎼 Loading ${genresData.classical.length} composers...`);
+        genresData.classical.forEach(composer => {
+            const option = document.createElement('option');
+            option.value = `Classical:${composer}`;
+            option.textContent = composer;
+            subcategorySelect.appendChild(option);
+        });
     }
     
     console.log(`✅ Subcategory dropdown updated: ${subcategorySelect.options.length} options`);
@@ -654,12 +625,12 @@ function toggleSearchType() {
         currentSearchType = 'album';
         btn.textContent = '💿 Album';
         btn.classList.add('active');
-        document.getElementById('searchQuery').placeholder = "z.B. 'Kuschelrock 5' oder 'Abbey Road'";
+        document.getElementById('searchQuery').placeholder = "e.g. 'Kuschelrock 5' or 'Abbey Road'";
     } else {
         currentSearchType = 'track';
-        btn.textContent = '🎤 Künstler/Titel';
+        btn.textContent = '🎤 Artist/Titel';
         btn.classList.remove('active');
-        document.getElementById('searchQuery').placeholder = "z.B. 'Taylor Swift' oder 'Bohemian Rhapsody'";
+        document.getElementById('searchQuery').placeholder = "e.g. 'Taylor Swift' or 'Bohemian Rhapsody'";
     }
 }
 
@@ -762,16 +733,49 @@ async function startGame() {
 // Lade Songs aus songs.json basierend auf Genre
 async function loadSongsFromGenre(genre, limit) {
     try {
-        // Handle Classical genre
-        if (genre === 'Classical') {
+        // Handle Classical genre (composer selection)
+        if (genre === 'Classical' || genre.startsWith('Classical:')) {
             const cacheBuster = Date.now();
-            const response = await fetch(`classicalList.json?v=${cacheBuster}`, { cache: 'no-store' });
+            const response = await fetch(`genres.json?v=${cacheBuster}`, { cache: 'no-store' });
             if (!response.ok) {
-                throw new Error('Fehler beim Laden von classicalList.json');
+                throw new Error(t('errorLoadingClassicalList'));
             }
-            const classicalData = await response.json();
-            const composers = classicalData.international_classical || [];
-            
+            const genresFile = await response.json();
+            const composers = genresFile.classical?.composers || [];
+            const selectedComposer = genre.startsWith('Classical:') ? genre.replace('Classical:', '') : null;
+
+            if (!composers.length) {
+                throw new Error(t('errorLoadingClassicalList'));
+            }
+
+            // If a composer is explicitly selected, fetch multiple tracks from that composer
+            if (selectedComposer) {
+                const { results } = await fetchItunesWithFallback(selectedComposer, ['US', 'DE', 'GB'], Math.max(limit * 2, 10));
+                const mapped = (results || [])
+                    .filter(song => song && song.previewUrl && song.trackName && song.artistName)
+                    .map(song => {
+                        const originalCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60 || '';
+                        const highResCover = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : '';
+                        return {
+                            id: song.trackId,
+                            track: song.trackName,
+                            artist: song.artistName,
+                            album: song.collectionName || 'Unbekannt',
+                            previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
+                            image: highResCover,
+                            genre: `Classical:${selectedComposer}`
+                        };
+                    })
+                    .slice(0, limit);
+
+                if (!mapped.length) {
+                    throw new Error(t('errorLoadingClassicalList'));
+                }
+
+                gameState.songs = mapped;
+                return;
+            }
+
             // Randomly select composers and search their works on iTunes
             const selectedComposers = composers.sort(() => 0.5 - Math.random()).slice(0, limit);
             const searchPromises = selectedComposers.map(async (composer) => {
@@ -807,12 +811,13 @@ async function loadSongsFromGenre(genre, limit) {
         if (genre.startsWith('Country:')) {
             const countryCode = genre.replace('Country:', '');
             const cacheBuster = Date.now();
-            const response = await fetch(`CountryList.json?v=${cacheBuster}`, { cache: 'no-store' });
+            const response = await fetch(`genres.json?v=${cacheBuster}`, { cache: 'no-store' });
             if (!response.ok) {
                 throw new Error(t('errorLoadingCountryList'));
             }
-            const countryData = await response.json();
-            const artists = countryData[countryCode] || [];
+            const genresFile = await response.json();
+            const countryInfo = genresFile.countries?.[countryCode];
+            const artists = countryInfo?.artists || [];
             
             if (artists.length === 0) {
                 throw new Error(t('errorNoArtistsForCountry'));
@@ -822,7 +827,7 @@ async function loadSongsFromGenre(genre, limit) {
             const selectedArtists = artists.sort(() => 0.5 - Math.random()).slice(0, limit);
             const searchPromises = selectedArtists.map(async (artist) => {
                 try {
-                    // Try AT first, then fallback to DE/US/GB
+                    // Try country first, then fallback to DE/US/GB
                     const { results } = await fetchItunesWithFallback(artist, [countryCode.toUpperCase(), 'DE', 'US', 'GB'], 5);
                     return results && results.length ? results[0] : null;
                 } catch (err) {
@@ -2444,13 +2449,18 @@ function initializePlayer() {
 
 // Update Player-Name Button im Header
 function updatePlayerNameDisplay(name) {
+    const playerId = getOrCreatePlayerID();
+    const shortId = playerId.substring(0, 4).toUpperCase();
+    const country = localStorage.getItem('playerCountry') || '🌍';
+    const displayName = `👤 ${name} ${country} #${shortId}`;
+    
     const btn = document.getElementById('playerNameBtn');
     if (btn) {
-        btn.textContent = `👤 ${name}`;
+        btn.textContent = displayName;
     }
     const statsBtn = document.getElementById('statsPlayerNameBtn');
     if (statsBtn) {
-        statsBtn.textContent = `👤 ${name}`;
+        statsBtn.textContent = displayName;
     }
 }
 
@@ -2459,12 +2469,103 @@ function openPlayerNameModal() {
     const modal = document.getElementById('playerNameModal');
     const input = document.getElementById('playerNameInput');
     const currentName = localStorage.getItem('playerName') || 'Anon';
+    const playerId = getOrCreatePlayerID();
+    const shortId = playerId.substring(0, 4).toUpperCase();
     
     if (currentName !== 'Anon') {
         input.value = currentName;
     }
+    
+    // Show player ID info
+    const idInfo = document.getElementById('playerIdInfo');
+    const idDisplay = document.getElementById('playerIdDisplay');
+    if (idInfo && idDisplay) {
+        idDisplay.textContent = `${currentName} #${shortId}`;
+        idInfo.style.display = 'block';
+    }
+    
     input.focus();
     modal.classList.add('show');
+}
+
+// Copy player ID to clipboard
+function copyPlayerIdToClipboard() {
+    const idDisplay = document.getElementById('playerIdDisplay');
+    if (idDisplay) {
+        const text = idDisplay.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.getElementById('copyIdBtn');
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Copied';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 2000);
+        });
+    }
+}
+
+// Open Restore Player ID modal
+function openRestoreIdModal() {
+    const modal = document.getElementById('restoreIdModal');
+    if (modal) {
+        modal.classList.add('show');
+    }
+}
+
+// Close Restore Player ID modal
+function closeRestoreIdModal() {
+    const modal = document.getElementById('restoreIdModal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+}
+
+// Restore player ID and name
+function restorePlayerIdAndName() {
+    const input = document.getElementById('restoreIdInput');
+    const restoreString = input.value.trim();
+    
+    if (!restoreString) {
+        alert('Please paste your player ID');
+        return;
+    }
+    
+    // Parse restore string: "Gerald 🇦🇹 #a3f2"
+    // Extract name and short ID
+    const parts = restoreString.split('#');
+    if (parts.length !== 2) {
+        alert('Invalid format. Use: Name Country #ID');
+        return;
+    }
+    
+    const namePart = parts[0].trim();
+    const idPart = parts[1].trim();
+    
+    if (!namePart || !idPart) {
+        alert('Invalid format. Use: Name Country #ID');
+        return;
+    }
+    
+    // Extract name (remove country emoji and extra spaces)
+    // Split by whitespace, remove any emoji, and rejoin
+    const words = namePart.split(/\s+/);
+    // Filter out words that are only emoji or special characters
+    const name = words.filter(word => /[a-zA-Z0-9]/.test(word)).join(' ').trim();
+    
+    if (!name || name.length < 2) {
+        alert('Invalid player name');
+        return;
+    }
+    
+    // Store the name and short ID (for reference)
+    localStorage.setItem('playerName', name);
+    localStorage.setItem('playerIdShort', idPart);
+    
+    updatePlayerNameDisplay(name);
+    closeRestoreIdModal();
+    closePlayerNameModal();
+    
+    alert('Player ID restored successfully!');
 }
 
 // Schließe Player-Name Modal
@@ -2473,7 +2574,7 @@ function closePlayerNameModal() {
     modal.classList.remove('show');
 }
 
-// Speichere Player-Name
+// Speichere Player-Name (ohne Uniqueness-Check - Hybrid-System mit Land + ID)
 function savePlayerName() {
     const input = document.getElementById('playerNameInput');
     const name = input.value.trim();
@@ -2503,16 +2604,81 @@ function startNewPlayer() {
     }
 }
 
-// Öffne Legal Modal
-function openLegalModal() {
-    const modal = document.getElementById('legalModal');
+// Öffne Player-Suche Modal
+async function openPlayerSearchModal() {
+    const modal = document.getElementById('playerSearchModal');
+    const resultsDiv = document.getElementById('playerSearchResults');
+    const playerName = localStorage.getItem('playerName') || 'Anon';
+    
+    if (!modal || !resultsDiv) return;
+    
+    resultsDiv.innerHTML = `<p style="text-align: center; color: #999;">${t('searchingScores')}</p>`;
     modal.classList.add('show');
+    
+    try {
+        // Lade ALL scores für globales Ranking
+        const response = await fetch('/api/all-scores');
+        const data = await response.json();
+        const allScores = data.scores || [];
+        
+        console.log('Total scores loaded:', allScores.length);
+        console.log('Searching for playerName:', playerName);
+        console.log('Sample score usernames:', allScores.slice(0, 5).map(s => s.username));
+        
+        // Filtere Player-Scores
+        const playerScores = allScores.filter(score => score.username === playerName);
+        
+        console.log('Player scores found:', playerScores.length);
+        
+        if (!playerScores || playerScores.length === 0) {
+            resultsDiv.innerHTML = `<p style="text-align: center; color: #666;">${t('noScoresFound')}</p>`;
+            return;
+        }
+        
+        // Sortiere Player-Scores nach Punkte (absteigend)
+        const sorted = playerScores.sort((a, b) => {
+            const ap = (a.points ?? a.totalPoints ?? 0);
+            const bp = (b.points ?? b.totalPoints ?? 0);
+            return bp - ap;
+        });
+        
+        // Rendera HTML mit globalem Ranking
+        const html = sorted.map((score) => {
+            const points = score.points ?? score.totalPoints ?? 0;
+            const modeLabel = score.gameMode || 'Modus';
+            const date = score.timestamp ? new Date(score.timestamp).toLocaleDateString() : 'Unbekannt';
+            const country = score.country || '🌍';
+            const shortId = (score.userId || score.playerId || '').substring(0, 4).toUpperCase();
+            const playerDisplay = shortId ? `${score.username} ${country} #${shortId}` : score.username;
+            
+            // Finde globale Position (alle Scores mit höheren Punkten + 1)
+            const globalRank = allScores.filter(s => (s.points ?? s.totalPoints ?? 0) > points).length + 1;
+            
+            return `
+                <div class="leaderboard-modal-item" style="background: rgba(102, 126, 234, 0.1); border-radius: 8px; padding: 12px; margin-bottom: 8px; border-bottom: 1px solid #e0e0e0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <strong style="color: #667eea;">#${globalRank}</strong>
+                        <span style="font-weight: bold; color: #764ba2;">🏆 ${points} Pkt</span>
+                    </div>
+                    <div style="font-size: 0.9em; color: #555; margin-bottom: 4px;">${playerDisplay}</div>
+                    <div style="font-size: 0.85em; color: #999;">${modeLabel} • ${date}</div>
+                </div>
+            `;
+        }).join('');
+        
+        resultsDiv.innerHTML = `<div style="text-align: center; color: #667eea; margin-bottom: 12px; font-weight: bold;">${sorted.length} ${t('entriesFound')}</div>` + html;
+    } catch (error) {
+        console.error('Error searching player scores:', error);
+        resultsDiv.innerHTML = '<p style="text-align: center; color: #d32f2f;">Fehler beim Laden der Scores.</p>';
+    }
 }
 
-// Schließe Legal Modal
-function closeLegalModal() {
-    const modal = document.getElementById('legalModal');
-    modal.classList.remove('show');
+// Schließe Player-Suche Modal
+function closePlayerSearchModal() {
+    const modal = document.getElementById('playerSearchModal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
 }
 
 // Lade Leaderboard für einen Spielmodus
@@ -2551,10 +2717,13 @@ function renderLeaderboardTicker(scores, gameMode) {
     const items = topScores.map((score, idx) => {
         const points = score.points ?? score.totalPoints ?? 0; // show per-score points, avoid summed totals
         const modeLabel = score.gameMode || gameMode || 'Modus';
+        const country = score.country || '🌍';
+        const shortId = (score.userId || score.playerId || '').substring(0, 4).toUpperCase();
+        const playerDisplay = shortId ? `${score.username} ${country} #${shortId}` : score.username;
         return `
             <span class="ticker-item">
                 <span class="leaderboard-rank">#${idx + 1}</span>
-                <span class="leaderboard-name">${score.username}</span>
+                <span class="leaderboard-name">${playerDisplay}</span>
                 <span class="ticker-mode">${modeLabel}</span>
                 <span class="ticker-points">🏆 ${points}</span>
             </span>
@@ -2588,12 +2757,16 @@ async function openLeaderboardModal(gameMode) {
             .map((score, idx) => {
                 const points = score.points ?? score.totalPoints ?? 0; // show per-score points
                 const modeLabel = score.gameMode || gameMode || 'Modus';
+                const date = score.timestamp ? new Date(score.timestamp).toLocaleDateString() : '';
+                const country = score.country || '🌍';
+                const shortId = (score.userId || score.playerId || '').substring(0, 4).toUpperCase();
+                const playerDisplay = shortId ? `${score.username} ${country} #${shortId}` : score.username;
                 return `
                     <li class="leaderboard-modal-item">
                         <span class="leaderboard-modal-rank">#${idx + 1}</span>
                         <div>
-                            <div class="leaderboard-modal-name">${score.username}</div>
-                            <div class="leaderboard-modal-meta">${modeLabel}</div>
+                            <div class="leaderboard-modal-name">${playerDisplay}</div>
+                            <div class="leaderboard-modal-meta">${modeLabel}${date ? ' • ' + date : ''}</div>
                         </div>
                         <span class="leaderboard-modal-points">🏆 ${points}</span>
                     </li>
@@ -2661,13 +2834,17 @@ async function showGameLeaderboard() {
     }
     
     // Render Top 3
-    const html = scores.slice(0, 3).map((score, index) => `
+    const html = scores.slice(0, 3).map((score, index) => {
+        const country = score.country || '🌍';
+        const shortId = (score.userId || score.playerId || '').substring(0, 4).toUpperCase();
+        const playerDisplay = shortId ? `${score.username} ${country} #${shortId}` : score.username;
+        return `
         <div class="leaderboard-item">
             <span class="leaderboard-rank">#${index + 1}</span>
-            <span class="leaderboard-name">${score.username}</span>
+            <span class="leaderboard-name">${playerDisplay}</span>
             <span class="leaderboard-points">🏆 ${score.totalPoints}</span>
         </div>
-    `).join('');
+    `}).join('');
     
     listDiv.innerHTML = html;
     leaderboardDiv.classList.add('show');

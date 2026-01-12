@@ -17,6 +17,17 @@ app.use(express.json());
 const previewCache = {};
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
+// Get country code from IP (simple mapping - can be enhanced with geoip library)
+function getCountryFromIP(ip) {
+    // For localhost/private IPs, return a default
+    if (ip === '::1' || ip === '127.0.0.1' || ip.startsWith('192.168.') || ip.startsWith('10.')) {
+        return 'XX';
+    }
+    // In production, use a geoip library like geoip2 or maxmind
+    // For now, return XX as placeholder
+    return 'XX';
+}
+
 /**
  * Fetch preview URL from iTunes API
  */
@@ -156,6 +167,12 @@ app.get('/api/player', (req, res) => {
     }
 });
 
+// GET /api/check-name/:name - Check if player name is unique (DISABLED - allow duplicate names)
+app.get('/api/check-name/:name', async (req, res) => {
+    // Allow duplicate names - return always false
+    res.json({ exists: false });
+});
+
 // POST /api/score - Neuen Score speichern (Firebase)
 app.post('/api/score', async (req, res) => {
     try {
@@ -188,6 +205,7 @@ app.post('/api/score', async (req, res) => {
             totalQuestions: totalQuestions,
             correctAnswers: correctAnswers,
             timestamp: new Date(),
+            country: getCountryFromIP(getClientIP(req)),
             documentId: scoreRef.id
         };
 
@@ -225,9 +243,11 @@ app.get('/api/leaderboard/:mode', async (req, res) => {
             
             const leaderboard = [];
             snapshot.forEach((doc) => {
+                const data = doc.data();
                 leaderboard.push({
                     id: doc.id,
-                    ...doc.data()
+                    ...data,
+                    timestamp: data.timestamp ? data.timestamp.toDate().toISOString() : null
                 });
             });
             
@@ -246,9 +266,11 @@ app.get('/api/leaderboard/:mode', async (req, res) => {
         
         const allScores = [];
         snapshot.forEach((doc) => {
+            const data = doc.data();
             allScores.push({
                 id: doc.id,
-                ...doc.data()
+                ...data,
+                timestamp: data.timestamp ? data.timestamp.toDate().toISOString() : null
             });
         });
         
@@ -277,9 +299,11 @@ app.get('/api/leaderboard-global', async (req, res) => {
         
         const leaderboard = [];
         snapshot.forEach((doc) => {
+            const data = doc.data();
             leaderboard.push({
                 id: doc.id,
-                ...doc.data()
+                ...data,
+                timestamp: data.timestamp ? data.timestamp.toDate().toISOString() : null
             });
         });
         
@@ -290,6 +314,33 @@ app.get('/api/leaderboard-global', async (req, res) => {
         });
     } catch (err) {
         console.error('Fehler beim Laden des globalen Leaderboards:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// GET /api/all-scores - All scores for ranking calculation
+app.get('/api/all-scores', async (req, res) => {
+    try {
+        const snapshot = await db.collection('scores')
+            .orderBy('points', 'desc')
+            .get();
+        
+        const allScores = [];
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            allScores.push({
+                id: doc.id,
+                ...data,
+                timestamp: data.timestamp ? data.timestamp.toDate().toISOString() : null
+            });
+        });
+        
+        res.json({
+            count: allScores.length,
+            scores: allScores
+        });
+    } catch (err) {
+        console.error('Fehler beim Laden aller Scores:', err);
         res.status(500).json({ error: err.message });
     }
 });

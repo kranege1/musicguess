@@ -468,7 +468,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url('MusicGuess_bgrd_dark.jpg');
+            background-image: url('MusicGuess_bgnd.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -1486,9 +1486,31 @@
             <div class="modal-content">
                 <div class="modal-header">👤 <span data-i18n="playerNamePrompt">Spielername</span></div>
                 <input type="text" class="modal-input" id="playerNameInput" data-i18n-placeholder="playerNamePlaceholder" placeholder="Gib deinen Namen ein..." maxlength="30">
+                <div id="playerIdInfo" style="margin: 12px 0; padding: 12px; background: rgba(102, 126, 234, 0.1); border-radius: 6px; font-size: 0.9em; color: #666; display: none;">
+                    <div style="margin-bottom: 6px;"><strong>Your Player ID:</strong></div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <code id="playerIdDisplay" style="background: #f0f0f0; padding: 6px 12px; border-radius: 4px; font-family: monospace; flex: 1; margin-right: 8px;"></code>
+                        <button class="modal-btn modal-btn-secondary" id="copyIdBtn" onclick="copyPlayerIdToClipboard()" style="font-size: 0.9em; padding: 6px 12px;">Copy</button>
+                    </div>
+                    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.1);">
+                        <button class="modal-btn modal-btn-secondary" id="restoreIdBtn" onclick="openRestoreIdModal()" style="font-size: 0.9em; padding: 6px 12px; width: 100%; margin-top: 0;">Restore ID</button>
+                    </div>
+                </div>
                 <div class="modal-buttons">
                     <button class="modal-btn modal-btn-secondary" onclick="closePlayerNameModal()" data-i18n="cancel">Abbrechen</button>
                     <button class="modal-btn modal-btn-primary" onclick="savePlayerName()" data-i18n="save">Speichern</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Restore Player ID Modal -->
+        <div class="modal" id="restoreIdModal">
+            <div class="modal-content">
+                <div class="modal-header">🔄 Restore Player ID</div>
+                <input type="text" class="modal-input" id="restoreIdInput" placeholder="Paste your player ID (e.g., Gerald 🇦🇹 #a3f2)" maxlength="50">
+                <div class="modal-buttons">
+                    <button class="modal-btn modal-btn-secondary" onclick="closeRestoreIdModal()">Cancel</button>
+                    <button class="modal-btn modal-btn-primary" onclick="restorePlayerIdAndName()">Restore</button>
                 </div>
             </div>
         </div>
@@ -1503,7 +1525,6 @@
                 </div>
                 <div class="setup-header-controls">
                     <button class="player-name-btn" id="playerNameBtn" onclick="openPlayerNameModal()">👤 Anon</button>
-                    <button class="player-name-btn" onclick="startNewPlayer()" style="background: #764ba2;" data-i18n-title="newPlayer"><span data-i18n="newPlayer">➕ Neu</span></button>
                 </div>
                 <h1 data-i18n="title">🎵 Musik Ratespiel</h1>
                 <p class="subtitle" id="gameSubtitle" data-i18n="setupSubtitle">Erkenne das Lied und gewinne!</p>
@@ -1583,6 +1604,19 @@
             </div>
         </div>
 
+        <!-- Player Search Modal -->
+        <div class="modal" id="playerSearchModal" style="z-index: 10000;">
+            <div class="modal-content" style="max-width: 500px; max-height: 70vh; overflow-y: auto;">
+                <div class="modal-header" data-i18n="myScores">my Scores</div>
+                <div style="padding: 16px; font-size: 0.95em;">
+                    <div id="playerSearchResults" style="max-height: 50vh; overflow-y: auto;"></div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-btn modal-btn-primary" onclick="closePlayerSearchModal()" data-i18n="close">Schließen</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Quiz Screen -->
         <div class="quiz-screen" id="quizScreen">
             <div class="stats">
@@ -1593,7 +1627,6 @@
                     </div>
                     <div class="stats-actions">
                         <button class="player-name-btn" id="statsPlayerNameBtn" onclick="openPlayerNameModal()">👤 Anon</button>
-                        <button class="player-name-btn" id="statsNewBtn" onclick="startNewPlayer()" style="background: #764ba2;" data-i18n="newPlayer">➕ Neu</button>
                     </div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; width: 100%; align-items: start;">
@@ -1706,6 +1739,7 @@
         <div class="leaderboard-modal" onclick="event.stopPropagation()">
             <div class="leaderboard-modal-header">
                 <span id="leaderboardModalTitle" data-i18n="leaderboardTitle">Highscores</span>
+                <button type="button" class="search-type-toggle" onclick="openPlayerSearchModal()" style="padding: 4px 12px; font-size: 0.9em; margin-right: 8px;" data-i18n="myScores">🔍 my Scores</button>
                 <button class="leaderboard-modal-close" onclick="closeLeaderboardModal(event)">✕</button>
             </div>
             <div class="leaderboard-modal-body" id="leaderboardModalBody">
@@ -1752,6 +1786,11 @@
                     🔥 Google Firebase<br/>
                     Last updated: January 2026
                     </p>
+                </div>
+
+                <div style="margin-top: 50px; text-align: center;">
+                    <h3 style="color: #8d0315; margin: 0 0 8px;">Link to MusicGuess Application:</h3>
+                    <img src="qr-code.png" alt="MusicGuess QR code" style="max-width: 180px; width: 100%; height: auto; display: inline-block; border: 1px solid #ddd; border-radius: 8px; padding: 8px; background: #fff;" />
                 </div>
             </div>
             <div class="modal-buttons">
