@@ -228,18 +228,21 @@ function updateSubcategoryDropdown() {
         const option = document.createElement('option');
         option.value = 'Alle';
         option.setAttribute('data-i18n', 'allGenres');
-        option.textContent = t('allGenres');
+        option.textContent = translations && currentLanguage ? t('allGenres') : 'All Genres';
         subcategorySelect.appendChild(option);
     } else if (category === 'decades') {
         // Decades
+        console.log(`📅 Loading ${genresData.decades.length} decades...`);
         genresData.decades.forEach(decade => {
             const option = document.createElement('option');
             option.value = decade;
             option.textContent = decade;
             subcategorySelect.appendChild(option);
+            console.log(`  ✅ Added decade: ${decade}`);
         });
     } else if (category === 'genres') {
         // Regular genres
+        console.log(`🎵 Loading ${genresData.genres.length} genres...`);
         genresData.genres.forEach(genre => {
             const option = document.createElement('option');
             option.value = genre;
@@ -248,6 +251,7 @@ function updateSubcategoryDropdown() {
         });
     } else if (category === 'countries') {
         // Countries
+        console.log(`🌍 Loading ${genresData.countries.length} countries...`);
         genresData.countries.forEach(country => {
             const option = document.createElement('option');
             option.value = country.value;
@@ -262,7 +266,7 @@ function updateSubcategoryDropdown() {
         subcategorySelect.appendChild(option);
     }
     
-    console.log(`Subcategory dropdown updated for category: ${category}, ${subcategorySelect.options.length} options`);
+    console.log(`✅ Subcategory dropdown updated: ${subcategorySelect.options.length} options`);
 }
 
 // Lade verfügbare Jahre für Billboard
