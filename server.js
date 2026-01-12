@@ -216,19 +216,45 @@ app.get('/api/leaderboard/:mode', async (req, res) => {
     try {
         const mode = decodeURIComponent(req.params.mode);
         
+        // Handle Global leaderboard (all scores regardless of mode)
+        if (mode === 'Global') {
+            const snapshot = await db.collection('scores')
+                .orderBy('points', 'desc')
+                .limit(10)
+                .get();
+            
+            const leaderboard = [];
+            snapshot.forEach((doc) => {
+                leaderboard.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+            
+            return res.json({
+                mode: 'Global',
+                count: leaderboard.length,
+                scores: leaderboard
+            });
+        }
+        
+        // Handle mode-specific leaderboard without requiring a composite index
+        // Fetch all scores for the mode, then sort in-memory by points desc and take top 10
         const snapshot = await db.collection('scores')
             .where('gameMode', '==', mode)
-            .orderBy('points', 'desc')
-            .limit(10)
             .get();
         
-        const leaderboard = [];
+        const allScores = [];
         snapshot.forEach((doc) => {
-            leaderboard.push({
+            allScores.push({
                 id: doc.id,
                 ...doc.data()
             });
         });
+        
+        const leaderboard = allScores
+            .sort((a, b) => (b.points || 0) - (a.points || 0))
+            .slice(0, 10);
         
         res.json({
             mode: mode,

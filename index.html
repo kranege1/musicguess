@@ -1231,20 +1231,19 @@
             font-size: 0.75em;
             color: #000;
             font-weight: bold;
-            pointer-events: none;
-            z-index: 10;
+            pointer-events: auto;
+            z-index: 1000;
             opacity: 1;
             transition: opacity 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 6px 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
 
-        .game-over.show ~ .version-footer {
-            opacity: 0 !important;
-            pointer-events: none !important;
-        }
-
-        body.game-over-active .version-footer {
-            opacity: 0 !important;
-            pointer-events: none !important;
+        .version-footer a {
+            pointer-events: auto;
+            cursor: pointer;
         }
 
         .final-score {
@@ -1617,13 +1616,10 @@
             </div>
             <div class="leaderboard-modal-body" id="leaderboardModalBody">
                 <ul class="leaderboard-modal-list" id="leaderboardModalList"></ul>
-    <!-- Version Footer with Legal Link -->
-    <div class="version-footer" id="versionFooter">
-        v0.0.0 | 
-        <a href="#" onclick="openLegalModal(); return false;" style="color: inherit; text-decoration: underline; cursor: pointer;">Legal</a> |
-        <a href="/privacy.html" target="_blank" style="color: inherit; text-decoration: underline;">Privacy</a> |
-        🎵 Powered by iTunes & Firebase
+        </div>
     </div>
+
+    <!-- Legal Modal -->
 
     <!-- Legal Modal -->
     <div class="modal" id="legalModal">
@@ -1670,6 +1666,15 @@
     </div>
 
     <audio id="audioPlayer" preload="none" playsinline webkit-playsinline crossOrigin="anonymous"></audio>
+
+    <!-- Version Footer with Links -->
+    <div class="version-footer" id="versionFooter">
+        v0.0.0 | 
+        <a href="#" onclick="openLegalModal(); return false;" style="color: #000; text-decoration: underline; cursor: pointer;">About</a> |
+        <a href="/privacy.html" target="_blank" style="color: #000; text-decoration: underline;">Privacy</a> |
+        🎵 Powered by iTunes & Firebase
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
