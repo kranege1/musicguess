@@ -168,6 +168,9 @@ async function loadAvailableGenres() {
         genresData.decades = allGenres.filter(g => decades.includes(g));
         genresData.genres = allGenres.filter(g => !decades.includes(g));
         
+        console.log('📅 Decades found:', genresData.decades);
+        console.log('🎵 Genres found:', genresData.genres);
+        
         // Load countries from CountryList.json
         try {
             const countriesResponse = await fetch(`CountryList.json?v=${new Date().getTime()}`, { cache: 'no-store' });
@@ -216,6 +219,9 @@ function updateSubcategoryDropdown() {
     
     const category = categorySelect.value;
     subcategorySelect.innerHTML = '';
+    
+    console.log(`🔄 Updating subcategory for category: ${category}`);
+    console.log(`📊 genresData:`, genresData);
     
     if (category === 'all') {
         // All Genres
