@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Musik Ratespiel - Datenschutz & Rechtliches</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            background: #764ba2;
+            text-decoration: none;
+        }
+
+        .section-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← Zurück zum Spiel</a>
+
+        <h1>🎵 Musik Ratespiel</h1>
+        <p class="subtitle">Datenschutzerklärung & Rechtliches</p>
+
+        <h2>📋 Über diese Anwendung</h2>
+        <p>
+            Musik Ratespiel ist ein interaktives Musikquiz-Spiel, das Nutzern ermöglicht, Lieder anhand von Preview-Clips zu erraten 
+            und ihre Punkte auf einer globalen Bestenliste zu sammeln.
+        </p>
+
+        <h2>🎵 iTunes Search API Attribution</h2>
+        <p>
+            Diese Anwendung verwendet die <strong>iTunes Search API</strong> von Apple Inc., um Musikvorschau-URLs und 
+            Songinformationen abzurufen. Durch die Nutzung dieser Anwendung stimmen Sie den 
+            <a href="https://www.apple.com/legal/" target="_blank">Apple Terms of Service</a> zu.
+        </p>
+
+        <div class="highlight">
+            <strong>⚠️ Wichtig:</strong> Alle Musikdaten, Vorschau-URLs und zugehörigen Metadaten werden von Apple Inc. 
+            über die iTunes Search API bereitgestellt. Wir besitzen oder vertreten keine Musikinhalte.
+        </div>
+
+        <h3>How We Use iTunes Data</h3>
+        <ul>
+            <li>Abruf von Musikvorschau-URLs (30-Sekunden-Clips)</li>
+            <li>Caching von URLs für bis zu 24 Stunden (Performance-Optimierung)</li>
+            <li>Anzeige von Künstler- und Songtiteln</li>
+        </ul>
+
+        <h2>📊 Datensammlung & Speicherung</h2>
+        <p>
+            Wenn Sie dieses Spiel spielen, erfassen und speichern wir die folgenden Informationen:
+        </p>
+
+        <div class="section-box">
+            <strong>Gesammelte Daten:</strong>
+            <ul>
+                <li>Ihr Spielername (Benutzername)</li>
+                <li>Eindeutige Spieler-ID (generiert lokal)</li>
+                <li>Gewählte Spielmodi</li>
+                <li>Spielergebnisse (Punkte, richtige Antworten)</li>
+                <li>Zeitstempel der Spielsitzungen</li>
+            </ul>
+        </div>
+
+        <strong>Speicherung:</strong> Diese Daten werden in <strong>Google Firebase Firestore</strong> gespeichert und dienen 
+        ausschließlich zur Verwaltung Ihrer Spielstatistiken und Bestenlisten-Rankings.
+
+        <h2>🔐 Datenschutz</h2>
+        <ul>
+            <li><strong>Verschlüsslung:</strong> Alle Daten werden über HTTPS übertragen und in Firebase gespeichert</li>
+            <li><strong>Zweck:</strong> Nur zur Spielfunktionalität und Bestenlisten-Verwaltung</li>
+            <li><strong>Weitergabe:</strong> Ihre Daten werden nicht an Dritte weitergegeben</li>
+            <li><strong>Löschung:</strong> Sie können Ihren Spieler-Datensatz jederzeit durch Löschen Ihres Browsers-Cache löschen</li>
+        </ul>
+
+        <h2>🌐 Externe Services</h2>
+        <p>Diese Anwendung nutzt die folgenden Dienste von Drittanbietern:</p>
+
+        <h3>1. Apple iTunes Search API</h3>
+        <ul>
+            <li><strong>Zweck:</strong> Musikvorschau-URLs abrufen</li>
+            <li><strong>Datenschutz:</strong> <a href="https://www.apple.com/privacy/" target="_blank">Apple Privacy Policy</a></li>
+            <li><strong>Nutzungsbedingungen:</strong> <a href="https://www.apple.com/legal/" target="_blank">Apple Terms</a></li>
+        </ul>
+
+        <h3>2. Google Firebase</h3>
+        <ul>
+            <li><strong>Zweck:</strong> Speicherung von Spielergebnissen und Authentifizierung</li>
+            <li><strong>Datenschutz:</strong> <a href="https://firebase.google.com/support/privacy" target="_blank">Firebase Privacy</a></li>
+            <li><strong>Nutzungsbedingungen:</strong> <a href="https://firebase.google.com/terms" target="_blank">Firebase Terms</a></li>
+        </ul>
+
+        <h2>⚖️ Haftungsausschluss</h2>
+        <p>
+            Diese ist eine <strong>inoffizielle</strong> Musikquiz-Anwendung. Sie wird bereitgestellt "wie besehen" ohne 
+            Garantien. Wir sind nicht verbunden mit oder unterstützt von Apple Inc.
+        </p>
+
+        <div class="highlight">
+            <strong>Keine Gewährleistung:</strong> Der Zugang zu Musikvorschau-URLs hängt von Apple ab und kann sich jederzeit ändern. 
+            Wir können nicht garantieren, dass alle Funktionen verfügbar bleiben.
+        </div>
+
+        <h2>🎵 Content Attribution</h2>
+        <p>
+            <strong>Powered by:</strong><br/>
+            • 🎵 iTunes Search API (Apple Inc.)<br/>
+            • 🔥 Google Firebase<br/>
+            • 💎 Community
+        </p>
+
+        <h2>📞 Kontakt & Support</h2>
+        <p>
+            Bei Fragen zu dieser Datenschutzerklärung oder zur Anwendung kontaktieren Sie uns über unser 
+            <a href="https://github.com/kranege1/MusicGuess" target="_blank">GitHub Repository</a>.
+        </p>
+
+        <div class="footer">
+            <p>
+                <strong>Musik Ratespiel</strong><br/>
+                Version 1.0.0 | Januar 2026<br/>
+                <a href="/">Zurück zum Spiel</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

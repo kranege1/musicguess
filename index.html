@@ -1617,12 +1617,57 @@
             </div>
             <div class="leaderboard-modal-body" id="leaderboardModalBody">
                 <ul class="leaderboard-modal-list" id="leaderboardModalList"></ul>
+    <!-- Version Footer with Legal Link -->
+    <div class="version-footer" id="versionFooter">
+        v0.0.0 | 
+        <a href="#" onclick="openLegalModal(); return false;" style="color: inherit; text-decoration: underline; cursor: pointer;">Legal</a> |
+        <a href="/privacy.html" target="_blank" style="color: inherit; text-decoration: underline;">Privacy</a> |
+        🎵 Powered by iTunes & Firebase
+    </div>
+
+    <!-- Legal Modal -->
+    <div class="modal" id="legalModal">
+        <div class="modal-content" style="max-height: 80vh; overflow-y: auto; max-width: 600px;">
+            <div class="modal-header">⚖️ Legal & Attribution</div>
+            <div style="padding: 16px; font-size: 0.9em; line-height: 1.6; color: #333;">
+                <h3 style="color: #667eea; margin-top: 12px; margin-bottom: 8px;">Data Sources</h3>
+                <p>This application uses the <strong>iTunes Search API</strong> provided by Apple Inc. to fetch music preview URLs and song information.</p>
+                
+                <h3 style="color: #667eea; margin-top: 16px; margin-bottom: 8px;">Data Collection & Storage</h3>
+                <p>When you play this game, we collect and store:</p>
+                <ul style="margin-left: 20px;">
+                    <li>Your player name (username)</li>
+                    <li>Game mode preferences</li>
+                    <li>Your scores and game statistics</li>
+                    <li>Timestamps of gameplay</li>
+                </ul>
+                <p style="margin-top: 8px;">This data is stored in <strong>Google Firebase Firestore</strong> and is used solely to maintain your game statistics and leaderboard rankings.</p>
+
+                <h3 style="color: #667eea; margin-top: 16px; margin-bottom: 8px;">Third-Party Services</h3>
+                <ul style="margin-left: 20px;">
+                    <li><strong>Apple iTunes API</strong> - Music preview data</li>
+                    <li><strong>Google Firebase</strong> - Database and authentication</li>
+                </ul>
+
+                <h3 style="color: #667eea; margin-top: 16px; margin-bottom: 8px;">Apple Terms of Service</h3>
+                <p>By using this application, you agree to comply with <a href="https://www.apple.com/legal/" target="_blank" style="color: #667eea;">Apple's Terms of Service</a>. Music preview URLs are cached for up to 24 hours for performance optimization.</p>
+
+                <h3 style="color: #667eea; margin-top: 16px; margin-bottom: 8px;">Disclaimer</h3>
+                <p>This is an unofficial music guessing game. All song data, preview URLs, and associated metadata are provided by Apple Inc. via the iTunes Search API. We do not own or represent any musical content.</p>
+
+                <div style="margin-top: 20px; padding-top: 12px; border-top: 1px solid #ddd; font-size: 0.85em; color: #666;">
+                    <p><strong>Powered by:</strong><br/>
+                    🎵 iTunes Search API (Apple Inc.)<br/>
+                    🔥 Google Firebase<br/>
+                    Last updated: January 2026
+                    </p>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-primary" onclick="closeLegalModal()">Close</button>
             </div>
         </div>
     </div>
-
-    <!-- Version Footer -->
-    <div class="version-footer" id="versionFooter">v0.0.0</div>
 
     <audio id="audioPlayer" preload="none" playsinline webkit-playsinline crossOrigin="anonymous"></audio>
     <script src="app.js"></script>

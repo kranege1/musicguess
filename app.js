@@ -2236,6 +2236,18 @@ function startNewPlayer() {
     }
 }
 
+// Öffne Legal Modal
+function openLegalModal() {
+    const modal = document.getElementById('legalModal');
+    modal.classList.add('show');
+}
+
+// Schließe Legal Modal
+function closeLegalModal() {
+    const modal = document.getElementById('legalModal');
+    modal.classList.remove('show');
+}
+
 // Lade Leaderboard für einen Spielmodus
 async function loadLeaderboard(gameMode) {
     try {
