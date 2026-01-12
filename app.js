@@ -1,6 +1,83 @@
 const APP_VERSION = '11.01.2026 00:00';
 window.APP_VERSION = APP_VERSION;
 
+// Language system
+let currentLanguage = localStorage.getItem('gameLanguage') || 'de';
+let translations = {};
+
+// Load translations
+async function loadTranslations() {
+    try {
+        const response = await fetch('/translations.json');
+        translations = await response.json();
+        updateUILanguage();
+    } catch (error) {
+        console.error('Failed to load translations:', error);
+        translations = { de: {}, en: {}, it: {} }; // Fallback
+    }
+}
+
+// Change language
+function changeLanguage(lang) {
+    currentLanguage = lang;
+    localStorage.setItem('gameLanguage', lang);
+    updateUILanguage();
+}
+
+// Update all UI elements with current language
+function updateUILanguage() {
+    const t = translations[currentLanguage] || translations['de'];
+    
+    // Update all elements with data-i18n attribute
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) {
+            el.textContent = t[key];
+        }
+    });
+    
+    // Update placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (t[key]) {
+            el.placeholder = t[key];
+        }
+    });
+    
+    // Update titles
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        if (t[key]) {
+            el.title = t[key];
+        }
+    });
+    
+    // Update active language button
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === currentLanguage);
+    });
+    
+    // Update song count options
+    updateSongCountOptions();
+}
+
+// Update song count dropdown with translated text
+function updateSongCountOptions() {
+    const t = translations[currentLanguage] || translations['de'];
+    const select = document.getElementById('songCount');
+    if (select) {
+        Array.from(select.options).forEach(option => {
+            const count = option.value;
+            option.text = `${count} ${t.songs || 'Songs'}`;
+        });
+    }
+}
+
+// Get translation by key
+function t(key) {
+    return translations[currentLanguage]?.[key] || translations['de']?.[key] || key;
+}
+
 // Detect if running on server or static hosting
 const API_BASE = window.location.origin; // Will use /api endpoints if available
 const USE_SERVER_API = () => {
@@ -220,10 +297,10 @@ async function loadVersion() {
             if (statsVersion) {
                 statsVersion.textContent = `v${data.version}`;
             }
-            // Update footer version
-            const versionFooter = document.getElementById('versionFooter');
-            if (versionFooter) {
-                versionFooter.textContent = `v${data.version}`;
+            // Update footer version (only the span to preserve links)
+            const versionText = document.getElementById('versionText');
+            if (versionText) {
+                versionText.textContent = `v${data.version}`;
             }
         }
     } catch (error) {
@@ -233,12 +310,14 @@ async function loadVersion() {
 
 // Initialisierung beim Laden der Seite
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadTranslations();
         loadVersion();
         loadAvailableGenres();
         loadAvailableYears();
         loadArtistNames();
         loadAlbumList();
+        initializePlayer();
         // Setze Standard auf "Freie Wahl" mit kurzer Verzögerung
         setTimeout(() => {
             const freieWahlBtn = document.querySelector('[data-mode="search"]');
@@ -247,10 +326,15 @@ if (document.readyState === 'loading') {
     });
 } else {
     // DOM ist bereits geladen
-    loadVersion();
-    loadAvailableGenres();
-    loadAvailableYears();
-    loadArtistNames();
+    (async () => {
+        await loadTranslations();
+        loadVersion();
+        loadAvailableGenres();
+        loadAvailableYears();
+        loadArtistNames();
+        loadAlbumList();
+        initializePlayer();
+    })();
     loadAlbumList();
     // Setze Standard auf "Freie Wahl" mit kurzer Verzögerung
     setTimeout(() => {
@@ -455,21 +539,21 @@ function selectGameMode(mode) {
         searchSelection.style.display = 'none';
         stopArtistBubbles();
         // Setze Subtitle zurück
-        setSubtitle('Erkenne das Lied und gewinne!');
+        setSubtitle(t('setupSubtitle'));
     } else if (mode === 'billboard') {
         genreSelection.style.display = 'none';
         billboardSelection.style.display = 'flex';
         searchSelection.style.display = 'none';
         stopArtistBubbles();
         // Setze Subtitle zurück
-        setSubtitle('Erkenne das Lied und gewinne!');
+        setSubtitle(t('setupSubtitle'));
     } else {
         genreSelection.style.display = 'none';
         billboardSelection.style.display = 'none';
         searchSelection.style.display = 'flex';
         startArtistBubbles();
         // Setze Subtitle zurück
-        setSubtitle('Erkenne das Lied und gewinne!');
+        setSubtitle(t('setupSubtitle'));
     }
     
     // Update Leaderboard bei Modus-Wechsel
@@ -1433,7 +1517,7 @@ function selectAnswer(answer, index) {
         }
 
         const resultMsg = document.getElementById('resultMessage');
-        resultMsg.textContent = `✅ Richtig! +${awardedPoints} Punkte`;
+        resultMsg.textContent = `${t('answerCorrect')} +${awardedPoints} ${t('points')}`;
         resultMsg.classList.remove('incorrect');
         resultMsg.classList.add('correct');
         resultMsg.style.fontSize = '1.3em';
@@ -1450,7 +1534,7 @@ function selectAnswer(answer, index) {
         }
         
         const resultMsg = document.getElementById('resultMessage');
-        resultMsg.textContent = '❌ Falsch!';
+        resultMsg.textContent = t('answerWrong');
         resultMsg.classList.remove('correct');
         resultMsg.classList.add('incorrect');
         resultMsg.style.fontSize = '1.3em';
@@ -2023,7 +2107,7 @@ function updateStats() {
     const answeredQuestions = (gameState.correctAnswers || 0) + (gameState.wrongAnswers || 0);
     const totalEl = document.getElementById('totalProgress');
     if (totalEl) {
-        totalEl.textContent = `${displayedQuestion} von ${totalQuestions} Fragen`;
+        totalEl.textContent = `${displayedQuestion} ${t('questionsProgress')} ${totalQuestions} ${t('questions')}`;
     }
 
     const correctEl = document.getElementById('correctCount');
@@ -2067,15 +2151,15 @@ function endGame() {
     document.getElementById('gameOverScreen').classList.add('show');
     document.getElementById('finalScore').textContent = `${gameState.correctAnswers}/${total}`;
     document.getElementById('scorePercentage').textContent = `${percentage}%`;
-    document.getElementById('finalPoints').textContent = `🏆 ${finalScore} Punkte`;
+    document.getElementById('finalPoints').textContent = `🏆 ${finalScore} ${t('points')}`;
 
     // Display high score message
     const highScoreMessageEl = document.getElementById('highScoreMessage');
     if (total < 10) {
-        highScoreMessageEl.innerHTML = '⚠️ Mindestens 10 Fragen erforderlich<br/><small style="font-size: 0.9em; font-weight: 500;">Dein Score wurde nicht gespeichert</small>';
+        highScoreMessageEl.innerHTML = `${t('minQuestionsRequired')}<br/><small style="font-size: 0.9em; font-weight: 500;">${t('scoreNotSaved')}</small>`;
         highScoreMessageEl.style.color = '#ff9800';
     } else {
-        highScoreMessageEl.innerHTML = '✅ Score wurde gespeichert!<br/><small style="font-size: 0.9em; font-weight: 500;">Dein Ergebnis ist im Highscore enthalten</small>';
+        highScoreMessageEl.innerHTML = `${t('scoreSavedSuccess')}<br/><small style="font-size: 0.9em; font-weight: 500;">${t('scoreInLeaderboard')}</small>`;
         highScoreMessageEl.style.color = '#2e7d32';
     }
 
@@ -2175,6 +2259,18 @@ async function initializePlayerName() {
     updatePlayerNameDisplay(playerName);
 }
 
+// Initialize player name from localStorage
+function initializePlayer() {
+    let playerId = localStorage.getItem('playerId');
+    if (!playerId) {
+        playerId = generateUUID();
+        localStorage.setItem('playerId', playerId);
+    }
+    
+    const playerName = localStorage.getItem('playerName') || 'Anon';
+    updatePlayerNameDisplay(playerName);
+}
+
 // Update Player-Name Button im Header
 function updatePlayerNameDisplay(name) {
     const btn = document.getElementById('playerNameBtn');
@@ -2212,7 +2308,7 @@ function savePlayerName() {
     const name = input.value.trim();
     
     if (!name || name.length < 2) {
-        alert('Bitte geben Sie einen Namen ein (min. 2 Zeichen)');
+        alert(t('playerNameTooShort'));
         return;
     }
     
@@ -2223,7 +2319,7 @@ function savePlayerName() {
 
 // Neuer Spieler: Lösche localStorage und erstelle neue ID
 function startNewPlayer() {
-    if (confirm('Neuen Spieler starten? Dein aktueller Name wird zurückgesetzt.')) {
+    if (confirm(t('newPlayerConfirm'))) {
         localStorage.removeItem('playerId');
         localStorage.removeItem('playerName');
         const newId = generateUUID();
@@ -2231,7 +2327,7 @@ function startNewPlayer() {
         localStorage.setItem('playerName', 'Anon');
         updatePlayerNameDisplay('Anon');
         console.log('Neuer Spieler gestartet. ID:', newId);
-        alert('Neuer Spieler erstellt! Bitte Namen festlegen.');
+        alert(t('newPlayerCreated'));
         openPlayerNameModal();
     }
 }

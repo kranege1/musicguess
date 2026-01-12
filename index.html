@@ -76,6 +76,37 @@
             position: relative;
         }
 
+        .setup-header-lang {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            gap: 4px;
+        }
+
+        .lang-btn {
+            background: rgba(102, 126, 234, 0.8);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.75em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+
+        .lang-btn:hover {
+            background: rgba(118, 75, 162, 0.9);
+            transform: scale(1.05);
+        }
+
+        .lang-btn.active {
+            background: #667eea;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+
         .setup-header-controls {
             position: absolute;
             top: 0;
@@ -424,6 +455,26 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            position: relative;
+            border-radius: 12px;
+            padding: 14px;
+            isolation: isolate;
+        }
+
+        .setup-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('MusicGuess_bgnd.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 12px;
+            opacity: 0.5;
+            z-index: -1;
         }
 
         .input-group {
@@ -649,10 +700,39 @@
         }
 
         .start-game-btn {
-            height: 120px !important;
-            font-size: 1.5em !important;
+            height: 78px !important;
+            font-size: 1.2em !important;
             font-weight: 700 !important;
-            margin: 20px 0 !important;
+            margin: 0 !important;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            line-height: 1;
+        }
+
+        .start-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 14px 0 18px 0;
+        }
+
+        .leaderboard-btn {
+            height: 78px;
+            font-size: 1.05em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff9f1c 0%, #ff6b6b 100%);
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(255, 159, 28, 0.35);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            line-height: 1;
+            margin: 0;
         }
 
         @keyframes slideLeftChain {
@@ -1225,20 +1305,19 @@
         }
 
         .version-footer {
-            position: fixed;
-            bottom: 8px;
-            right: 12px;
-            font-size: 0.75em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: flex-end;
+            font-size: 0.8em;
             color: #000;
-            font-weight: bold;
-            pointer-events: auto;
-            z-index: 1000;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 6px 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            font-weight: 400;
+            padding: 2px 0 6px;
+        }
+
+        .version-footer span,
+        .version-footer a {
+            font-weight: 400;
         }
 
         .version-footer a {
@@ -1404,11 +1483,11 @@
         <!-- Player Name Modal -->
         <div class="modal" id="playerNameModal">
             <div class="modal-content">
-                <div class="modal-header">👤 Spielername</div>
-                <input type="text" class="modal-input" id="playerNameInput" placeholder="Gib deinen Namen ein..." maxlength="30">
+                <div class="modal-header">👤 <span data-i18n="playerNamePrompt">Spielername</span></div>
+                <input type="text" class="modal-input" id="playerNameInput" data-i18n-placeholder="playerNamePlaceholder" placeholder="Gib deinen Namen ein..." maxlength="30">
                 <div class="modal-buttons">
-                    <button class="modal-btn modal-btn-secondary" onclick="closePlayerNameModal()">Abbrechen</button>
-                    <button class="modal-btn modal-btn-primary" onclick="savePlayerName()">Speichern</button>
+                    <button class="modal-btn modal-btn-secondary" onclick="closePlayerNameModal()" data-i18n="cancel">Abbrechen</button>
+                    <button class="modal-btn modal-btn-primary" onclick="savePlayerName()" data-i18n="save">Speichern</button>
                 </div>
             </div>
         </div>
@@ -1416,39 +1495,44 @@
         <!-- Setup Screen -->
         <div class="setup-screen" id="setupScreen">
             <div class="setup-header">
+                <div class="setup-header-lang">
+                    <button class="lang-btn" onclick="changeLanguage('de')" data-lang="de">DE</button>
+                    <button class="lang-btn" onclick="changeLanguage('en')" data-lang="en">EN</button>
+                    <button class="lang-btn" onclick="changeLanguage('it')" data-lang="it">IT</button>
+                </div>
                 <div class="setup-header-controls">
                     <button class="player-name-btn" id="playerNameBtn" onclick="openPlayerNameModal()">👤 Anon</button>
-                    <button class="player-name-btn" onclick="startNewPlayer()" style="background: #764ba2;" title="Neuen Spieler starten">➕ Neu</button>
+                    <button class="player-name-btn" onclick="startNewPlayer()" style="background: #764ba2;" data-i18n-title="newPlayer"><span data-i18n="newPlayer">➕ Neu</span></button>
                 </div>
-                <h1>🎵 Musik Ratespiel</h1>
-                <p class="subtitle" id="gameSubtitle">Erkenne das Lied und gewinne!</p>
+                <h1 data-i18n="title">🎵 Musik Ratespiel</h1>
+                <p class="subtitle" id="gameSubtitle" data-i18n="setupSubtitle">Erkenne das Lied und gewinne!</p>
             </div>
             <div class="input-group">
-                <label>🎮 Spielmodus:</label>
+                <label data-i18n="gameMode">🎮 Spielmodus:</label>
                 <div class="game-mode-buttons">
-                    <button type="button" class="mode-btn" data-mode="genre" onclick="selectGameMode('genre')">🎸 Genre auswählen</button>
-                    <button type="button" class="mode-btn" data-mode="billboard" onclick="selectGameMode('billboard')">🔥 Billboard Hot 100</button>
-                    <button type="button" class="mode-btn active" data-mode="search" onclick="selectGameMode('search')">🎤 Freie Wahl</button>
+                    <button type="button" class="mode-btn" data-mode="genre" onclick="selectGameMode('genre')" data-i18n="modeGenre">🎸 Genre auswählen</button>
+                    <button type="button" class="mode-btn" data-mode="billboard" onclick="selectGameMode('billboard')" data-i18n="modeBillboard">🔥 Billboard Hot 100</button>
+                    <button type="button" class="mode-btn active" data-mode="search" onclick="selectGameMode('search')" data-i18n="modeSearch">🎤 Freie Wahl</button>
                 </div>
             </div>
 
             <div class="input-group" id="genreSelection">
-                <label for="genreSelect">🎸 Genre wählen:</label>
+                <label for="genreSelect" data-i18n="selectGenre">🎸 Genre wählen:</label>
                 <select id="genreSelect">
-                    <option value="Alle">Alle Genres</option>
+                    <option value="Alle" data-i18n="allGenres">Alle Genres</option>
                     <!-- Genres werden dynamisch geladen -->
                 </select>
             </div>
 
             <div class="input-group" id="billboardSelection" style="display: none;">
-                <label for="yearSelect">📅 Jahr wählen:</label>
+                <label for="yearSelect" data-i18n="selectYear">📅 Jahr wählen:</label>
                 <div style="display: flex; gap: 10px;">
                     <select id="yearSelect" style="flex: 1;" onchange="loadBillboardSongsForYear()">
-                        <option value="">Jahr auswählen...</option>
+                        <option value="" data-i18n="yearPlaceholder">Jahr auswählen...</option>
                         <!-- Jahre werden dynamisch geladen -->
                     </select>
                     <select id="billboardSongInfo" style="flex: 2;" disabled>
-                        <option value="">Wähle zuerst ein Jahr...</option>
+                        <option value="" data-i18n="selectYearFirst">Wähle zuerst ein Jahr...</option>
                         <!-- Songs werden dynamisch geladen -->
                     </select>
                 </div>
@@ -1456,36 +1540,37 @@
 
             <div class="input-group" id="searchSelection" style="display: none;">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                    <label for="searchQuery" style="margin: 0;">🎤 Künstler oder Titel durchsuchen:</label>
-                    <button type="button" class="search-type-toggle" id="searchTypeBtn" onclick="toggleSearchType()" title="Zwischen Künstler/Titel und Album wechseln">📀 Album</button>
+                    <label for="searchQuery" style="margin: 0;" data-i18n="searchLabel">🎤 Künstler oder Titel durchsuchen:</label>
+                    <button type="button" class="search-type-toggle" id="searchTypeBtn" onclick="toggleSearchType()" data-i18n="searchToggleAlbum">📀 Album</button>
                 </div>
-                <input type="text" id="searchQuery" placeholder="z.B. 'Taylor Swift' oder 'Bohemian Rhapsody'">
+                <input type="text" id="searchQuery" data-i18n-placeholder="searchPlaceholder" placeholder="z.B. 'Taylor Swift' oder 'Bohemian Rhapsody'">
                 <!-- Artist Bubbles Container -->
                 <div class="artist-bubbles-container" id="artistBubblesContainer"></div>
             </div>
 
             <div class="input-group">
-                <label for="songCount">📊 Anzahl der Songs:</label>
+                <label for="songCount" data-i18n="songCount">📊 Anzahl der Songs:</label>
                 <select id="songCount">
-                    <option value="5">5 Songs</option>
-                    <option value="10" selected>10 Songs</option>
-                    <option value="15">15 Songs</option>
-                    <option value="20">20 Songs</option>
+                    <option value="5">5 <span data-i18n="songs">Songs</span></option>
+                    <option value="10" selected>10 <span data-i18n="songs">Songs</span></option>
+                    <option value="15">15 <span data-i18n="songs">Songs</span></option>
+                    <option value="20">20 <span data-i18n="songs">Songs</span></option>
                 </select>
             </div>
 
             <div class="error-message" id="errorMessage"></div>
 
-            <button onclick="startGame()" class="start-game-btn">🚀 Spiel Starten</button>
+            <div class="start-controls">
+                <button onclick="startGame()" class="start-game-btn" style="flex: 7;" data-i18n="startGame">🚀 Spiel Starten</button>
+                <button onclick="openLeaderboardModal('Global')" class="leaderboard-btn" style="flex: 3;" data-i18n="highscores">🏆 Highscores</button>
+            </div>
 
-            <div class="leaderboard-widget" id="setupLeaderboard">
-                <div class="leaderboard-title" id="setupLeaderboardTitle">🏆 Highscores</div>
-                <div class="leaderboard-ticker" id="leaderboardTicker" title="Klicken für alle Scores">
-                    <div class="leaderboard-ticker-track" id="leaderboardTickerTrack">
-                        <span class="ticker-empty">Keine Scores vorhanden</span>
-                    </div>
-                </div>
-                <div class="leaderboard-caption">Tippe oder klicke, um alle Scores anzuzeigen</div>
+            <!-- Version Inline under buttons -->
+            <div class="version-footer" id="versionFooter">
+                <span id="versionText">v0.0.0</span> |
+                <a href="#" onclick="openLegalModal(); return false;" style="color: #000; text-decoration: underline; cursor: pointer;">About</a> |
+                <a href="/privacy.html" target="_blank" style="color: #000; text-decoration: underline;">Privacy</a> |
+                <span data-i18n="poweredBy">🎵 Powered by iTunes & Firebase</span>
             </div>
         </div>
 
@@ -1494,12 +1579,12 @@
             <div class="stats">
                 <div class="stats-head">
                     <div class="stats-title-block">
-                        <div class="stats-title">🎵 Musik Ratespiel</div>
-                        <div class="stats-subtitle" id="statsSubtitle">Erkenne das Lied und gewinne!</div>
+                        <div class="stats-title" data-i18n="title">🎵 Musik Ratespiel</div>
+                        <div class="stats-subtitle" id="statsSubtitle" data-i18n="setupSubtitle">Erkenne das Lied und gewinne!</div>
                     </div>
                     <div class="stats-actions">
                         <button class="player-name-btn" id="statsPlayerNameBtn" onclick="openPlayerNameModal()">👤 Anon</button>
-                        <button class="player-name-btn" id="statsNewBtn" onclick="startNewPlayer()" style="background: #764ba2;">➕ Neu</button>
+                        <button class="player-name-btn" id="statsNewBtn" onclick="startNewPlayer()" style="background: #764ba2;" data-i18n="newPlayer">➕ Neu</button>
                     </div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; width: 100%; align-items: start;">
@@ -1527,8 +1612,8 @@
 
             <div class="mid-section">
                 <div class="mid-column mid-left">
-                    <button onclick="endGame()" class="control-btn btn-ghost-gray">🏁 Spiel Beenden</button>
-                    <button class="play-btn control-btn btn-ghost-green" id="playBtn" onclick="playPreview()">▶️ Abspielen</button>
+                    <button onclick="endGame()" class="control-btn btn-ghost-gray" data-i18n="endGame">🏁 Spiel Beenden</button>
+                    <button class="next-btn control-btn btn-ghost-purple" id="nextBtn" onclick="nextQuestion()" data-i18n="next">⬜ Nächste Frage</button>
                 </div>
                 <div class="mid-column mid-center">
                     <div class="album-cover" id="albumCover">
@@ -1536,12 +1621,12 @@
                     </div>
                 </div>
                 <div class="mid-column mid-right">
-                    <button class="next-btn control-btn btn-ghost-purple" id="nextBtn" onclick="nextQuestion()">⬜ Nächste Frage</button>
-                    <button class="reverse-btn control-btn btn-ghost-dark" id="reverseBtn" onclick="playPreviewReverse()">⏪ Revers</button>
+                    <button class="reverse-btn control-btn btn-ghost-dark" id="reverseBtn" onclick="playPreviewReverse()" data-i18n="reverse">⏪ Revers</button>
+                    <button class="play-btn control-btn btn-ghost-green" id="playBtn" onclick="playPreview()" data-i18n="play">▶️ Abspielen</button>
                 </div>
             </div>
 
-            <button class="stop-btn" id="stopBtn" onclick="stopPreview()">⏹️</button>
+            <button class="stop-btn" id="stopBtn" onclick="stopPreview()" data-i18n="stop">⏹️</button>
 
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -1550,28 +1635,28 @@
             <div class="time-display" id="timeDisplay">0:00 / 0:30</div>
 
             <div class="questions-section">
-                <div class="question-title">🎯 Welches Lied ist das?</div>
+                <div class="question-title" data-i18n="questionTitle">🎯 Welches Lied ist das?</div>
                 <div id="loadingIndicator" class="loading" style="display: none;">
                     <div class="spinner"></div>
-                    <p>Songs werden geladen...</p>
+                    <p data-i18n="loading">Songs werden geladen...</p>
                 </div>
                 <div class="answers" id="answersContainer"></div>
                 <div class="result-message" id="resultMessage"></div>
                 <div class="song-info" id="songInfo">
                     <div class="info-row">
-                        <span class="info-label">Künstler:</span>
+                        <span class="info-label" data-i18n="artist">Künstler:</span>
                         <span class="info-value" id="infoArtist"></span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Titel:</span>
+                        <span class="info-label" data-i18n="track">Titel:</span>
                         <span class="info-value" id="infoTrack"></span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Album:</span>
+                        <span class="info-label" data-i18n="album">Album:</span>
                         <span class="info-value" id="infoAlbum"></span>
                     </div>
                     <div class="info-row" id="genreRow" style="display: none;">
-                        <span class="info-label">Genre:</span>
+                        <span class="info-label" data-i18n="genre">Genre:</span>
                         <span class="info-value" id="infoGenre"></span>
                     </div>
                 </div>
@@ -1579,7 +1664,7 @@
 
             <!-- Motivation Leaderboard Widget: fixed to bottom position of quiz screen -->
             <div class="leaderboard-widget" id="quizLeaderboard">
-                <div class="leaderboard-title">🏆 Top 3 diese Runde</div>
+                <div class="leaderboard-title" data-i18n="top3ThisRound">🏆 Top 3 diese Runde</div>
                 <div id="quizLeaderboardList"></div>
             </div>
         </div>
@@ -1587,7 +1672,7 @@
         <!-- Punkte-Countdown unten -->
         <div class="points-countdown" id="pointsCountdown" aria-live="polite">
             <div class="points-countdown-row">
-                <span class="points-countdown-label">Punkte jetzt:</span>
+                <span class="points-countdown-label" data-i18n="pointsNow">Punkte jetzt:</span>
                 <span class="points-countdown-value" id="pointsCountdownValue">0</span>
             </div>
             <div class="points-countdown-track">
@@ -1598,12 +1683,12 @@
         <!-- Game Over Screen -->
         <div class="game-over" id="gameOverScreen">
             <div class="emoji">🎉</div>
-            <h2>Spiel zu Ende!</h2>
+            <h2 data-i18n="gameOver">Spiel zu Ende!</h2>
             <div class="final-score" id="finalScore">0/10</div>
             <div class="score-percentage" id="scorePercentage">0%</div>
-            <div class="final-score" id="finalPoints" style="font-size: 1.8em; margin: 10px 0;">🏆 0 Punkte</div>
+            <div class="final-score" id="finalPoints" style="font-size: 1.8em; margin: 10px 0;">🏆 0 <span data-i18n="points">Punkte</span></div>
             <div id="highScoreMessage" style="font-size: 1.1em; margin: 12px 0; font-weight: 600; min-height: 32px;"></div>
-            <button onclick="location.reload()">🔄 Neues Spiel</button>
+            <button onclick="location.reload()" data-i18n="newGame">🔄 Neues Spiel</button>
         </div>
     </div>
 
@@ -1611,11 +1696,12 @@
     <div class="leaderboard-modal-backdrop" id="leaderboardModal" onclick="closeLeaderboardModal(event)">
         <div class="leaderboard-modal" onclick="event.stopPropagation()">
             <div class="leaderboard-modal-header">
-                <span id="leaderboardModalTitle">Highscores</span>
+                <span id="leaderboardModalTitle" data-i18n="leaderboardTitle">Highscores</span>
                 <button class="leaderboard-modal-close" onclick="closeLeaderboardModal(event)">✕</button>
             </div>
             <div class="leaderboard-modal-body" id="leaderboardModalBody">
                 <ul class="leaderboard-modal-list" id="leaderboardModalList"></ul>
+            </div>
         </div>
     </div>
 
@@ -1667,14 +1753,6 @@
 
     <audio id="audioPlayer" preload="none" playsinline webkit-playsinline crossOrigin="anonymous"></audio>
 
-    <!-- Version Footer with Links -->
-    <div class="version-footer" id="versionFooter">
-        v0.0.0 | 
-        <a href="#" onclick="openLegalModal(); return false;" style="color: #000; text-decoration: underline; cursor: pointer;">About</a> |
-        <a href="/privacy.html" target="_blank" style="color: #000; text-decoration: underline;">Privacy</a> |
-        🎵 Powered by iTunes & Firebase
-    </div>
-
-    <script src="app.js"></script>
+    <script src="app.js?v=20260112095500"></script>
 </body>
 </html>

@@ -327,8 +327,17 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`🎵 MusicGuess Server running on port ${PORT}`);
     console.log(`📡 API: http://localhost:${PORT}/api`);
     console.log(`🌐 Web: http://localhost:${PORT}`);
+});
+
+// Handle uncaught errors
+process.on('uncaughtException', (err) => {
+    console.error('❌ Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
 });
