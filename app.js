@@ -734,8 +734,8 @@ async function loadSongsFromGenre(genre, limit) {
             const selectedComposers = composers.sort(() => 0.5 - Math.random()).slice(0, limit);
             const searchPromises = selectedComposers.map(async (composer) => {
                 try {
-                    const results = await fetchItunes(composer, { limit: 1, country: 'US', entity: 'song' });
-                    return results[0] || null;
+                    const { results } = await fetchItunesWithFallback(composer, ['US', 'DE', 'GB'], 5);
+                    return results && results.length ? results[0] : null;
                 } catch (err) {
                     console.warn(`Failed to load composer ${composer}:`, err);
                     return null;
@@ -767,13 +767,13 @@ async function loadSongsFromGenre(genre, limit) {
             const cacheBuster = Date.now();
             const response = await fetch(`CountryList.json?v=${cacheBuster}`, { cache: 'no-store' });
             if (!response.ok) {
-                throw new Error('Fehler beim Laden von CountryList.json');
+                throw new Error(t('errorLoadingCountryList'));
             }
             const countryData = await response.json();
             const artists = countryData[countryCode] || [];
             
             if (artists.length === 0) {
-                throw new Error(`Keine Künstler für Land ${countryCode} gefunden`);
+                throw new Error(t('errorNoArtistsForCountry'));
             }
             
             // Randomly select artists from country and search their songs
@@ -807,7 +807,7 @@ async function loadSongsFromGenre(genre, limit) {
             gameState.songs = mapped;
             
             if (gameState.songs.length === 0) {
-                throw new Error(`Keine Songs für Land ${countryCode} gefunden`);
+                throw new Error(t('errorNoSongsForCountry'));
             }
             return;
         }
