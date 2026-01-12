@@ -1517,10 +1517,18 @@
             </div>
 
             <div class="input-group" id="genreSelection">
-                <label for="genreSelect" data-i18n="selectGenre">🎸 Genre wählen:</label>
-                <select id="genreSelect">
+                <label for="categorySelect" data-i18n="selectCategory">📂 Kategorie wählen:</label>
+                <select id="categorySelect" onchange="updateSubcategoryDropdown()">
+                    <option value="all" data-i18n="categoryAll">Alle Genres</option>
+                    <option value="decades" data-i18n="categoryDecades">Jahrzehnte</option>
+                    <option value="genres" data-i18n="categoryGenres">Genres</option>
+                    <option value="countries" data-i18n="categoryCountries">Länder</option>
+                    <option value="classical" data-i18n="categoryClassical">Classical</option>
+                </select>
+                <label for="subcategorySelect" data-i18n="selectSubcategory" style="margin-top: 10px;">🎵 Auswahl:</label>
+                <select id="subcategorySelect">
                     <option value="Alle" data-i18n="allGenres">Alle Genres</option>
-                    <!-- Genres werden dynamisch geladen -->
+                    <!-- Subgenres werden dynamisch geladen -->
                 </select>
             </div>
 

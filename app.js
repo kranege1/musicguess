@@ -124,6 +124,13 @@ let gameState = {
     firstPlayDone: false, // Flag ob bereits einmal abgespielt wurde
 };
 
+// Store genres, decades, and countries for two-tier dropdown
+let genresData = {
+    decades: [],
+    genres: [],
+    countries: []
+};
+
 // Lade verfügbare Genres beim Seitenstart
 async function loadAvailableGenres() {
     console.log('loadAvailableGenres() wird aufgerufen...');
@@ -151,80 +158,105 @@ async function loadAvailableGenres() {
         console.log(`${songs.length} Songs geladen`);
         debugLog(`✅ ${songs.length} Songs geladen`);
         
-        // Extrahiere einzigartige Genres
-        const genres = [...new Set(songs.map(song => song.genre))].sort();
-        console.log('Gefundene Genres:', genres);
-        debugLog(`🎵 Genres: ${genres.join(', ')}`);
+        // Extrahiere einzigartige Genres und kategorisiere sie
+        const allGenres = [...new Set(songs.map(song => song.genre))].sort();
+        console.log('Gefundene Genres:', allGenres);
+        debugLog(`🎵 Genres: ${allGenres.join(', ')}`);
         
-        // Fülle die Genre-Dropdown
-        const genreSelect = document.getElementById('genreSelect');
+        // Kategorisiere Genres: Decades vs regular genres
+        const decades = ['1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
+        genresData.decades = allGenres.filter(g => decades.includes(g));
+        genresData.genres = allGenres.filter(g => !decades.includes(g));
         
-        if (!genreSelect) {
-            console.error('genreSelect Element nicht gefunden!');
-            return;
-        }
-        
-        console.log('genreSelect Element gefunden, füge Genres hinzu...');
-        
-        // Lösche alle Optionen und füge "Alle Genres" wieder hinzu
-        genreSelect.innerHTML = '';
-        
-        const alleOption = document.createElement('option');
-        alleOption.value = 'Alle';
-        alleOption.textContent = 'Alle Genres';
-        genreSelect.appendChild(alleOption);
-        
-        // Füge alle gefundenen Genres hinzu
-        genres.forEach(genre => {
-            const option = document.createElement('option');
-            option.value = genre;
-            option.textContent = genre;
-            genreSelect.appendChild(option);
-            console.log(`Genre hinzugefügt: ${genre}`);
-        });
-        
-        // Add Classical genre
-        const classicalOption = document.createElement('option');
-        classicalOption.value = 'Classical';
-        classicalOption.textContent = 'Classical';
-        genreSelect.appendChild(classicalOption);
-        console.log('Genre hinzugefügt: Classical');
-        
-        // Add individual countries from CountryList.json
+        // Load countries from CountryList.json
         try {
             const countriesResponse = await fetch(`CountryList.json?v=${new Date().getTime()}`, { cache: 'no-store' });
             if (countriesResponse.ok) {
                 const countryData = await countriesResponse.json();
                 const countryNames = {
                     'de': 'Germany',
+                    'at': 'Austria',
                     'us': 'USA',
                     'gb': 'UK',
                     'it': 'Italy',
                     'fr': 'France',
-                    'es': 'Spain',
-                    'jp': 'Japan',
-                    'kr': 'Korea',
-                    'br': 'Brazil'
+                    'es': 'Spain'
                 };
                 
-                Object.keys(countryData).forEach(countryCode => {
-                    const countryName = countryNames[countryCode] || countryCode.toUpperCase();
-                    const countryOption = document.createElement('option');
-                    countryOption.value = `Country:${countryCode}`;
-                    countryOption.textContent = `🌍 ${countryName}`;
-                    genreSelect.appendChild(countryOption);
-                    console.log(`Genre hinzugefügt: ${countryName}`);
-                });
+                genresData.countries = Object.keys(countryData).map(countryCode => ({
+                    code: countryCode,
+                    name: countryNames[countryCode] || countryCode.toUpperCase(),
+                    value: `Country:${countryCode}`
+                }));
             }
         } catch (err) {
             console.warn('CountryList.json konnte nicht geladen werden:', err);
         }
         
-        console.log(`✅ ${genres.length} Genres erfolgreich geladen!`);
+        // Initialize subcategory dropdown with "All Genres"
+        updateSubcategoryDropdown();
+        
+        console.log('✅ Genre-Daten erfolgreich geladen');
+        debugLog(`✅ Genres kategorisiert: ${genresData.decades.length} Dekaden, ${genresData.genres.length} Genres, ${genresData.countries.length} Länder`);
     } catch (error) {
         console.error(t('errorLoadingGenres') + ':', error);
         debugLog(`[F1] ❌ Load failed: ${error.message}`, 'F1');
     }
+}
+
+// Update subcategory dropdown based on selected category
+function updateSubcategoryDropdown() {
+    const categorySelect = document.getElementById('categorySelect');
+    const subcategorySelect = document.getElementById('subcategorySelect');
+    
+    if (!categorySelect || !subcategorySelect) {
+        console.error('Category or subcategory select not found!');
+        return;
+    }
+    
+    const category = categorySelect.value;
+    subcategorySelect.innerHTML = '';
+    
+    if (category === 'all') {
+        // All Genres
+        const option = document.createElement('option');
+        option.value = 'Alle';
+        option.setAttribute('data-i18n', 'allGenres');
+        option.textContent = t('allGenres');
+        subcategorySelect.appendChild(option);
+    } else if (category === 'decades') {
+        // Decades
+        genresData.decades.forEach(decade => {
+            const option = document.createElement('option');
+            option.value = decade;
+            option.textContent = decade;
+            subcategorySelect.appendChild(option);
+        });
+    } else if (category === 'genres') {
+        // Regular genres
+        genresData.genres.forEach(genre => {
+            const option = document.createElement('option');
+            option.value = genre;
+            option.textContent = genre;
+            subcategorySelect.appendChild(option);
+        });
+    } else if (category === 'countries') {
+        // Countries
+        genresData.countries.forEach(country => {
+            const option = document.createElement('option');
+            option.value = country.value;
+            option.textContent = `🌍 ${country.name}`;
+            subcategorySelect.appendChild(option);
+        });
+    } else if (category === 'classical') {
+        // Classical
+        const option = document.createElement('option');
+        option.value = 'Classical';
+        option.textContent = 'Classical';
+        subcategorySelect.appendChild(option);
+    }
+    
+    console.log(`Subcategory dropdown updated for category: ${category}, ${subcategorySelect.options.length} options`);
 }
 
 // Lade verfügbare Jahre für Billboard
@@ -652,7 +684,7 @@ async function startGame() {
     try {
         if (gameMode === 'genre') {
             // Genre-Modus: Lade Songs aus songs.json
-            const selectedGenre = document.getElementById('genreSelect').value;
+            const selectedGenre = document.getElementById('subcategorySelect').value;
             await loadSongsFromGenre(selectedGenre, songCount);
             // Update Subtitle
             const genreText = selectedGenre === 'Alle' ? 'Alle Genres' : selectedGenre;
