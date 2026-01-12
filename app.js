@@ -780,8 +780,9 @@ async function loadSongsFromGenre(genre, limit) {
             const selectedArtists = artists.sort(() => 0.5 - Math.random()).slice(0, limit);
             const searchPromises = selectedArtists.map(async (artist) => {
                 try {
-                    const results = await fetchItunes(artist, { limit: 1, country: countryCode.toUpperCase(), entity: 'song' });
-                    return results[0] || null;
+                    // Try AT first, then fallback to DE/US/GB
+                    const { results } = await fetchItunesWithFallback(artist, [countryCode.toUpperCase(), 'DE', 'US', 'GB'], 5);
+                    return results && results.length ? results[0] : null;
                 } catch (err) {
                     console.warn(`Failed to load artist ${artist}:`, err);
                     return null;
