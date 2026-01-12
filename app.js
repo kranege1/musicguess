@@ -742,7 +742,22 @@ async function loadSongsFromGenre(genre, limit) {
                 }
             });
             const results = await Promise.all(searchPromises);
-            gameState.songs = results.filter(song => song !== null);
+            const mapped = results
+                .filter(song => song && song.previewUrl && song.trackName && song.artistName)
+                .map(song => {
+                    const originalCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60 || '';
+                    const highResCover = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : '';
+                    return {
+                        id: song.trackId,
+                        track: song.trackName,
+                        artist: song.artistName,
+                        album: song.collectionName || 'Unbekannt',
+                        previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
+                        image: highResCover,
+                        genre: 'Classical'
+                    };
+                });
+            gameState.songs = mapped;
             return;
         }
         
@@ -773,7 +788,22 @@ async function loadSongsFromGenre(genre, limit) {
                 }
             });
             const results = await Promise.all(searchPromises);
-            gameState.songs = results.filter(song => song !== null);
+            const mapped = results
+                .filter(song => song && song.previewUrl && song.trackName && song.artistName)
+                .map(song => {
+                    const originalCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60 || '';
+                    const highResCover = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : '';
+                    return {
+                        id: song.trackId,
+                        track: song.trackName,
+                        artist: song.artistName,
+                        album: song.collectionName || 'Unbekannt',
+                        previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
+                        image: highResCover,
+                        genre: `Country:${countryCode}`
+                    };
+                });
+            gameState.songs = mapped;
             
             if (gameState.songs.length === 0) {
                 throw new Error(`Keine Songs für Land ${countryCode} gefunden`);
@@ -1396,7 +1426,7 @@ function displayAnswers() {
         
         if (!song || !song.track) {
             console.error('Song oder song.track ist undefined:', song);
-            document.getElementById('answersContainer').innerHTML = '<p style="color: red;">Fehler: Song-Daten nicht vorhanden</p>';
+            document.getElementById('answersContainer').innerHTML = `<p style="color: red;">${t('errorSongDataMissing')}</p>`;
             return;
         }
 
