@@ -918,6 +918,15 @@ function showAlbumSelectionModal(artistName, albums) {
     modal.classList.add('show');
 }
 
+// Truncate text to max 12 words (less than 13 words)
+function truncateToMaxWords(text, maxWords = 12) {
+    const words = text.split(' ');
+    if (words.length > maxWords) {
+        return words.slice(0, maxWords).join(' ') + '...';
+    }
+    return text;
+}
+
 // Display filtered albums in grid
 function displayFilteredAlbums(albums) {
     const grid = document.getElementById('albumSelectionGrid');
@@ -948,14 +957,15 @@ function displayFilteredAlbums(albums) {
         
         const coverUrl = album.artworkUrl100 || album.artworkUrl60 || '';
         const coverUrlHiRes = coverUrl.replace('100x100', '300x300').replace('60x60', '300x300');
+        const albumNameTruncated = truncateToMaxWords(album.collectionName);
         
         const badge = isPrimary ? '' : '<div style="position: absolute; top: 4px; right: 4px; background: rgba(255, 159, 28, 0.9); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.65em; font-weight: 700;">COMP</div>';
         
         card.innerHTML = `
             ${badge}
             <img src="${coverUrlHiRes}" alt="${album.collectionName}" style="width: 100%; height: auto; display: block;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'%3E%3Crect fill=\'%23667eea\' width=\'100\' height=\'100\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'40\' fill=\'white\'%3E💿%3C/text%3E%3C/svg%3E'">
-            <div style="padding: 8px; font-size: 0.75em; text-align: center; font-weight: 600; line-height: 1.2; min-height: 50px; display: flex; align-items: center; justify-content: center;">
-                ${album.collectionName}
+            <div style="padding: 8px; font-size: 0.75em; text-align: center; font-weight: 600; line-height: 1.2; min-height: 50px; display: flex; align-items: center; justify-content: center;" title="${album.collectionName}">
+                ${albumNameTruncated}
             </div>
         `;
         
