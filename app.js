@@ -644,6 +644,7 @@ function selectGameMode(mode) {
     const genreSelection = document.getElementById('genreSelection');
     const searchSelection = document.getElementById('searchSelection');
     const subtitle = document.getElementById('gameSubtitle');
+    const searchInput = document.getElementById('searchQuery');
 
     if (mode === 'genre') {
         genreSelection.style.display = 'flex';
@@ -657,6 +658,19 @@ function selectGameMode(mode) {
         startArtistBubbles();
         // Setze Subtitle zurück
         setSubtitle(t('setupSubtitle'));
+        
+        // Setze currentSearchType basierend auf Modus
+        if (mode === 'album') {
+            currentSearchType = 'album';
+            if (searchInput) {
+                searchInput.placeholder = "e.g. 'Abbey Road' or 'Thriller' - enter artist name first";
+            }
+        } else {
+            currentSearchType = 'track';
+            if (searchInput) {
+                searchInput.placeholder = "e.g. 'Taylor Swift' or 'Bohemian Rhapsody'";
+            }
+        }
     }
     
     // Update Leaderboard bei Modus-Wechsel
