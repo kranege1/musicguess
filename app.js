@@ -848,31 +848,32 @@ async function selectArtistAndLoadAlbums(artist) {
         // Filter unique albums by collection ID (prevents duplicates from different regions)
         const uniqueAlbums = [];
         const seenIds = new Set();
-        const seenNames = new Map(); // Track by name to deduplicate versions
+        const seenBaseNames = new Map(); // Track by base name (without edition info) to deduplicate versions
         
         data.results.forEach(item => {
             if (item.collectionId && !seenIds.has(item.collectionId)) {
-                // Also check if we've already seen this collection name
-                // If we have, only keep it if this version has more tracks (full version > remaster)
-                const collectionName = (item.collectionName || '').toLowerCase().trim();
-                if (seenNames.has(collectionName)) {
-                    const existingAlbum = seenNames.get(collectionName);
+                // Get the base album name without edition info for comparison
+                const baseAlbumName = getAlbumBaseeName(item.collectionName);
+                
+                if (seenBaseNames.has(baseAlbumName)) {
+                    const existingAlbum = seenBaseNames.get(baseAlbumName);
                     // Keep the one with more tracks (full version likely has more)
                     if (item.trackCount && existingAlbum.trackCount && item.trackCount > existingAlbum.trackCount) {
                         // Remove old one and add new one
-                        uniqueAlbums = uniqueAlbums.filter(a => a.collectionId !== existingAlbum.collectionId);
+                        uniqueAlbums.splice(uniqueAlbums.findIndex(a => a.collectionId === existingAlbum.collectionId), 1);
                         seenIds.delete(existingAlbum.collectionId);
                         uniqueAlbums.push(item);
                         seenIds.add(item.collectionId);
-                        seenNames.set(collectionName, item);
+                        seenBaseNames.set(baseAlbumName, item);
                     }
                     // Otherwise skip this version
                 } else {
                     seenIds.add(item.collectionId);
                     uniqueAlbums.push(item);
-                    seenNames.set(collectionName, item);
+                    seenBaseNames.set(baseAlbumName, item);
                 }
             }
+        });
         });
         
         if (uniqueAlbums.length === 0) {
@@ -1031,6 +1032,18 @@ function isAlbumPrimary(album, artistName) {
     return collectionArtist === searchArtist || 
            collectionArtist.startsWith(searchArtist) ||
            searchArtist.startsWith(collectionArtist);
+}
+
+// Helper function to strip edition info from album names for deduplication
+function getAlbumBaseeName(albumName) {
+    if (!albumName) return '';
+    // Remove common edition markers: (Deluxe), (Remastered), (Tour Edition), (Wembley Edition), etc.
+    return albumName
+        .toLowerCase()
+        .trim()
+        .replace(/\s*\([^)]*(?:deluxe|remaster|edition|remix|live|demo|version|explicit|clean|alternate|bonus|expanded|anniversary|special|collectors?|digi|digipack|anniversary|explicit|clean|alternate|bonus|expanded|anniversary|special|vinyl|record|lp|cd|cassette|box)\s*[^)]*\)/gi, '')
+        .replace(/\s*-\s*(?:deluxe|remaster|edition|remix|live|demo|version|explicit|clean|alternate|bonus|expanded|anniversary|special|collectors?|digi|digipack|anniversary|explicit|clean|alternate|bonus|expanded|anniversary|special|vinyl|record|lp|cd|cassette|box)\s*$/gi, '')
+        .trim();
 }
 
 // Check if album is a single based on collectionType and track count
