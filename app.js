@@ -1050,7 +1050,7 @@ function filterAlbums(filterType) {
     let filteredAlbums = allAlbumsForModal;
     
     if (filterType === 'primary') {
-        filteredAlbums = allAlbumsForModal.filter(album => isAlbumPrimary(album, currentArtistName));
+        filteredAlbums = allAlbumsForModal.filter(album => isAlbumPrimary(album, currentArtistName) && !isAlbumSingle(album));
     } else if (filterType === 'compilations') {
         filteredAlbums = allAlbumsForModal.filter(album => !isAlbumPrimary(album, currentArtistName) && !isAlbumSingle(album));
     } else if (filterType === 'singles') {
