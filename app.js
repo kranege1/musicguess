@@ -581,29 +581,9 @@ function createArtistBubble() {
     if (!container || !container.classList.contains('active')) return;
     
     let bubbleText = '';
-    let isAlbumBubble = false;
     
-    // Two-stage approach for album mode:
-    // Stage 1: Show artist bubbles (selectedArtistForAlbums is null)
-    // Stage 2: Show album bubbles for selected artist (selectedArtistForAlbums is set)
-    if (currentSearchType === 'album' && selectedArtistForAlbums) {
-        // Stage 2: Show albums from selected artist
-        if (albumListData.length > 0) {
-            const artistAlbums = albumListData.filter(album => 
-                album.artist.toLowerCase() === selectedArtistForAlbums.toLowerCase()
-            );
-            if (artistAlbums.length > 0) {
-                const randomAlbum = artistAlbums[Math.floor(Math.random() * artistAlbums.length)];
-                bubbleText = randomAlbum.album;
-                isAlbumBubble = true;
-            } else {
-                return; // No albums found for this artist
-            }
-        } else {
-            return;
-        }
-    } else if (artistNames.length > 0) {
-        // Stage 1: Show artist bubbles (default for all modes)
+    // Show artist bubbles
+    if (artistNames.length > 0) {
         bubbleText = artistNames[Math.floor(Math.random() * artistNames.length)];
     } else {
         return;
@@ -612,12 +592,6 @@ function createArtistBubble() {
     // Erstelle Bubble
     const bubble = document.createElement('div');
     bubble.className = 'artist-bubble';
-    
-    // Füge album-bubble Klasse hinzu wenn wir Albums zeigen
-    if (isAlbumBubble) {
-        bubble.classList.add('album-bubble');
-    }
-    
     bubble.textContent = bubbleText;
     
     // Starte immer rechts außerhalb (100%)
@@ -631,22 +605,11 @@ function createArtistBubble() {
         const searchInput = document.getElementById('searchQuery');
         
         if (currentSearchType === 'album' && !selectedArtistForAlbums) {
-            // Stage 1: Artist bubble clicked in album mode -> select artist and show albums
-            selectedArtistForAlbums = bubbleText;
+            // Artist bubble clicked in album mode -> trigger check artist to show album modal
             if (searchInput) {
                 searchInput.value = bubbleText;
-                searchInput.disabled = true;
             }
-            // Restart bubbles to show albums instead of artists
-            stopArtistBubbles();
-            setTimeout(() => startArtistBubbles(), 100);
-        } else if (isAlbumBubble) {
-            // Stage 2: Album bubble clicked -> set as final selection
-            if (searchInput) {
-                searchInput.value = bubbleText;
-                searchInput.disabled = false;
-                searchInput.focus();
-            }
+            checkArtist(); // This will show the album selection modal
         } else {
             // Normal artist/track search mode
             if (searchInput) {
