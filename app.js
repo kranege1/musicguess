@@ -699,7 +699,7 @@ function selectGameMode(mode) {
         if (mode === 'album') {
             currentSearchType = 'album';
             selectedArtistForAlbums = null; // Reset artist selection
-            stopArtistBubbles(); // No bubbles for album mode
+            startArtistBubbles(); // Show artist bubbles in album mode too
             if (searchInput) {
                 searchInput.placeholder = "Enter artist name (e.g. 'The Beatles')";
                 searchInput.disabled = false;
@@ -857,11 +857,12 @@ async function selectArtistAndLoadAlbums(artist) {
         
         // Update search input
         if (searchInput) {
-            searchInput.value = `✅ ${artist.artistName} (${uniqueAlbums.length} albums found - click an album below)`;
+            searchInput.value = `✅ ${artist.artistName}`;
+            searchInput.disabled = false;
         }
         
-        // Display album bubbles
-        displayAlbumBubbles(uniqueAlbums);
+        // Show album selection modal with cover art
+        showAlbumSelectionModal(artist.artistName, uniqueAlbums);
         
     } catch (error) {
         console.error('Error loading albums:', error);
@@ -873,48 +874,86 @@ async function selectArtistAndLoadAlbums(artist) {
     }
 }
 
-// Display album bubbles
-function displayAlbumBubbles(albums) {
-    const container = document.getElementById('artistBubblesContainer');
-    if (!container) return;
+// Show album selection modal with cover art
+function showAlbumSelectionModal(artistName, albums) {
+    const modal = document.getElementById('albumSelectionModal');
+    const header = document.getElementById('albumSelectionHeader');
+    const grid = document.getElementById('albumSelectionGrid');
     
-    // Stop any existing bubbles
-    stopArtistBubbles();
+    if (!modal || !header || !grid) return;
     
-    container.classList.add('active');
-    container.innerHTML = '';
+    // Set header with artist name
+    header.textContent = `💿 Select Album by ${artistName}`;
     
-    let delay = 0;
-    albums.forEach((album, index) => {
-        setTimeout(() => {
-            const bubble = document.createElement('div');
-            bubble.className = 'artist-bubble album-bubble';
-            bubble.textContent = album.collectionName;
-            bubble.style.left = '100%';
-            bubble.style.animationDelay = `${index * 0.5}s`;
-            
-            bubble.onclick = () => {
-                const searchInput = document.getElementById('searchQuery');
-                if (searchInput) {
-                    searchInput.value = album.collectionName;
-                    searchInput.disabled = false;
-                }
-                // Stop bubbles after selection
-                stopArtistBubbles();
-            };
-            
-            container.appendChild(bubble);
-            
-            // Remove bubble after animation
-            setTimeout(() => {
-                if (bubble.parentElement) {
-                    bubble.remove();
-                }
-            }, 11000);
-        }, delay);
+    // Clear previous albums
+    grid.innerHTML = '';
+    
+    // Create album cards with cover art
+    albums.forEach(album => {
+        const card = document.createElement('div');
+        card.style.cssText = 'cursor: pointer; border: 2px solid #ddd; border-radius: 8px; overflow: hidden; transition: all 0.2s; background: white;';
         
-        delay += 1350; // Same interval as original bubbles
+        const coverUrl = album.artworkUrl100 || album.artworkUrl60 || '';
+        const coverUrlHiRes = coverUrl.replace('100x100', '300x300').replace('60x60', '300x300');
+        
+        card.innerHTML = `
+            <img src="${coverUrlHiRes}" alt="${album.collectionName}" style="width: 100%; height: auto; display: block;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'%3E%3Crect fill=\'%23667eea\' width=\'100\' height=\'100\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'40\' fill=\'white\'%3E💿%3C/text%3E%3C/svg%3E'">
+            <div style="padding: 8px; font-size: 0.75em; text-align: center; font-weight: 600; line-height: 1.2; min-height: 50px; display: flex; align-items: center; justify-content: center;">
+                ${album.collectionName}
+            </div>
+        `;
+        
+        card.onmouseover = () => {
+            card.style.borderColor = '#667eea';
+            card.style.transform = 'scale(1.05)';
+            card.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
+        };
+        
+        card.onmouseout = () => {
+            card.style.borderColor = '#ddd';
+            card.style.transform = 'scale(1)';
+            card.style.boxShadow = 'none';
+        };
+        
+        card.onclick = () => {
+            selectAlbumAndStartGame(album.collectionName);
+        };
+        
+        grid.appendChild(card);
     });
+    
+    // Show modal
+    modal.classList.add('show');
+}
+
+// Close album selection modal
+function closeAlbumSelectionModal() {
+    const modal = document.getElementById('albumSelectionModal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+}
+
+// Select album and prepare to start game
+function selectAlbumAndStartGame(albumName) {
+    const searchInput = document.getElementById('searchQuery');
+    if (searchInput) {
+        searchInput.value = albumName;
+        searchInput.disabled = false;
+    }
+    
+    // Close modal
+    closeAlbumSelectionModal();
+    
+    // Scroll to start button or highlight it
+    const startBtn = document.querySelector('.start-game-btn');
+    if (startBtn) {
+        startBtn.style.animation = 'pulse-highlight 1s ease-out';
+        startBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        setTimeout(() => {
+            startBtn.style.animation = '';
+        }, 1000);
+    }
 }
 
 // Subtitle synchron halten (Header + Stats)

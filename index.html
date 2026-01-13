@@ -1549,6 +1549,19 @@
             </div>
         </div>
 
+        <!-- Album Selection Modal -->
+        <div class="modal" id="albumSelectionModal">
+            <div class="modal-content" style="max-width: 700px; max-height: 85vh;">
+                <div class="modal-header" id="albumSelectionHeader">💿 Select Album</div>
+                <div id="albumSelectionGrid" style="max-height: 65vh; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; padding: 10px;">
+                    <!-- Album covers will be populated here -->
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-btn modal-btn-secondary" onclick="closeAlbumSelectionModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Setup Screen -->
         <div class="setup-screen" id="setupScreen">
             <div class="setup-header">
