@@ -633,7 +633,7 @@ function createArtistBubble() {
             // Stage 1: Artist bubble clicked in album mode -> select artist and show albums
             selectedArtistForAlbums = bubbleText;
             if (searchInput) {
-                searchInput.value = `${bubbleText} (Artist selected - choose album below)`;
+                searchInput.value = bubbleText;
                 searchInput.disabled = true;
             }
             // Restart bubbles to show albums instead of artists
