@@ -483,6 +483,7 @@ async function loadArtistNames() {
 
 // Speichere Album- und Artist-Listen
 let albumListData = [];
+let selectedArtistForAlbums = null; // Tracks selected artist in album mode
 
 // Hilfsfunktion um lokales Album-Cover zu bekommen
 function getLocalAlbumCover(albumName) {
@@ -579,14 +580,29 @@ function createArtistBubble() {
     if (!container || !container.classList.contains('active')) return;
     
     let bubbleText = '';
+    let isAlbumBubble = false;
     
-    // Bestimme ob wir im Album-Modus sind
-    if (currentSearchType === 'album' && albumListData.length > 0) {
-        // Wähle zufälliges Album aus AlbumList
-        const randomAlbum = albumListData[Math.floor(Math.random() * albumListData.length)];
-        bubbleText = randomAlbum.album;
+    // Two-stage approach for album mode:
+    // Stage 1: Show artist bubbles (selectedArtistForAlbums is null)
+    // Stage 2: Show album bubbles for selected artist (selectedArtistForAlbums is set)
+    if (currentSearchType === 'album' && selectedArtistForAlbums) {
+        // Stage 2: Show albums from selected artist
+        if (albumListData.length > 0) {
+            const artistAlbums = albumListData.filter(album => 
+                album.artist.toLowerCase() === selectedArtistForAlbums.toLowerCase()
+            );
+            if (artistAlbums.length > 0) {
+                const randomAlbum = artistAlbums[Math.floor(Math.random() * artistAlbums.length)];
+                bubbleText = randomAlbum.album;
+                isAlbumBubble = true;
+            } else {
+                return; // No albums found for this artist
+            }
+        } else {
+            return;
+        }
     } else if (artistNames.length > 0) {
-        // Wähle zufälligen Künstler
+        // Stage 1: Show artist bubbles (default for all modes)
         bubbleText = artistNames[Math.floor(Math.random() * artistNames.length)];
     } else {
         return;
@@ -596,8 +612,8 @@ function createArtistBubble() {
     const bubble = document.createElement('div');
     bubble.className = 'artist-bubble';
     
-    // Füge album-bubble Klasse hinzu wenn im Album-Modus
-    if (currentSearchType === 'album') {
+    // Füge album-bubble Klasse hinzu wenn wir Albums zeigen
+    if (isAlbumBubble) {
         bubble.classList.add('album-bubble');
     }
     
@@ -612,9 +628,30 @@ function createArtistBubble() {
     // Click Handler
     bubble.onclick = () => {
         const searchInput = document.getElementById('searchQuery');
-        if (searchInput) {
-            searchInput.value = bubbleText;
-            searchInput.focus();
+        
+        if (currentSearchType === 'album' && !selectedArtistForAlbums) {
+            // Stage 1: Artist bubble clicked in album mode -> select artist and show albums
+            selectedArtistForAlbums = bubbleText;
+            if (searchInput) {
+                searchInput.value = `${bubbleText} (Artist selected - choose album below)`;
+                searchInput.disabled = true;
+            }
+            // Restart bubbles to show albums instead of artists
+            stopArtistBubbles();
+            setTimeout(() => startArtistBubbles(), 100);
+        } else if (isAlbumBubble) {
+            // Stage 2: Album bubble clicked -> set as final selection
+            if (searchInput) {
+                searchInput.value = bubbleText;
+                searchInput.disabled = false;
+                searchInput.focus();
+            }
+        } else {
+            // Normal artist/track search mode
+            if (searchInput) {
+                searchInput.value = bubbleText;
+                searchInput.focus();
+            }
         }
     };
     
@@ -662,13 +699,17 @@ function selectGameMode(mode) {
         // Setze currentSearchType basierend auf Modus
         if (mode === 'album') {
             currentSearchType = 'album';
+            selectedArtistForAlbums = null; // Reset artist selection
             if (searchInput) {
-                searchInput.placeholder = "e.g. 'Abbey Road' or 'Thriller' - enter artist name first";
+                searchInput.placeholder = "Step 1: Click an artist bubble to see their albums";
+                searchInput.disabled = false;
             }
         } else {
             currentSearchType = 'track';
+            selectedArtistForAlbums = null; // Reset
             if (searchInput) {
                 searchInput.placeholder = "e.g. 'Taylor Swift' or 'Bohemian Rhapsody'";
+                searchInput.disabled = false;
             }
         }
     }
