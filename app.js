@@ -2172,26 +2172,45 @@ function selectAnswer(answer, index) {
         // Spiele Erfolgs-Sound
         playCorrectSound();
         
-        // Nutze aktiven Countdown (falls vorhanden), ansonsten Basiswert abhängig vom Modus
-        const countdownActive = gameState.pointsCountdownActive;
-        const countdownPoints = countdownActive ? Math.max(0, Math.round(gameState.pointsCountdownValue)) : null;
-        const basePoints = gameState.currentPlayedReverse ? 2200 : 2000;
-        const awardedPoints = countdownPoints !== null ? countdownPoints : basePoints;
+        // Check if song was never played - give bonus 1700 points
+        if (!gameState.firstPlayDone) {
+            const bonusPoints = 1700;
+            gameState.totalPoints += bonusPoints;
+            
+            // Stempel auf gewählter Antwort
+            if (selectedBtn) {
+                selectedBtn.dataset.stamp = `+${bonusPoints} 🎯`;
+                selectedBtn.classList.add('stamp', 'stamp-correct');
+            }
+            
+            const resultMsg = document.getElementById('resultMessage');
+            resultMsg.textContent = `${t('answerCorrect')} +${bonusPoints} ${t('points')} 🎯 Never played bonus!`;
+            resultMsg.classList.remove('incorrect');
+            resultMsg.classList.add('correct');
+            resultMsg.style.fontSize = '1.3em';
+            resultMsg.style.animation = 'bounce-in 0.5s ease-out';
+        } else {
+            // Nutze aktiven Countdown (falls vorhanden), ansonsten Basiswert abhängig vom Modus
+            const countdownActive = gameState.pointsCountdownActive;
+            const countdownPoints = countdownActive ? Math.max(0, Math.round(gameState.pointsCountdownValue)) : null;
+            const basePoints = gameState.currentPlayedReverse ? 2200 : 2000;
+            const awardedPoints = countdownPoints !== null ? countdownPoints : basePoints;
 
-        gameState.totalPoints += awardedPoints;
-        
-        // Stempel auf gewählter Antwort
-        if (selectedBtn) {
-            selectedBtn.dataset.stamp = `+${awardedPoints}`;
-            selectedBtn.classList.add('stamp', 'stamp-correct');
+            gameState.totalPoints += awardedPoints;
+            
+            // Stempel auf gewählter Antwort
+            if (selectedBtn) {
+                selectedBtn.dataset.stamp = `+${awardedPoints}`;
+                selectedBtn.classList.add('stamp', 'stamp-correct');
+            }
+
+            const resultMsg = document.getElementById('resultMessage');
+            resultMsg.textContent = `${t('answerCorrect')} +${awardedPoints} ${t('points')}`;
+            resultMsg.classList.remove('incorrect');
+            resultMsg.classList.add('correct');
+            resultMsg.style.fontSize = '1.3em';
+            resultMsg.style.animation = 'bounce-in 0.5s ease-out';
         }
-
-        const resultMsg = document.getElementById('resultMessage');
-        resultMsg.textContent = `${t('answerCorrect')} +${awardedPoints} ${t('points')}`;
-        resultMsg.classList.remove('incorrect');
-        resultMsg.classList.add('correct');
-        resultMsg.style.fontSize = '1.3em';
-        resultMsg.style.animation = 'bounce-in 0.5s ease-out';
     } else {
         gameState.wrongAnswers++;
         
