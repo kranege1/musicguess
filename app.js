@@ -1622,22 +1622,31 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 let bestMatch = null;
                 if (albumResults.length > 0) {
                     const normalizedQuery = searchQuery.toLowerCase().trim();
+                    const normalizedArtist = selectedArtistForAlbums ? selectedArtistForAlbums.toLowerCase().trim() : null;
                     
-                    // 1. Priorität: Exaktes Match
-                    bestMatch = albumResults.find(album => 
+                    // Filter: Nur Alben vom ausgewählten Künstler
+                    let filteredAlbums = albumResults;
+                    if (normalizedArtist) {
+                        filteredAlbums = albumResults.filter(album => 
+                            album.artistName && album.artistName.toLowerCase().includes(normalizedArtist)
+                        );
+                    }
+                    
+                    // 1. Priorität: Exaktes Match (mit Artist-Filter)
+                    bestMatch = filteredAlbums.find(album => 
                         album.collectionName && album.collectionName.toLowerCase() === normalizedQuery
                     );
                     
-                    // 2. Priorität: Album beginnt mit Suchbegriff
+                    // 2. Priorität: Album beginnt mit Suchbegriff (mit Artist-Filter)
                     if (!bestMatch) {
-                        bestMatch = albumResults.find(album => 
+                        bestMatch = filteredAlbums.find(album => 
                             album.collectionName && album.collectionName.toLowerCase().startsWith(normalizedQuery)
                         );
                     }
                     
-                    // 3. Priorität: Kürzestes Album das Suchbegriff enthält (vermeidet Compilations)
+                    // 3. Priorität: Kürzestes Album das Suchbegriff enthält (mit Artist-Filter)
                     if (!bestMatch) {
-                        const matches = albumResults.filter(album => 
+                        const matches = filteredAlbums.filter(album => 
                             album.collectionName && album.collectionName.toLowerCase().includes(normalizedQuery)
                         );
                         if (matches.length > 0) {
@@ -1647,9 +1656,9 @@ async function loadSongsFromItunes(searchQuery, limit) {
                         }
                     }
                     
-                    // 4. Fallback: erstes Ergebnis
-                    if (!bestMatch) {
-                        bestMatch = albumResults[0];
+                    // 4. Fallback: erstes Ergebnis (mit Artist-Filter)
+                    if (!bestMatch && filteredAlbums.length > 0) {
+                        bestMatch = filteredAlbums[0];
                     }
                 }
                 
@@ -1658,19 +1667,28 @@ async function loadSongsFromItunes(searchQuery, limit) {
                     const usAlbumResults = await fetchItunes(searchQuery, { limit: 10, country: 'US', entity: 'album' });
                     if (usAlbumResults.length > 0) {
                         const normalizedQuery = searchQuery.toLowerCase().trim();
+                        const normalizedArtist = selectedArtistForAlbums ? selectedArtistForAlbums.toLowerCase().trim() : null;
                         
-                        bestMatch = usAlbumResults.find(album => 
+                        // Filter: Nur Alben vom ausgewählten Künstler
+                        let filteredAlbums = usAlbumResults;
+                        if (normalizedArtist) {
+                            filteredAlbums = usAlbumResults.filter(album => 
+                                album.artistName && album.artistName.toLowerCase().includes(normalizedArtist)
+                            );
+                        }
+                        
+                        bestMatch = filteredAlbums.find(album => 
                             album.collectionName && album.collectionName.toLowerCase() === normalizedQuery
                         );
                         
                         if (!bestMatch) {
-                            bestMatch = usAlbumResults.find(album => 
+                            bestMatch = filteredAlbums.find(album => 
                                 album.collectionName && album.collectionName.toLowerCase().startsWith(normalizedQuery)
                             );
                         }
                         
                         if (!bestMatch) {
-                            const matches = usAlbumResults.filter(album => 
+                            const matches = filteredAlbums.filter(album => 
                                 album.collectionName && album.collectionName.toLowerCase().includes(normalizedQuery)
                             );
                             if (matches.length > 0) {
@@ -1680,8 +1698,8 @@ async function loadSongsFromItunes(searchQuery, limit) {
                             }
                         }
                         
-                        if (!bestMatch) {
-                            bestMatch = usAlbumResults[0];
+                        if (!bestMatch && filteredAlbums.length > 0) {
+                            bestMatch = filteredAlbums[0];
                         }
                         
                         const albumId = bestMatch.collectionId;
@@ -1695,19 +1713,28 @@ async function loadSongsFromItunes(searchQuery, limit) {
                         const albumArtistResults = await fetchItunes(searchQuery, { limit: 50, country: 'US', entity: 'album', attribute: 'albumTerm' });
                         if (albumArtistResults.length > 0) {
                             const normalizedQuery = searchQuery.toLowerCase().trim();
+                            const normalizedArtist = selectedArtistForAlbums ? selectedArtistForAlbums.toLowerCase().trim() : null;
                             
-                            bestMatch = albumArtistResults.find(album => 
+                            // Filter: Nur Alben vom ausgewählten Künstler
+                            let filteredAlbums = albumArtistResults;
+                            if (normalizedArtist) {
+                                filteredAlbums = albumArtistResults.filter(album => 
+                                    album.artistName && album.artistName.toLowerCase().includes(normalizedArtist)
+                                );
+                            }
+                            
+                            bestMatch = filteredAlbums.find(album => 
                                 album.collectionName && album.collectionName.toLowerCase() === normalizedQuery
                             );
                             
                             if (!bestMatch) {
-                                bestMatch = albumArtistResults.find(album => 
+                                bestMatch = filteredAlbums.find(album => 
                                     album.collectionName && album.collectionName.toLowerCase().startsWith(normalizedQuery)
                                 );
                             }
                             
                             if (!bestMatch) {
-                                const matches = albumArtistResults.filter(album => 
+                                const matches = filteredAlbums.filter(album => 
                                     album.collectionName && album.collectionName.toLowerCase().includes(normalizedQuery)
                                 );
                                 if (matches.length > 0) {

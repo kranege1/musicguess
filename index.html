@@ -1289,23 +1289,48 @@
         }
 
         .song-info {
-            background: #f5f5f5;
-            padding: 12px;
-            border-radius: 9px;
-            margin-bottom: 14px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(102, 126, 234, 0.6);
             display: none;
+            z-index: 2000;
+            max-width: 500px;
+            width: 90%;
+            border: 3px solid #fff;
         }
 
         .song-info.show {
             display: block;
+            animation: flyInGlow 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes flyInGlow {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -150%) scale(0.5);
+                box-shadow: 0 0 0 rgba(102, 126, 234, 0);
+            }
+            50% {
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 80px rgba(102, 126, 234, 1);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(102, 126, 234, 0.6);
+            }
         }
 
         .info-row {
             display: flex;
             justify-content: space-between;
-            margin: 6px 0;
-            padding: 6px 0;
-            border-bottom: 1px solid #ddd;
+            margin: 8px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .info-row:last-child {
@@ -1314,14 +1339,21 @@
 
         .info-label {
             font-weight: 600;
-            color: #666;
-            font-size: 0.9em;
+            color: #fff;
+            font-size: 0.95em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         .info-value {
-            color: #333;
+            color: #fff;
             font-weight: 500;
-            font-size: 0.9em;
+            font-size: 0.95em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        #infoArtist {
+            font-weight: 700;
+            font-size: 1.1em;
         }
 
         .game-over {
@@ -1580,10 +1612,18 @@
         <!-- Setup Screen -->
         <div class="setup-screen" id="setupScreen">
             <div class="setup-header">
-                <div class="setup-header-lang">
-                    <button class="lang-btn" onclick="changeLanguage('de')" data-lang="de">DE</button>
-                    <button class="lang-btn" onclick="changeLanguage('en')" data-lang="en">EN</button>
-                    <button class="lang-btn" onclick="changeLanguage('it')" data-lang="it">IT</button>
+                <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                    <div class="setup-header-lang">
+                        <button class="lang-btn" onclick="changeLanguage('de')" data-lang="de">DE</button>
+                        <button class="lang-btn" onclick="changeLanguage('en')" data-lang="en">EN</button>
+                        <button class="lang-btn" onclick="changeLanguage('it')" data-lang="it">IT</button>
+                    </div>
+                    <select id="songCount" style="padding: 5px 6px; border-radius: 4px; border: 2px solid #8170e2; font-size: 0.65em; width: 50px; background: rgb(109, 137, 231); color: white; font-weight: 700; margin-top: 46px;">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                    </select>
                 </div>
                 <div class="setup-header-controls">
                     <button class="player-name-btn" id="playerNameBtn" onclick="openPlayerNameModal()">👤 Anon</button>
@@ -1606,7 +1646,7 @@
                     <option value="all" data-i18n="categoryAll">Alle Genres</option>
                     <option value="decades" data-i18n="categoryDecades">Jahrzehnte</option>
                     <option value="genres" data-i18n="categoryGenres">Genres</option>
-                    <option value="billboard" data-i18n="categoryBillboard">🔥 Billboard Hot 100</option>
+                    <option value="billboard" data-i18n="categoryBillboard">Billboard Charts</option>
                     <option value="countries" data-i18n="categoryCountries">Länder</option>
                     <option value="classical" data-i18n="categoryClassical">Classical</option>
                 </select>
@@ -1631,16 +1671,6 @@
                 </div>
                 <!-- Artist Bubbles Container -->
                 <div class="artist-bubbles-container" id="artistBubblesContainer"></div>
-            </div>
-
-            <div class="input-group">
-                <label for="songCount" data-i18n="songCount">📊 Anzahl der Songs:</label>
-                <select id="songCount">
-                    <option value="5">5 <span data-i18n="songs">Songs</span></option>
-                    <option value="10" selected>10 <span data-i18n="songs">Songs</span></option>
-                    <option value="15">15 <span data-i18n="songs">Songs</span></option>
-                    <option value="20">20 <span data-i18n="songs">Songs</span></option>
-                </select>
             </div>
 
             <div class="error-message" id="errorMessage"></div>
@@ -1707,25 +1737,6 @@
                 </div>
             </div>
 
-            <div class="song-info" id="songInfo">
-                <div class="info-row">
-                    <span class="info-label" data-i18n="artist">Künstler:</span>
-                    <span class="info-value" id="infoArtist"></span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label" data-i18n="track">Titel:</span>
-                    <span class="info-value" id="infoTrack"></span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label" data-i18n="album">Album:</span>
-                    <span class="info-value" id="infoAlbum"></span>
-                </div>
-                <div class="info-row" id="genreRow" style="display: none;">
-                    <span class="info-label" data-i18n="genre">Genre:</span>
-                    <span class="info-value" id="infoGenre"></span>
-                </div>
-            </div>
-
             <div class="mid-section">
                 <div class="mid-column mid-left">
                     <button onclick="endGame()" class="control-btn btn-ghost-gray" data-i18n="endGame">🏁 Spiel Beenden</button>
@@ -1764,6 +1775,26 @@
             <div class="leaderboard-widget" id="quizLeaderboard">
                 <div class="leaderboard-title" data-i18n="top3ThisRound">🏆 Top 3 diese Runde</div>
                 <div id="quizLeaderboardList"></div>
+            </div>
+
+            <!-- Song Info Popup -->
+            <div class="song-info" id="songInfo" onclick="this.classList.remove('show')">
+                <div class="info-row">
+                    <span class="info-label" data-i18n="artist">Künstler:</span>
+                    <span class="info-value" id="infoArtist"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label" data-i18n="track">Titel:</span>
+                    <span class="info-value" id="infoTrack"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label" data-i18n="album">Album:</span>
+                    <span class="info-value" id="infoAlbum"></span>
+                </div>
+                <div class="info-row" id="genreRow" style="display: none;">
+                    <span class="info-label" data-i18n="genre">Genre:</span>
+                    <span class="info-value" id="infoGenre"></span>
+                </div>
             </div>
         </div>
 
