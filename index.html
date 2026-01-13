@@ -478,7 +478,6 @@
             position: relative;
             border-radius: 12px;
             padding: 14px;
-            isolation: isolate;
         }
 
         .setup-screen::before {
@@ -494,7 +493,13 @@
             background-repeat: no-repeat;
             border-radius: 12px;
             opacity: 0.9;
-            z-index: -1;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .setup-screen > * {
+            position: relative;
+            z-index: 1;
         }
 
         .input-group {
