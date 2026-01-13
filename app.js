@@ -874,6 +874,10 @@ async function selectArtistAndLoadAlbums(artist) {
     }
 }
 
+// Global variable to store all albums for filtering
+let allAlbumsForModal = [];
+let currentArtistName = '';
+
 // Show album selection modal with cover art
 function showAlbumSelectionModal(artistName, albums) {
     const modal = document.getElementById('albumSelectionModal');
@@ -882,21 +886,56 @@ function showAlbumSelectionModal(artistName, albums) {
     
     if (!modal || !header || !grid) return;
     
+    // Store albums and artist name for filtering
+    allAlbumsForModal = albums;
+    currentArtistName = artistName;
+    
     // Set header with artist name
     header.textContent = `💿 Select Album by ${artistName}`;
+    
+    // Reset filter buttons
+    const filterBoth = document.getElementById('filterBoth');
+    const filterPrimary = document.getElementById('filterPrimary');
+    const filterSampler = document.getElementById('filterSampler');
+    if (filterBoth) filterBoth.classList.add('active');
+    if (filterPrimary) filterPrimary.classList.remove('active');
+    if (filterSampler) filterSampler.classList.remove('active');
+    
+    // Display all albums initially
+    displayFilteredAlbums(albums);
+    
+    // Show modal
+    modal.classList.add('show');
+}
+
+// Display filtered albums in grid
+function displayFilteredAlbums(albums) {
+    const grid = document.getElementById('albumSelectionGrid');
+    if (!grid) return;
     
     // Clear previous albums
     grid.innerHTML = '';
     
+    if (albums.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: #666;">No albums found for this filter</div>';
+        return;
+    }
+    
     // Create album cards with cover art
     albums.forEach(album => {
         const card = document.createElement('div');
-        card.style.cssText = 'cursor: pointer; border: 2px solid #ddd; border-radius: 8px; overflow: hidden; transition: all 0.2s; background: white;';
+        const isPrimary = isAlbumPrimary(album, currentArtistName);
+        const borderColor = isPrimary ? '#667eea' : '#ff9f1c';
+        
+        card.style.cssText = `cursor: pointer; border: 2px solid ${borderColor}; border-radius: 8px; overflow: hidden; transition: all 0.2s; background: white; position: relative;`;
         
         const coverUrl = album.artworkUrl100 || album.artworkUrl60 || '';
         const coverUrlHiRes = coverUrl.replace('100x100', '300x300').replace('60x60', '300x300');
         
+        const badge = isPrimary ? '' : '<div style="position: absolute; top: 4px; right: 4px; background: rgba(255, 159, 28, 0.9); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.65em; font-weight: 700;">COMP</div>';
+        
         card.innerHTML = `
+            ${badge}
             <img src="${coverUrlHiRes}" alt="${album.collectionName}" style="width: 100%; height: auto; display: block;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'%3E%3Crect fill=\'%23667eea\' width=\'100\' height=\'100\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'40\' fill=\'white\'%3E💿%3C/text%3E%3C/svg%3E'">
             <div style="padding: 8px; font-size: 0.75em; text-align: center; font-weight: 600; line-height: 1.2; min-height: 50px; display: flex; align-items: center; justify-content: center;">
                 ${album.collectionName}
@@ -904,13 +943,13 @@ function showAlbumSelectionModal(artistName, albums) {
         `;
         
         card.onmouseover = () => {
-            card.style.borderColor = '#667eea';
+            card.style.borderColor = isPrimary ? '#764ba2' : '#f857a6';
             card.style.transform = 'scale(1.05)';
             card.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
         };
         
         card.onmouseout = () => {
-            card.style.borderColor = '#ddd';
+            card.style.borderColor = borderColor;
             card.style.transform = 'scale(1)';
             card.style.boxShadow = 'none';
         };
@@ -921,9 +960,50 @@ function showAlbumSelectionModal(artistName, albums) {
         
         grid.appendChild(card);
     });
+}
+
+// Check if album is primary (artist is the main album artist) or compilation
+function isAlbumPrimary(album, artistName) {
+    const collectionArtist = (album.collectionArtistName || '').toLowerCase();
+    const searchArtist = artistName.toLowerCase();
+    const collectionType = album.collectionType || '';
     
-    // Show modal
-    modal.classList.add('show');
+    // Check if it's marked as compilation
+    if (collectionType === 'Compilation') return false;
+    
+    // Check if collection artist is "Various Artists"
+    if (collectionArtist.includes('various') || collectionArtist.includes('compilation')) return false;
+    
+    // Check if collection artist matches search artist
+    return collectionArtist.includes(searchArtist) || searchArtist.includes(collectionArtist);
+}
+
+// Filter albums based on type
+function filterAlbums(filterType) {
+    // Update button states
+    const filterBoth = document.getElementById('filterBoth');
+    const filterPrimary = document.getElementById('filterPrimary');
+    const filterSampler = document.getElementById('filterSampler');
+    
+    if (filterBoth) filterBoth.classList.remove('active');
+    if (filterPrimary) filterPrimary.classList.remove('active');
+    if (filterSampler) filterSampler.classList.remove('active');
+    
+    if (filterType === 'both' && filterBoth) filterBoth.classList.add('active');
+    if (filterType === 'primary' && filterPrimary) filterPrimary.classList.add('active');
+    if (filterType === 'sampler' && filterSampler) filterSampler.classList.add('active');
+    
+    // Filter albums
+    let filteredAlbums = allAlbumsForModal;
+    
+    if (filterType === 'primary') {
+        filteredAlbums = allAlbumsForModal.filter(album => isAlbumPrimary(album, currentArtistName));
+    } else if (filterType === 'sampler') {
+        filteredAlbums = allAlbumsForModal.filter(album => !isAlbumPrimary(album, currentArtistName));
+    }
+    
+    // Display filtered albums
+    displayFilteredAlbums(filteredAlbums);
 }
 
 // Close album selection modal
