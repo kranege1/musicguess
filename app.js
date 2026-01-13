@@ -714,7 +714,7 @@ function selectGameMode(mode) {
                 searchInput.placeholder = "e.g. 'Taylor Swift' or 'Bohemian Rhapsody'";
                 searchInput.disabled = false;
             }
-            if (checkArtistBtn) checkArtistBtn.style.display = 'none';
+            if (checkArtistBtn) checkArtistBtn.style.display = 'block'; // Show button in Free Choice mode too
         }
         // Setze Subtitle zurück
         setSubtitle(t('setupSubtitle'));
