@@ -1012,28 +1012,47 @@ function isAlbumPrimary(album, artistName) {
            searchArtist.startsWith(collectionArtist);
 }
 
+// Check if album is a single based on collectionType and track count
+function isAlbumSingle(album) {
+    const collectionType = (album.collectionType || '').toLowerCase();
+    const trackCount = album.trackCount || 0;
+    
+    // Check collectionType for 'single'
+    if (collectionType.includes('single')) return true;
+    
+    // Check track count (singles typically have 1-3 tracks)
+    if (trackCount > 0 && trackCount <= 3) return true;
+    
+    return false;
+}
+
 // Filter albums based on type
 function filterAlbums(filterType) {
     // Update button states
     const filterBoth = document.getElementById('filterBoth');
     const filterPrimary = document.getElementById('filterPrimary');
-    const filterSampler = document.getElementById('filterSampler');
+    const filterCompilations = document.getElementById('filterCompilations');
+    const filterSingles = document.getElementById('filterSingles');
     
     if (filterBoth) filterBoth.classList.remove('active');
     if (filterPrimary) filterPrimary.classList.remove('active');
-    if (filterSampler) filterSampler.classList.remove('active');
+    if (filterCompilations) filterCompilations.classList.remove('active');
+    if (filterSingles) filterSingles.classList.remove('active');
     
     if (filterType === 'both' && filterBoth) filterBoth.classList.add('active');
     if (filterType === 'primary' && filterPrimary) filterPrimary.classList.add('active');
-    if (filterType === 'sampler' && filterSampler) filterSampler.classList.add('active');
+    if (filterType === 'compilations' && filterCompilations) filterCompilations.classList.add('active');
+    if (filterType === 'singles' && filterSingles) filterSingles.classList.add('active');
     
     // Filter albums
     let filteredAlbums = allAlbumsForModal;
     
     if (filterType === 'primary') {
         filteredAlbums = allAlbumsForModal.filter(album => isAlbumPrimary(album, currentArtistName));
-    } else if (filterType === 'sampler') {
-        filteredAlbums = allAlbumsForModal.filter(album => !isAlbumPrimary(album, currentArtistName));
+    } else if (filterType === 'compilations') {
+        filteredAlbums = allAlbumsForModal.filter(album => !isAlbumPrimary(album, currentArtistName) && !isAlbumSingle(album));
+    } else if (filterType === 'singles') {
+        filteredAlbums = allAlbumsForModal.filter(album => isAlbumSingle(album));
     }
     
     // Display filtered albums
