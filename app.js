@@ -1022,8 +1022,8 @@ function isAlbumSingle(album) {
     // Check collectionType for 'single'
     if (collectionType.includes('single')) return true;
     
-    // Check track count (singles typically have 1-3 tracks)
-    if (trackCount > 0 && trackCount <= 3) return true;
+    // Check track count (only 1 track is a single, 2-3 could be EPs)
+    if (trackCount === 1) return true;
     
     return false;
 }
