@@ -1034,7 +1034,7 @@ function isAlbumPrimary(album, artistName) {
 }
 
 // Helper function to strip edition info from album names for deduplication
-function getAlbumBaseeName(albumName) {
+function getAlbumBaseName(albumName) {
     if (!albumName) return '';
     // Remove common edition markers: (Deluxe), (Remastered), (Tour Edition), (Wembley Edition), etc.
     return albumName
