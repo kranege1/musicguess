@@ -1707,6 +1707,25 @@
                 </div>
             </div>
 
+            <div class="song-info" id="songInfo">
+                <div class="info-row">
+                    <span class="info-label" data-i18n="artist">Künstler:</span>
+                    <span class="info-value" id="infoArtist"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label" data-i18n="track">Titel:</span>
+                    <span class="info-value" id="infoTrack"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label" data-i18n="album">Album:</span>
+                    <span class="info-value" id="infoAlbum"></span>
+                </div>
+                <div class="info-row" id="genreRow" style="display: none;">
+                    <span class="info-label" data-i18n="genre">Genre:</span>
+                    <span class="info-value" id="infoGenre"></span>
+                </div>
+            </div>
+
             <div class="mid-section">
                 <div class="mid-column mid-left">
                     <button onclick="endGame()" class="control-btn btn-ghost-gray" data-i18n="endGame">🏁 Spiel Beenden</button>
@@ -1739,24 +1758,6 @@
                 </div>
                 <div class="answers" id="answersContainer"></div>
                 <div class="result-message" id="resultMessage"></div>
-                <div class="song-info" id="songInfo">
-                    <div class="info-row">
-                        <span class="info-label" data-i18n="artist">Künstler:</span>
-                        <span class="info-value" id="infoArtist"></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label" data-i18n="track">Titel:</span>
-                        <span class="info-value" id="infoTrack"></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label" data-i18n="album">Album:</span>
-                        <span class="info-value" id="infoAlbum"></span>
-                    </div>
-                    <div class="info-row" id="genreRow" style="display: none;">
-                        <span class="info-label" data-i18n="genre">Genre:</span>
-                        <span class="info-value" id="infoGenre"></span>
-                    </div>
-                </div>
             </div>
 
             <!-- Motivation Leaderboard Widget: fixed to bottom position of quiz screen -->
