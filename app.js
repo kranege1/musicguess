@@ -816,6 +816,16 @@ async function selectArtistAndLoadAlbums(artist) {
     const searchInput = document.getElementById('searchQuery');
     selectedArtistForAlbums = artist.artistName;
     
+    // If in Free Choice mode (track search), just populate the input and return
+    if (currentSearchType === 'track') {
+        if (searchInput) {
+            searchInput.value = `✅ ${artist.artistName}`;
+            searchInput.disabled = false;
+        }
+        return;
+    }
+    
+    // Album mode: fetch and show albums
     if (searchInput) {
         searchInput.value = `✅ ${artist.artistName} - Loading albums...`;
         searchInput.disabled = true;
