@@ -1535,6 +1535,20 @@
             </div>
         </div>
 
+        <!-- Artist Selection Modal -->
+        <div class="modal" id="artistSelectionModal">
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header">🎤 Select Artist</div>
+                <p style="margin-bottom: 12px; font-size: 0.9em; color: #666;">Multiple artists found. Please select the correct one:</p>
+                <div id="artistSelectionList" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Artist options will be populated here -->
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-btn modal-btn-secondary" onclick="closeArtistSelectionModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Setup Screen -->
         <div class="setup-screen" id="setupScreen">
             <div class="setup-header">
@@ -1583,7 +1597,10 @@
 
             <div class="input-group" id="searchSelection" style="display: none;">
                 <label for="searchQuery" data-i18n="searchLabel">🎤 Künstler oder Titel durchsuchen:</label>
-                <input type="text" id="searchQuery" data-i18n-placeholder="searchPlaceholder" placeholder="z.B. 'Taylor Swift' oder 'Bohemian Rhapsody'">
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="text" id="searchQuery" data-i18n-placeholder="searchPlaceholder" placeholder="z.B. 'Taylor Swift' oder 'Bohemian Rhapsody'" style="flex: 1;">
+                    <button id="checkArtistBtn" onclick="checkArtist()" style="display: none; min-width: 120px; padding: 9px 16px; white-space: nowrap;">✓ Check Artist</button>
+                </div>
                 <!-- Artist Bubbles Container -->
                 <div class="artist-bubbles-container" id="artistBubblesContainer"></div>
             </div>

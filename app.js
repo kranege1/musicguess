@@ -682,40 +682,239 @@ function selectGameMode(mode) {
     const searchSelection = document.getElementById('searchSelection');
     const subtitle = document.getElementById('gameSubtitle');
     const searchInput = document.getElementById('searchQuery');
+    const checkArtistBtn = document.getElementById('checkArtistBtn');
 
     if (mode === 'genre') {
         genreSelection.style.display = 'flex';
         searchSelection.style.display = 'none';
         stopArtistBubbles();
+        if (checkArtistBtn) checkArtistBtn.style.display = 'none';
         // Setze Subtitle zurück
         setSubtitle(t('setupSubtitle'));
     } else {
         genreSelection.style.display = 'none';
         searchSelection.style.display = 'flex';
-        startArtistBubbles();
-        // Setze Subtitle zurück
-        setSubtitle(t('setupSubtitle'));
         
         // Setze currentSearchType basierend auf Modus
         if (mode === 'album') {
             currentSearchType = 'album';
             selectedArtistForAlbums = null; // Reset artist selection
+            stopArtistBubbles(); // No bubbles for album mode
             if (searchInput) {
-                searchInput.placeholder = "Step 1: Click an artist bubble to see their albums";
+                searchInput.placeholder = "Enter artist name (e.g. 'The Beatles')";
                 searchInput.disabled = false;
+                searchInput.value = '';
             }
+            if (checkArtistBtn) checkArtistBtn.style.display = 'block';
         } else {
             currentSearchType = 'track';
             selectedArtistForAlbums = null; // Reset
+            startArtistBubbles(); // Show bubbles for artist/track mode
             if (searchInput) {
                 searchInput.placeholder = "e.g. 'Taylor Swift' or 'Bohemian Rhapsody'";
                 searchInput.disabled = false;
             }
+            if (checkArtistBtn) checkArtistBtn.style.display = 'none';
         }
+        // Setze Subtitle zurück
+        setSubtitle(t('setupSubtitle'));
     }
     
     // Update Leaderboard bei Modus-Wechsel
     showSetupLeaderboard();
+}
+
+// Check Artist function for album mode
+async function checkArtist() {
+    const searchInput = document.getElementById('searchQuery');
+    const artistName = searchInput?.value?.trim();
+    
+    if (!artistName) {
+        showError('Please enter an artist name');
+        return;
+    }
+    
+    try {
+        // Search for artist via iTunes API
+        const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artistName)}&entity=musicArtist&limit=10`);
+        const data = await response.json();
+        
+        if (!data.results || data.results.length === 0) {
+            showError(`No artist found for "${artistName}". Please try a different name.`);
+            return;
+        }
+        
+        // Filter for exact or close matches
+        const artists = data.results.filter(artist => artist.artistName);
+        
+        if (artists.length === 0) {
+            showError(`No artist found for "${artistName}". Please try a different name.`);
+            return;
+        }
+        
+        if (artists.length === 1) {
+            // Single artist found - proceed directly
+            selectArtistAndLoadAlbums(artists[0]);
+        } else {
+            // Multiple artists found - show selection modal
+            showArtistSelectionModal(artists);
+        }
+    } catch (error) {
+        console.error('Error checking artist:', error);
+        showError('Error checking artist. Please try again.');
+    }
+}
+
+// Show artist selection modal
+function showArtistSelectionModal(artists) {
+    const modal = document.getElementById('artistSelectionModal');
+    const list = document.getElementById('artistSelectionList');
+    
+    if (!modal || !list) return;
+    
+    // Clear previous options
+    list.innerHTML = '';
+    
+    // Create radio button options for each artist
+    artists.forEach((artist, index) => {
+        const option = document.createElement('div');
+        option.style.cssText = 'padding: 10px; margin: 5px 0; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.2s;';
+        option.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="radio" name="artistChoice" value="${index}" id="artist_${index}" style="cursor: pointer;">
+                <label for="artist_${index}" style="cursor: pointer; flex: 1; margin: 0;">
+                    <strong>${artist.artistName}</strong>
+                    ${artist.primaryGenreName ? `<br><small style="color: #666;">${artist.primaryGenreName}</small>` : ''}
+                </label>
+            </div>
+        `;
+        
+        option.onclick = (e) => {
+            if (e.target.tagName !== 'INPUT') {
+                option.querySelector('input').checked = true;
+            }
+            selectArtistAndLoadAlbums(artist);
+            closeArtistSelectionModal();
+        };
+        
+        list.appendChild(option);
+    });
+    
+    modal.classList.add('show');
+}
+
+// Close artist selection modal
+function closeArtistSelectionModal() {
+    const modal = document.getElementById('artistSelectionModal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+}
+
+// Select artist and load their albums
+async function selectArtistAndLoadAlbums(artist) {
+    const searchInput = document.getElementById('searchQuery');
+    selectedArtistForAlbums = artist.artistName;
+    
+    if (searchInput) {
+        searchInput.value = `✅ ${artist.artistName} - Loading albums...`;
+        searchInput.disabled = true;
+    }
+    
+    try {
+        // Fetch albums from iTunes API
+        const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artist.artistName)}&entity=album&limit=200`);
+        const data = await response.json();
+        
+        if (!data.results || data.results.length === 0) {
+            showError(`No albums found for ${artist.artistName}`);
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.disabled = false;
+            }
+            return;
+        }
+        
+        // Filter unique albums by collection name
+        const uniqueAlbums = [];
+        const seen = new Set();
+        
+        data.results.forEach(item => {
+            if (item.collectionName && !seen.has(item.collectionName)) {
+                seen.add(item.collectionName);
+                uniqueAlbums.push(item);
+            }
+        });
+        
+        if (uniqueAlbums.length === 0) {
+            showError(`No albums found for ${artist.artistName}`);
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.disabled = false;
+            }
+            return;
+        }
+        
+        // Update search input
+        if (searchInput) {
+            searchInput.value = `✅ ${artist.artistName} (${uniqueAlbums.length} albums found - click an album below)`;
+        }
+        
+        // Display album bubbles
+        displayAlbumBubbles(uniqueAlbums);
+        
+    } catch (error) {
+        console.error('Error loading albums:', error);
+        showError('Error loading albums. Please try again.');
+        if (searchInput) {
+            searchInput.value = '';
+            searchInput.disabled = false;
+        }
+    }
+}
+
+// Display album bubbles
+function displayAlbumBubbles(albums) {
+    const container = document.getElementById('artistBubblesContainer');
+    if (!container) return;
+    
+    // Stop any existing bubbles
+    stopArtistBubbles();
+    
+    container.classList.add('active');
+    container.innerHTML = '';
+    
+    let delay = 0;
+    albums.forEach((album, index) => {
+        setTimeout(() => {
+            const bubble = document.createElement('div');
+            bubble.className = 'artist-bubble album-bubble';
+            bubble.textContent = album.collectionName;
+            bubble.style.left = '100%';
+            bubble.style.animationDelay = `${index * 0.5}s`;
+            
+            bubble.onclick = () => {
+                const searchInput = document.getElementById('searchQuery');
+                if (searchInput) {
+                    searchInput.value = album.collectionName;
+                    searchInput.disabled = false;
+                }
+                // Stop bubbles after selection
+                stopArtistBubbles();
+            };
+            
+            container.appendChild(bubble);
+            
+            // Remove bubble after animation
+            setTimeout(() => {
+                if (bubble.parentElement) {
+                    bubble.remove();
+                }
+            }, 11000);
+        }, delay);
+        
+        delay += 1350; // Same interval as original bubbles
+    });
 }
 
 // Subtitle synchron halten (Header + Stats)
