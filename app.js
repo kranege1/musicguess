@@ -847,12 +847,31 @@ async function selectArtistAndLoadAlbums(artist) {
         
         // Filter unique albums by collection ID (prevents duplicates from different regions)
         const uniqueAlbums = [];
-        const seen = new Set();
+        const seenIds = new Set();
+        const seenNames = new Map(); // Track by name to deduplicate versions
         
         data.results.forEach(item => {
-            if (item.collectionId && !seen.has(item.collectionId)) {
-                seen.add(item.collectionId);
-                uniqueAlbums.push(item);
+            if (item.collectionId && !seenIds.has(item.collectionId)) {
+                // Also check if we've already seen this collection name
+                // If we have, only keep it if this version has more tracks (full version > remaster)
+                const collectionName = (item.collectionName || '').toLowerCase().trim();
+                if (seenNames.has(collectionName)) {
+                    const existingAlbum = seenNames.get(collectionName);
+                    // Keep the one with more tracks (full version likely has more)
+                    if (item.trackCount && existingAlbum.trackCount && item.trackCount > existingAlbum.trackCount) {
+                        // Remove old one and add new one
+                        uniqueAlbums = uniqueAlbums.filter(a => a.collectionId !== existingAlbum.collectionId);
+                        seenIds.delete(existingAlbum.collectionId);
+                        uniqueAlbums.push(item);
+                        seenIds.add(item.collectionId);
+                        seenNames.set(collectionName, item);
+                    }
+                    // Otherwise skip this version
+                } else {
+                    seenIds.add(item.collectionId);
+                    uniqueAlbums.push(item);
+                    seenNames.set(collectionName, item);
+                }
             }
         });
         
@@ -906,13 +925,13 @@ function showAlbumSelectionModal(artistName, albums) {
     // Reset filter buttons - set "Primary Only" as default
     const filterBoth = document.getElementById('filterBoth');
     const filterPrimary = document.getElementById('filterPrimary');
-    const filterSampler = document.getElementById('filterSampler');
+    const filterCompilations = document.getElementById('filterCompilations');
     if (filterBoth) filterBoth.classList.remove('active');
     if (filterPrimary) filterPrimary.classList.add('active');
-    if (filterSampler) filterSampler.classList.remove('active');
+    if (filterCompilations) filterCompilations.classList.remove('active');
     
-    // Display primary albums only initially
-    const primaryAlbums = albums.filter(album => isAlbumPrimary(album, artistName));
+    // Display primary albums only initially (exclude singles and compilations)
+    const primaryAlbums = albums.filter(album => isAlbumPrimary(album, artistName) && !isAlbumSingle(album));
     displayFilteredAlbums(primaryAlbums);
     
     // Show modal
@@ -1050,9 +1069,13 @@ function filterAlbums(filterType) {
     let filteredAlbums = allAlbumsForModal;
     
     if (filterType === 'primary') {
-        filteredAlbums = allAlbumsForModal.filter(album => isAlbumPrimary(album, currentArtistName) && !isAlbumSingle(album));
+        filteredAlbums = allAlbumsForModal.filter(album => {
+            return isAlbumPrimary(album, currentArtistName) && !isAlbumSingle(album);
+        });
     } else if (filterType === 'compilations') {
-        filteredAlbums = allAlbumsForModal.filter(album => !isAlbumPrimary(album, currentArtistName) && !isAlbumSingle(album));
+        filteredAlbums = allAlbumsForModal.filter(album => {
+            return !isAlbumPrimary(album, currentArtistName) && !isAlbumSingle(album);
+        });
     } else if (filterType === 'singles') {
         filteredAlbums = allAlbumsForModal.filter(album => isAlbumSingle(album));
     }
