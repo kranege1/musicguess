@@ -179,6 +179,8 @@ async function loadAvailableGenres() {
 function updateSubcategoryDropdown() {
     const categorySelect = document.getElementById('categorySelect');
     const subcategorySelect = document.getElementById('subcategorySelect');
+    const yearSelect = document.getElementById('yearSelect');
+    const yearSelectLabel = document.getElementById('yearSelectLabel');
     
     if (!categorySelect || !subcategorySelect) {
         console.error('Category or subcategory select not found!');
@@ -187,6 +189,10 @@ function updateSubcategoryDropdown() {
     
     const category = categorySelect.value;
     subcategorySelect.innerHTML = '';
+    
+    // Hide year select by default, show only for decades
+    if (yearSelect) yearSelect.style.display = 'none';
+    if (yearSelectLabel) yearSelectLabel.style.display = 'none';
     
     console.log(`🔄 Updating subcategory for category: ${category}`);
     console.log(`📊 genresData:`, genresData);
@@ -199,6 +205,9 @@ function updateSubcategoryDropdown() {
         option.textContent = translations && currentLanguage ? t('allGenres') : 'All Genres';
         subcategorySelect.appendChild(option);
     } else if (category === 'decades') {
+        // Show year select for decades
+        if (yearSelect) yearSelect.style.display = 'block';
+        if (yearSelectLabel) yearSelectLabel.style.display = 'block';
         // Decades
         console.log(`📅 Loading ${genresData.decades.length} decades...`);
         genresData.decades.forEach(decade => {
@@ -208,6 +217,8 @@ function updateSubcategoryDropdown() {
             subcategorySelect.appendChild(option);
             console.log(`  ✅ Added decade: ${decade}`);
         });
+        // Load available years for the first decade
+        setTimeout(() => loadAvailableYears(), 100);
     } else if (category === 'genres') {
         // Regular genres
         console.log(`🎵 Loading ${genresData.genres.length} genres...`);
