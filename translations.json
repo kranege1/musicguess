@@ -101,7 +101,8 @@
     "errorLoadingNextQuestion": "Lade nächste Frage...",
     "errorNoPreview": "Für diesen Song ist leider keine Preview verfügbar. Überspringe...",
     "errorPlayback": "Fehler beim Abspielen. Bitte tippe erneut auf Play oder überspringe den Song.",
-    "errorReversePlayback": "Konnte Reverse-Preview nicht abspielen."
+    "errorReversePlayback": "Konnte Reverse-Preview nicht abspielen.",
+    "errorNotEnoughSongs": "Nicht genug Songs verfügbar! {0} gefunden, aber {1} benötigt. Bitte wählen Sie eine kleinere Anzahl."
   },
   "en": {
     "title": "🎵 Music Quiz Game",
@@ -205,7 +206,8 @@
     "errorLoadingNextQuestion": "Loading next question...",
     "errorNoPreview": "Unfortunately, no preview is available for this song. Skipping...",
     "errorPlayback": "Playback error. Please tap Play again or skip the song.",
-    "errorReversePlayback": "Could not play reverse preview."
+    "errorReversePlayback": "Could not play reverse preview.",
+    "errorNotEnoughSongs": "Not enough songs available! {0} found, but {1} needed. Please select a smaller number."
   },
   "it": {
     "title": "🎵 Quiz Musicale",
@@ -309,6 +311,7 @@
     "errorLoadingNextQuestion": "Caricamento prossima domanda...",
     "errorNoPreview": "Purtroppo non è disponibile un'anteprima per questa canzone. Passando oltre...",
     "errorPlayback": "Errore di riproduzione. Per favore premi di nuovo Play o salta la canzone.",
-    "errorReversePlayback": "Impossibile riprodurre l'anteprima inversa."
+    "errorReversePlayback": "Impossibile riprodurre l'anteprima al contrario.",
+    "errorNotEnoughSongs": "Non abbastanza canzoni disponibili! {0} trovate, ma {1} necessarie. Per favore seleziona un numero più piccolo."
   }
 }
