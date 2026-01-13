@@ -845,13 +845,13 @@ async function selectArtistAndLoadAlbums(artist) {
             return;
         }
         
-        // Filter unique albums by collection name
+        // Filter unique albums by collection ID (prevents duplicates from different regions)
         const uniqueAlbums = [];
         const seen = new Set();
         
         data.results.forEach(item => {
-            if (item.collectionName && !seen.has(item.collectionName)) {
-                seen.add(item.collectionName);
+            if (item.collectionId && !seen.has(item.collectionId)) {
+                seen.add(item.collectionId);
                 uniqueAlbums.push(item);
             }
         });
@@ -921,10 +921,17 @@ function showAlbumSelectionModal(artistName, albums) {
 // Display filtered albums in grid
 function displayFilteredAlbums(albums) {
     const grid = document.getElementById('albumSelectionGrid');
+    const countDisplay = document.getElementById('albumCount');
+    
     if (!grid) return;
     
     // Clear previous albums
     grid.innerHTML = '';
+    
+    // Update count display
+    if (countDisplay) {
+        countDisplay.textContent = `${albums.length} album${albums.length !== 1 ? 's' : ''}`;
+    }
     
     if (albums.length === 0) {
         grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: #666;">No albums found for this filter</div>';
