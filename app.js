@@ -964,18 +964,24 @@ function displayFilteredAlbums(albums) {
 
 // Check if album is primary (artist is the main album artist) or compilation
 function isAlbumPrimary(album, artistName) {
-    const collectionArtist = (album.collectionArtistName || '').toLowerCase();
-    const searchArtist = artistName.toLowerCase();
-    const collectionType = album.collectionType || '';
+    const collectionArtist = (album.collectionArtistName || album.artistName || '').toLowerCase().trim();
+    const searchArtist = artistName.toLowerCase().trim();
+    const collectionType = (album.collectionType || '').toLowerCase();
+    const wrapperType = (album.wrapperType || '').toLowerCase();
     
     // Check if it's marked as compilation
-    if (collectionType === 'Compilation') return false;
+    if (collectionType === 'compilation' || wrapperType === 'compilation') return false;
     
-    // Check if collection artist is "Various Artists"
-    if (collectionArtist.includes('various') || collectionArtist.includes('compilation')) return false;
+    // Check if collection artist is "Various Artists" or compilation-related
+    if (collectionArtist.includes('various') || 
+        collectionArtist.includes('compilation') ||
+        collectionArtist.includes('sampler')) return false;
     
-    // Check if collection artist matches search artist
-    return collectionArtist.includes(searchArtist) || searchArtist.includes(collectionArtist);
+    // Check for exact match or very close match (artist name is the collection artist)
+    // Use exact match or "starts with" to avoid false positives
+    return collectionArtist === searchArtist || 
+           collectionArtist.startsWith(searchArtist) ||
+           searchArtist.startsWith(collectionArtist);
 }
 
 // Filter albums based on type
