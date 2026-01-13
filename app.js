@@ -484,6 +484,7 @@ async function loadArtistNames() {
 // Speichere Album- und Artist-Listen
 let albumListData = [];
 let selectedArtistForAlbums = null; // Tracks selected artist in album mode
+let selectedAlbumName = null; // Tracks selected album in album mode
 
 // Hilfsfunktion um lokales Album-Cover zu bekommen
 function getLocalAlbumCover(albumName) {
@@ -699,6 +700,7 @@ function selectGameMode(mode) {
         if (mode === 'album') {
             currentSearchType = 'album';
             selectedArtistForAlbums = null; // Reset artist selection
+            selectedAlbumName = null; // Reset album selection
             startArtistBubbles(); // Show artist bubbles in album mode too
             if (searchInput) {
                 searchInput.placeholder = "Enter artist name (e.g. 'The Beatles')";
@@ -709,6 +711,7 @@ function selectGameMode(mode) {
         } else {
             currentSearchType = 'track';
             selectedArtistForAlbums = null; // Reset
+            selectedAlbumName = null; // Reset
             startArtistBubbles(); // Show bubbles for artist/track mode
             if (searchInput) {
                 searchInput.placeholder = "e.g. 'Taylor Swift' or 'Bohemian Rhapsody'";
@@ -1107,8 +1110,13 @@ function closeAlbumSelectionModal() {
 // Select album and prepare to start game
 function selectAlbumAndStartGame(albumName) {
     const searchInput = document.getElementById('searchQuery');
-    if (searchInput) {
-        searchInput.value = albumName;
+    
+    // Store the selected album name
+    selectedAlbumName = albumName;
+    
+    // Update search input to show artist + album selected
+    if (searchInput && selectedArtistForAlbums) {
+        searchInput.value = `✅ ${selectedArtistForAlbums} - ${albumName}`;
         searchInput.disabled = false;
     }
     
@@ -1201,7 +1209,14 @@ async function startGame() {
             }
         } else {
             // iTunes Suchmodus
-            const searchQuery = document.getElementById('searchQuery').value.trim();
+            // In album mode, use selectedAlbumName; otherwise use searchQuery
+            let searchQuery;
+            if (currentSearchType === 'album' && selectedAlbumName) {
+                searchQuery = selectedAlbumName;
+            } else {
+                searchQuery = document.getElementById('searchQuery').value.trim();
+            }
+            
             if (!searchQuery) {
                 showError('Bitte geben Sie einen Künstler oder Titel ein!');
                 document.getElementById('setupScreen').style.display = 'block';
@@ -1211,7 +1226,12 @@ async function startGame() {
             }
             await loadSongsFromItunes(searchQuery, songCount);
             // Update Subtitle
-            const subtitleText = `Songs von ${searchQuery}`;
+            let subtitleText;
+            if (currentSearchType === 'album' && selectedAlbumName && selectedArtistForAlbums) {
+                subtitleText = `Album: ${selectedAlbumName} by ${selectedArtistForAlbums}`;
+            } else {
+                subtitleText = `Songs von ${searchQuery}`;
+            }
             setSubtitle(subtitleText);
             gameState.currentGameMode = subtitleText;
         }
