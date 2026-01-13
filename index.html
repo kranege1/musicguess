@@ -442,12 +442,32 @@
             color: #667eea;
             font-size: 1.5em;
             margin-bottom: 3px;
+            -webkit-text-stroke: 1.5px black;
+            text-shadow: 
+                -2px -2px 0 black,
+                2px -2px 0 black,
+                -2px 2px 0 black,
+                2px 2px 0 black,
+                -2px 0 0 black,
+                2px 0 0 black,
+                0 -2px 0 black,
+                0 2px 0 black;
         }
 
         .subtitle {
             color: #666;
             font-size: 1.05em;
             font-weight: 500;
+            -webkit-text-stroke: 0.8px black;
+            text-shadow: 
+                -1.5px -1.5px 0 black,
+                1.5px -1.5px 0 black,
+                -1.5px 1.5px 0 black,
+                1.5px 1.5px 0 black,
+                -1.5px 0 0 black,
+                1.5px 0 0 black,
+                0 -1.5px 0 black,
+                0 1.5px 0 black;
         }
 
         /* Setup Seite */
@@ -1533,8 +1553,7 @@
                 <label data-i18n="gameMode">🎮 Spielmodus:</label>
                 <div class="game-mode-buttons">
                     <button type="button" class="mode-btn" data-mode="genre" onclick="selectGameMode('genre')" data-i18n="modeGenre">🎸 Genre auswählen</button>
-                    <button type="button" class="mode-btn" data-mode="billboard" onclick="selectGameMode('billboard')" data-i18n="modeBillboard">🔥 Billboard Hot 100</button>
-                    <button type="button" class="mode-btn active" data-mode="search" onclick="selectGameMode('search')" data-i18n="modeSearch">🎤 Freie Wahl</button>
+                    <button type="button" class="mode-btn active" data-mode="search" onclick="selectGameMode('search')">🎤 Choose Artist</button>
                 </div>
             </div>
 
@@ -1544,6 +1563,7 @@
                     <option value="all" data-i18n="categoryAll">Alle Genres</option>
                     <option value="decades" data-i18n="categoryDecades">Jahrzehnte</option>
                     <option value="genres" data-i18n="categoryGenres">Genres</option>
+                    <option value="billboard" data-i18n="categoryBillboard">🔥 Billboard Hot 100</option>
                     <option value="countries" data-i18n="categoryCountries">Länder</option>
                     <option value="classical" data-i18n="categoryClassical">Classical</option>
                 </select>
@@ -1554,25 +1574,10 @@
                 </select>
             </div>
 
-            <div class="input-group" id="billboardSelection" style="display: none;">
-                <label for="yearSelect" data-i18n="selectYear">📅 Jahr wählen:</label>
-                <div style="display: flex; gap: 10px;">
-                    <select id="yearSelect" style="flex: 1;" onchange="loadBillboardSongsForYear()">
-                        <option value="" data-i18n="yearPlaceholder">Jahr auswählen...</option>
-                        <!-- Jahre werden dynamisch geladen -->
-                    </select>
-                    <select id="billboardSongInfo" style="flex: 2;" disabled>
-                        <option value="" data-i18n="selectYearFirst">Wähle zuerst ein Jahr...</option>
-                        <!-- Songs werden dynamisch geladen -->
-                    </select>
-                </div>
-            </div>
+
 
             <div class="input-group" id="searchSelection" style="display: none;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                    <label for="searchQuery" style="margin: 0;" data-i18n="searchLabel">🎤 Künstler oder Titel durchsuchen:</label>
-                    <button type="button" class="search-type-toggle" id="searchTypeBtn" onclick="toggleSearchType()" data-i18n="searchToggleAlbum">📀 Album</button>
-                </div>
+                <label for="searchQuery" data-i18n="searchLabel">🎤 Künstler oder Titel durchsuchen:</label>
                 <input type="text" id="searchQuery" data-i18n-placeholder="searchPlaceholder" placeholder="z.B. 'Taylor Swift' oder 'Bohemian Rhapsody'">
                 <!-- Artist Bubbles Container -->
                 <div class="artist-bubbles-container" id="artistBubblesContainer"></div>

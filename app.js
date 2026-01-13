@@ -227,17 +227,70 @@ function updateSubcategoryDropdown() {
             subcategorySelect.appendChild(option);
         });
     } else if (category === 'classical') {
-        // Classical composers
-        console.log(`🎼 Loading ${genresData.classical.length} composers...`);
-        genresData.classical.forEach(composer => {
+        // Classical subcategories (Komponist, Oper, Operette, etc.)
+        console.log(`🎼 Loading classical subcategories...`);
+        const subcategories = [
+            { key: 'Komponist', i18nKey: 'classicalKomponist' },
+            { key: 'Oper', i18nKey: 'classicalOper' },
+            { key: 'Operette', i18nKey: 'classicalOperette' },
+            { key: 'Symphonie', i18nKey: 'classicalSymphonie' },
+            { key: 'Kammermusik', i18nKey: 'classicalKammermusik' },
+            { key: 'Kirchenmusik', i18nKey: 'classicalKirchenmusik' }
+        ];
+        subcategories.forEach(sub => {
             const option = document.createElement('option');
-            option.value = `Classical:${composer}`;
-            option.textContent = composer;
+            option.value = `Classical:${sub.key}`;
+            option.textContent = translations && currentLanguage ? t(sub.i18nKey) : sub.key;
             subcategorySelect.appendChild(option);
+            console.log(`  ✅ Added classical subcategory: ${sub.key}`);
+        });
+    } else if (category === 'billboard') {
+        // Billboard years
+        console.log(`🔥 Loading Billboard years...`);
+        loadBillboardYears().then(years => {
+            subcategorySelect.innerHTML = '';
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = `Billboard:${year}`;
+                option.textContent = year;
+                subcategorySelect.appendChild(option);
+            });
+            console.log(`  ✅ Added ${years.length} Billboard years`);
+        }).catch(err => {
+            console.error('Error loading Billboard years:', err);
         });
     }
     
     console.log(`✅ Subcategory dropdown updated: ${subcategorySelect.options.length} options`);
+}
+
+// Load Billboard years for genre category
+async function loadBillboardYears() {
+    console.log('🔥 loadBillboardYears() wird aufgerufen...');
+    try {
+        const cacheBuster = new Date().getTime();
+        const response = await fetch(`hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
+        
+        if (!response.ok) {
+            throw new Error('Fehler beim Laden der Billboard Daten');
+        }
+
+        const songs = await response.json();
+        
+        console.log(`${songs.length} Billboard Songs geladen`);
+        
+        // Extract unique years from chart_week
+        const years = [...new Set(songs.map(song => {
+            const year = song.chart_week.substring(0, 4);
+            return year;
+        }))].sort((a, b) => b - a); // Newest first
+        
+        console.log('🔥 Gefundene Jahre:', years);
+        return years;
+    } catch (error) {
+        console.error('Fehler beim Laden der Billboard-Jahre:', error);
+        return [];
+    }
 }
 
 // Lade verfügbare Jahre für Billboard
@@ -564,7 +617,7 @@ function createArtistBubble() {
 }
 
 
-// Toggle zwischen Genre-, Billboard- und Suchmodus
+// Toggle zwischen Genre- und Suchmodus
 function selectGameMode(mode) {
     // Entferne active Klasse von allen Buttons
     document.querySelectorAll('.mode-btn').forEach(btn => {
@@ -578,28 +631,17 @@ function selectGameMode(mode) {
     document.body.className = `mode-${mode}`;
     
     const genreSelection = document.getElementById('genreSelection');
-    const billboardSelection = document.getElementById('billboardSelection');
     const searchSelection = document.getElementById('searchSelection');
-    const artistBubblesContainer = document.getElementById('artistBubblesContainer');
     const subtitle = document.getElementById('gameSubtitle');
 
     if (mode === 'genre') {
         genreSelection.style.display = 'flex';
-        billboardSelection.style.display = 'none';
-        searchSelection.style.display = 'none';
-        stopArtistBubbles();
-        // Setze Subtitle zurück
-        setSubtitle(t('setupSubtitle'));
-    } else if (mode === 'billboard') {
-        genreSelection.style.display = 'none';
-        billboardSelection.style.display = 'flex';
         searchSelection.style.display = 'none';
         stopArtistBubbles();
         // Setze Subtitle zurück
         setSubtitle(t('setupSubtitle'));
     } else {
         genreSelection.style.display = 'none';
-        billboardSelection.style.display = 'none';
         searchSelection.style.display = 'flex';
         startArtistBubbles();
         // Setze Subtitle zurück
@@ -666,27 +708,23 @@ async function startGame() {
         if (gameMode === 'genre') {
             // Genre-Modus: Lade Songs aus songs.json
             const selectedGenre = document.getElementById('subcategorySelect').value;
-            await loadSongsFromGenre(selectedGenre, songCount);
-            // Update Subtitle
-            const genreText = selectedGenre === 'Alle' ? 'Alle Genres' : selectedGenre;
-            const subtitleText = `Genre: ${genreText}`;
-            setSubtitle(subtitleText);
-            gameState.currentGameMode = subtitleText;
-        } else if (gameMode === 'billboard') {
-            // Billboard-Modus: Lade Songs nach Jahr
-            const selectedYear = document.getElementById('yearSelect').value;
-            if (!selectedYear) {
-                showError('Bitte wählen Sie ein Jahr aus!');
-                document.getElementById('setupScreen').style.display = 'block';
-                document.getElementById('quizScreen').style.display = 'none';
-                hideLoadingState();
-                return;
+            
+            // Check if it's a Billboard selection
+            if (selectedGenre.startsWith('Billboard:')) {
+                const year = selectedGenre.replace('Billboard:', '');
+                await loadSongsFromBillboard(year, songCount);
+                // Update Subtitle
+                const subtitleText = `🔥 Billboard Charts aus ${year}`;
+                setSubtitle(subtitleText);
+                gameState.currentGameMode = subtitleText;
+            } else {
+                await loadSongsFromGenre(selectedGenre, songCount);
+                // Update Subtitle
+                const genreText = selectedGenre === 'Alle' ? 'Alle Genres' : selectedGenre;
+                const subtitleText = `Genre: ${genreText}`;
+                setSubtitle(subtitleText);
+                gameState.currentGameMode = subtitleText;
             }
-            await loadSongsFromBillboard(selectedYear, songCount);
-            // Update Subtitle
-            const subtitleText = `Billboard Charts aus ${selectedYear}`;
-            setSubtitle(subtitleText);
-            gameState.currentGameMode = subtitleText;
         } else {
             // iTunes Suchmodus
             const searchQuery = document.getElementById('searchQuery').value.trim();
@@ -733,7 +771,7 @@ async function startGame() {
 // Lade Songs aus songs.json basierend auf Genre
 async function loadSongsFromGenre(genre, limit) {
     try {
-        // Handle Classical genre (composer selection)
+        // Handle Classical genre (subcategory selection like Classical:Oper, Classical:Komponist, etc.)
         if (genre === 'Classical' || genre.startsWith('Classical:')) {
             const cacheBuster = Date.now();
             const response = await fetch(`genres.json?v=${cacheBuster}`, { cache: 'no-store' });
@@ -741,49 +779,31 @@ async function loadSongsFromGenre(genre, limit) {
                 throw new Error(t('errorLoadingClassicalList'));
             }
             const genresFile = await response.json();
-            const composers = genresFile.classical?.composers || [];
-            const selectedComposer = genre.startsWith('Classical:') ? genre.replace('Classical:', '') : null;
-
-            if (!composers.length) {
+            const classicalData = genresFile.classical || {};
+            
+            // Determine which subcategory was selected
+            const selectedSubcategory = genre.startsWith('Classical:') ? genre.replace('Classical:', '') : null;
+            
+            if (!selectedSubcategory) {
                 throw new Error(t('errorLoadingClassicalList'));
             }
 
-            // If a composer is explicitly selected, fetch multiple tracks from that composer
-            if (selectedComposer) {
-                const { results } = await fetchItunesWithFallback(selectedComposer, ['US', 'DE', 'GB'], Math.max(limit * 2, 10));
-                const mapped = (results || [])
-                    .filter(song => song && song.previewUrl && song.trackName && song.artistName)
-                    .map(song => {
-                        const originalCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60 || '';
-                        const highResCover = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : '';
-                        return {
-                            id: song.trackId,
-                            track: song.trackName,
-                            artist: song.artistName,
-                            album: song.collectionName || 'Unbekannt',
-                            previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
-                            image: highResCover,
-                            genre: `Classical:${selectedComposer}`
-                        };
-                    })
-                    .slice(0, limit);
-
-                if (!mapped.length) {
-                    throw new Error(t('errorLoadingClassicalList'));
-                }
-
-                gameState.songs = mapped;
-                return;
+            // Get artists from the selected subcategory
+            const artists = classicalData[selectedSubcategory] || [];
+            
+            if (!artists.length) {
+                throw new Error(t('errorLoadingClassicalList'));
             }
 
-            // Randomly select composers and search their works on iTunes
-            const selectedComposers = composers.sort(() => 0.5 - Math.random()).slice(0, limit);
-            const searchPromises = selectedComposers.map(async (composer) => {
+            // Randomly select artists and search their works on iTunes
+            const selectedArtists = artists.sort(() => 0.5 - Math.random()).slice(0, Math.max(limit, 10));
+            const searchPromises = selectedArtists.map(async (artist) => {
                 try {
-                    const { results } = await fetchItunesWithFallback(composer, ['US', 'DE', 'GB'], 5);
+                    // Search with multiple country fallbacks for better results
+                    const { results } = await fetchItunesWithFallback(artist, ['DE', 'US', 'GB', 'AT'], 5);
                     return results && results.length ? results[0] : null;
                 } catch (err) {
-                    console.warn(`Failed to load composer ${composer}:`, err);
+                    console.warn(`Failed to load artist ${artist}:`, err);
                     return null;
                 }
             });
@@ -800,9 +820,15 @@ async function loadSongsFromGenre(genre, limit) {
                         album: song.collectionName || 'Unbekannt',
                         previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
                         image: highResCover,
-                        genre: 'Classical'
+                        genre: `Classical:${selectedSubcategory}`
                     };
-                });
+                })
+                .slice(0, limit);
+
+            if (!mapped.length) {
+                throw new Error(t('errorLoadingClassicalList'));
+            }
+
             gameState.songs = mapped;
             return;
         }
@@ -2572,6 +2598,22 @@ function restorePlayerIdAndName() {
 function closePlayerNameModal() {
     const modal = document.getElementById('playerNameModal');
     modal.classList.remove('show');
+}
+
+// Open Legal/About Modal
+function openLegalModal() {
+    const modal = document.getElementById('legalModal');
+    if (modal) {
+        modal.classList.add('show');
+    }
+}
+
+// Close Legal/About Modal
+function closeLegalModal() {
+    const modal = document.getElementById('legalModal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
 }
 
 // Speichere Player-Name (ohne Uniqueness-Check - Hybrid-System mit Land + ID)
