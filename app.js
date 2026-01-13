@@ -903,16 +903,17 @@ function showAlbumSelectionModal(artistName, albums) {
     // Set header with artist name
     header.textContent = `💿 Select Album by ${artistName}`;
     
-    // Reset filter buttons
+    // Reset filter buttons - set "Primary Only" as default
     const filterBoth = document.getElementById('filterBoth');
     const filterPrimary = document.getElementById('filterPrimary');
     const filterSampler = document.getElementById('filterSampler');
-    if (filterBoth) filterBoth.classList.add('active');
-    if (filterPrimary) filterPrimary.classList.remove('active');
+    if (filterBoth) filterBoth.classList.remove('active');
+    if (filterPrimary) filterPrimary.classList.add('active');
     if (filterSampler) filterSampler.classList.remove('active');
     
-    // Display all albums initially
-    displayFilteredAlbums(albums);
+    // Display primary albums only initially
+    const primaryAlbums = albums.filter(album => isAlbumPrimary(album, artistName));
+    displayFilteredAlbums(primaryAlbums);
     
     // Show modal
     modal.classList.add('show');

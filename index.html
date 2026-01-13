@@ -1554,9 +1554,9 @@
             <div class="modal-content" style="max-width: 700px; max-height: 85vh;">
                 <div class="modal-header" id="albumSelectionHeader">💿 Select Album</div>
                 <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; flex-wrap: wrap;">
-                    <button class="search-type-toggle active" onclick="filterAlbums('both')" id="filterBoth" style="min-width: auto; padding: 6px 12px;">All Albums</button>
-                    <button class="search-type-toggle" onclick="filterAlbums('primary')" id="filterPrimary" style="min-width: auto; padding: 6px 12px;">Primary Only</button>
-                    <button class="search-type-toggle" onclick="filterAlbums('sampler')" id="filterSampler" style="min-width: auto; padding: 6px 12px;">Compilations</button>
+                    <button class="search-type-toggle" onclick="filterAlbums('both')" id="filterBoth" style="min-width: auto; padding: 6px 12px;" data-i18n="filterAllAlbums">All Albums</button>
+                    <button class="search-type-toggle active" onclick="filterAlbums('primary')" id="filterPrimary" style="min-width: auto; padding: 6px 12px;" data-i18n="filterPrimaryOnly">Primary Only</button>
+                    <button class="search-type-toggle" onclick="filterAlbums('sampler')" id="filterSampler" style="min-width: auto; padding: 6px 12px;" data-i18n="filterCompilations">Compilations</button>
                 </div>
                 <div id="albumSelectionGrid" style="max-height: 65vh; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; padding: 10px;">
                     <!-- Album covers will be populated here -->
