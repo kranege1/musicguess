@@ -853,7 +853,7 @@ async function selectArtistAndLoadAlbums(artist) {
         data.results.forEach(item => {
             if (item.collectionId && !seenIds.has(item.collectionId)) {
                 // Get the base album name without edition info for comparison
-                const baseAlbumName = getAlbumBaseeName(item.collectionName);
+                const baseAlbumName = getAlbumBaseName(item.collectionName);
                 
                 if (seenBaseNames.has(baseAlbumName)) {
                     const existingAlbum = seenBaseNames.get(baseAlbumName);
@@ -873,7 +873,6 @@ async function selectArtistAndLoadAlbums(artist) {
                     seenBaseNames.set(baseAlbumName, item);
                 }
             }
-        });
         });
         
         if (uniqueAlbums.length === 0) {
