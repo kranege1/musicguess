@@ -1412,21 +1412,22 @@
         }
 
         .song-info-actions {
-            padding: 15px 20px;
+            padding: 15px 20px 10px 20px;
             display: flex;
             gap: 10px;
             justify-content: center;
+            flex-wrap: wrap;
             background: rgba(0, 0, 0, 0.1);
             border-radius: 0 0 13px 13px;
         }
 
         .info-btn {
             padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             border: 2px solid rgba(255, 255, 255, 0.5);
             border-radius: 8px;
             color: white;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.85em;
             cursor: pointer;
             transition: all 0.2s;
@@ -1435,13 +1436,28 @@
         }
 
         .info-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.25);
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .info-btn:active {
             transform: translateY(0);
+        }
+
+        .info-details {
+            padding: 10px 20px 18px 20px;
+            color: #fff;
+            font-size: 0.9em;
+            line-height: 1.5;
+            background: rgba(0, 0, 0, 0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 0 0 13px 13px;
+            display: none;
+        }
+
+        .info-details.show {
+            display: block;
         }
 
         .game-over {
@@ -1909,10 +1925,11 @@
                     </div>
                 </div>
                 <div class="song-info-actions">
-                    <a class="info-btn" id="infoDeezerBtn" href="#" target="_blank" style="display: none;">🎵 Deezer</a>
-                    <a class="info-btn" id="infoSpotifyBtn" href="#" target="_blank" style="display: none;">🎧 Spotify</a>
+                    <button class="info-btn" id="infoArtistBtn">👤 Artist Info</button>
+                    <button class="info-btn" id="infoAlbumBtn">💿 Album Info</button>
                     <button class="info-btn" onclick="closeSongInfo()">✕ Close</button>
                 </div>
+                <div class="info-details" id="infoDetails"></div>
             </div>
         </div>
 
@@ -2006,6 +2023,6 @@
 
     <audio id="audioPlayer" preload="none" playsinline webkit-playsinline crossOrigin="anonymous"></audio>
 
-    <script src="app.js?v=20260114170000"></script>
+    <script src="app.js?v=20260114170500"></script>
 </body>
 </html>

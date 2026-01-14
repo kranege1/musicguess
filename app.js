@@ -2545,32 +2545,93 @@ function showSongInfo() {
         albumImg.style.display = 'none';
     }
 
-    // Create Deezer search link
-    const deezerBtn = document.getElementById('infoDeezerBtn');
-    const searchQuery = encodeURIComponent(`${song.artist} ${song.track}`);
-    deezerBtn.href = `https://www.deezer.com/search/${searchQuery}`;
-    deezerBtn.style.display = 'inline-block';
-
-    // Create Spotify search link
-    const spotifyBtn = document.getElementById('infoSpotifyBtn');
-    spotifyBtn.href = `https://open.spotify.com/search/${searchQuery}`;
-    spotifyBtn.style.display = 'inline-block';
-
     const songInfoEl = document.getElementById('songInfo');
     songInfoEl.classList.add('show');
 
-    // Click to close
+    // Wire buttons (stop propagation to keep popup open)
+    const artistBtn = document.getElementById('infoArtistBtn');
+    const albumBtn = document.getElementById('infoAlbumBtn');
+    const infoDetails = document.getElementById('infoDetails');
+
+    if (artistBtn) {
+        artistBtn.onclick = async (e) => {
+            e.stopPropagation();
+            infoDetails.classList.add('show');
+            infoDetails.textContent = 'Loading artist info...';
+            const details = await fetchArtistInfo(song.artist);
+            infoDetails.textContent = details || 'No artist details found.';
+        };
+    }
+
+    if (albumBtn) {
+        albumBtn.onclick = async (e) => {
+            e.stopPropagation();
+            infoDetails.classList.add('show');
+            infoDetails.textContent = 'Loading album info...';
+            const details = await fetchAlbumInfo(song.artist, song.album);
+            infoDetails.textContent = details || 'No album details found.';
+        };
+    }
+
+    // Click outside buttons closes
     songInfoEl.onclick = function(e) {
-        // Don't close if clicking on buttons/links
-        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
-            return;
-        }
+        if (e.target.tagName === 'BUTTON') return;
         this.classList.remove('show');
     };
 }
 
 function closeSongInfo() {
     document.getElementById('songInfo').classList.remove('show');
+}
+
+// Fetch artist details from Deezer; fallback to iTunes if needed
+async function fetchArtistInfo(artistName) {
+    try {
+        const resp = await fetch(`https://api.deezer.com/search/artist?q=${encodeURIComponent(artistName)}`);
+        if (!resp.ok) throw new Error('Deezer artist search failed');
+        const data = await resp.json();
+        const artist = (data.data && data.data[0]) || null;
+        if (!artist) return null;
+        return `${artist.name} — ${artist.nb_fan?.toLocaleString() || 'n/a'} fans`;
+    } catch (e) {
+        // Fallback: iTunes
+        try {
+            const itResp = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artistName)}&entity=musicArtist&limit=1`);
+            if (!itResp.ok) throw new Error('iTunes artist search failed');
+            const itData = await itResp.json();
+            const itArtist = (itData.results && itData.results[0]) || null;
+            if (!itArtist) return null;
+            return `${itArtist.artistName} — ${itArtist.primaryGenreName || 'Artist'}`;
+        } catch (err) {
+            console.warn('Artist info lookup failed:', err.message);
+            return null;
+        }
+    }
+}
+
+// Fetch album details from Deezer; fallback to iTunes
+async function fetchAlbumInfo(artistName, albumName) {
+    try {
+        const resp = await fetch(`https://api.deezer.com/search/album?q=${encodeURIComponent(albumName + ' ' + artistName)}`);
+        if (!resp.ok) throw new Error('Deezer album search failed');
+        const data = await resp.json();
+        const album = (data.data && data.data[0]) || null;
+        if (!album) return null;
+        return `${album.title} — ${album.nb_tracks || '?'} tracks, ${album.release_date || 'unknown date'}, ${album.record_type || 'Album'}`;
+    } catch (e) {
+        // Fallback: iTunes
+        try {
+            const itResp = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(albumName + ' ' + artistName)}&entity=album&limit=1`);
+            if (!itResp.ok) throw new Error('iTunes album search failed');
+            const itData = await itResp.json();
+            const itAlbum = (itData.results && itData.results[0]) || null;
+            if (!itAlbum) return null;
+            return `${itAlbum.collectionName} — ${itAlbum.trackCount || '?'} tracks, ${itAlbum.releaseDate ? itAlbum.releaseDate.slice(0,10) : 'unknown date'}`;
+        } catch (err) {
+            console.warn('Album info lookup failed:', err.message);
+            return null;
+        }
+    }
 }
 
 // Berechne Punkte für richtige Antwort
