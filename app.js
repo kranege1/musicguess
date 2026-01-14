@@ -590,8 +590,20 @@ async function createArtistBubble() {
         return;
     }
     
-    // Fetch artist image and fan count from Deezer
-    const artistData = await fetchArtistImageFromDeezer(bubbleText);
+    // Fetch artist image and fan count from Deezer with timeout
+    let artistData = { image: null, fans: 0 };
+    try {
+        const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Timeout')), 2000)
+        );
+        artistData = await Promise.race([
+            fetchArtistImageFromDeezer(bubbleText),
+            timeoutPromise
+        ]);
+    } catch (err) {
+        console.warn(`Deezer fetch skipped for "${bubbleText}": ${err.message}`);
+        // Continue with empty artistData
+    }
     
     // Erstelle Bubble
     const bubble = document.createElement('div');
