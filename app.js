@@ -422,26 +422,31 @@ if (document.readyState === 'loading') {
 
 // Artist Bubbles Animation
 let artistNames = [];
+let artistNamesPromise = null;
 let bubbleInterval = null;
 let activeBubbles = 0;
 
 // Lade Künstlernamen aus ArtistsList.json
 async function loadArtistNames() {
-    try {
-        const cacheBuster = new Date().getTime();
-        const response = await fetch(`ArtistsList.json?v=${cacheBuster}`, { cache: 'no-store' });
-        
-        if (!response.ok) {
-            throw new Error(t('errorLoadingArtists'));
+    if (artistNames.length > 0) return artistNames;
+    if (artistNamesPromise) return artistNamesPromise;
+    artistNamesPromise = (async () => {
+        try {
+            const cacheBuster = new Date().getTime();
+            const response = await fetch(`ArtistsList.json?v=${cacheBuster}`, { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error(t('errorLoadingArtists'));
+            }
+            const data = await response.json();
+            artistNames = data.famous_song_interpreters || [];
+            console.log(`${artistNames.length} Künstler für Bubbles geladen`);
+            return artistNames;
+        } catch (error) {
+            console.error(t('errorLoadingArtists') + ':', error);
+            return [];
         }
-
-        const data = await response.json();
-        artistNames = data.famous_song_interpreters || [];
-        
-        console.log(`${artistNames.length} Künstler für Bubbles geladen`);
-    } catch (error) {
-        console.error(t('errorLoadingArtists') + ':', error);
-    }
+    })();
+    return artistNamesPromise;
 }
 
 // Speichere Album- und Artist-Listen
@@ -477,10 +482,19 @@ async function loadAlbumList() {
 }
 
 // Starte Artist Bubbles Animation
-function startArtistBubbles() {
+async function startArtistBubbles() {
     const container = document.getElementById('artistBubblesContainer');
-    if (!container || artistNames.length === 0) {
+    if (!container) {
         console.warn('Cannot start bubbles: container exists:', !!container, 'artistNames:', artistNames.length);
+        return;
+    }
+
+    // Ensure artists are loaded
+    if (artistNames.length === 0) {
+        await loadArtistNames();
+    }
+    if (artistNames.length === 0) {
+        console.warn('Cannot start bubbles: artistNames still empty after load');
         return;
     }
     
