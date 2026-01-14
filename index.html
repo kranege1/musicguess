@@ -76,36 +76,7 @@
             position: relative;
         }
 
-        .setup-header-lang {
-            position: absolute;
-            top: 0;
-            left: 0;
-            display: flex;
-            gap: 4px;
-        }
 
-        .lang-btn {
-            background: rgba(102, 126, 234, 0.8);
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 0.75em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            backdrop-filter: blur(10px);
-        }
-
-        .lang-btn:hover {
-            background: rgba(118, 75, 162, 0.9);
-            transform: scale(1.05);
-        }
-
-        .lang-btn.active {
-            background: #667eea;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
-        }
 
         .setup-header-controls {
             position: absolute;
@@ -1601,8 +1572,8 @@
         <!-- Player Name Modal -->
         <div class="modal" id="playerNameModal">
             <div class="modal-content">
-                <div class="modal-header">👤 <span data-i18n="playerNamePrompt">Spielername</span></div>
-                <input type="text" class="modal-input" id="playerNameInput" data-i18n-placeholder="playerNamePlaceholder" placeholder="Gib deinen Namen ein..." maxlength="30">
+                <div class="modal-header">👤 <span>Enter Player Name</span></div>
+                <input type="text" class="modal-input" id="playerNameInput" placeholder="Your name (min. 2 characters)" maxlength="30">
                 <div id="playerIdInfo" style="margin: 12px 0; padding: 12px; background: rgba(102, 126, 234, 0.1); border-radius: 6px; font-size: 0.9em; color: #666; display: none;">
                     <div style="margin-bottom: 6px;"><strong>Your Player ID:</strong></div>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -1614,8 +1585,8 @@
                     </div>
                 </div>
                 <div class="modal-buttons">
-                    <button class="modal-btn modal-btn-secondary" onclick="closePlayerNameModal()" data-i18n="cancel">Abbrechen</button>
-                    <button class="modal-btn modal-btn-primary" onclick="savePlayerName()" data-i18n="save">Speichern</button>
+                    <button class="modal-btn modal-btn-secondary" onclick="closePlayerNameModal()">Cancel</button>
+                    <button class="modal-btn modal-btn-primary" onclick="savePlayerName()">Save</button>
                 </div>
             </div>
         </div>
@@ -1651,10 +1622,10 @@
             <div class="modal-content" style="max-width: 700px; max-height: 85vh;">
                 <div class="modal-header" id="albumSelectionHeader">💿 Select Album</div>
                 <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; flex-wrap: wrap;">
-                    <button class="search-type-toggle" onclick="filterAlbums('both')" id="filterBoth" style="min-width: auto; padding: 6px 12px;" data-i18n="filterAllAlbums">All Albums</button>
-                    <button class="search-type-toggle active" onclick="filterAlbums('primary')" id="filterPrimary" style="min-width: auto; padding: 6px 12px;" data-i18n="filterPrimaryOnly">Primary Only</button>
-                    <button class="search-type-toggle" onclick="filterAlbums('compilations')" id="filterCompilations" style="min-width: auto; padding: 6px 12px;" data-i18n="filterCompilations">Compilations</button>
-                    <button class="search-type-toggle" onclick="filterAlbums('singles')" id="filterSingles" style="min-width: auto; padding: 6px 12px;" data-i18n="filterSingles">Singles</button>
+                    <button class="search-type-toggle" onclick="filterAlbums('both')" id="filterBoth" style="min-width: auto; padding: 6px 12px;">All Albums</button>
+                    <button class="search-type-toggle active" onclick="filterAlbums('primary')" id="filterPrimary" style="min-width: auto; padding: 6px 12px;">Primary Only</button>
+                    <button class="search-type-toggle" onclick="filterAlbums('compilations')" id="filterCompilations" style="min-width: auto; padding: 6px 12px;">Compilations</button>
+                    <button class="search-type-toggle" onclick="filterAlbums('singles')" id="filterSingles" style="min-width: auto; padding: 6px 12px;">Singles</button>
                 </div>
                 <div id="albumSelectionGrid" style="max-height: 65vh; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; padding: 10px;">
                     <!-- Album covers will be populated here -->
@@ -1670,12 +1641,7 @@
         <div class="setup-screen" id="setupScreen">
             <div class="setup-header">
                 <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                    <div class="setup-header-lang">
-                        <button class="lang-btn" onclick="changeLanguage('de')" data-lang="de">DE</button>
-                        <button class="lang-btn" onclick="changeLanguage('en')" data-lang="en">EN</button>
-                        <button class="lang-btn" onclick="changeLanguage('it')" data-lang="it">IT</button>
-                    </div>
-                    <select id="songCount" style="padding: 5px 6px; border-radius: 4px; border: 2px solid #8170e2; font-size: 0.65em; width: 50px; background: rgb(109, 137, 231); color: white; font-weight: 700; margin-top: 46px;">
+                    <select id="songCount" style="padding: 5px 6px; border-radius: 4px; border: 2px solid #8170e2; font-size: 0.65em; width: 50px; background: rgb(109, 137, 231); color: white; font-weight: 700; margin-top: 0px;">
                         <option value="5">5</option>
                         <option value="10" selected>10</option>
                         <option value="15">15</option>
@@ -1685,35 +1651,35 @@
                 <div class="setup-header-controls">
                     <button class="player-name-btn" id="playerNameBtn" onclick="openPlayerNameModal()">👤 Anon</button>
                 </div>
-                <h1 data-i18n="title">🎵 Musik Ratespiel</h1>
-                <p class="subtitle" id="gameSubtitle" data-i18n="setupSubtitle">Erkenne das Lied und gewinne!</p>
+                <h1>🎵 Music Quiz Game</h1>
+                <p class="subtitle" id="gameSubtitle">Guess the song and win!</p>
             </div>
             <div class="input-group">
-                <label data-i18n="gameMode">🎮 Spielmodus:</label>
+                <label>🎮 Game Mode:</label>
                 <div class="game-mode-buttons">
-                    <button type="button" class="mode-btn" data-mode="genre" onclick="selectGameMode('genre')" data-i18n="modeGenre">🎸 Genre auswählen</button>
-                    <button type="button" class="mode-btn active" data-mode="search" onclick="selectGameMode('search')" data-i18n="modeSearch">🎤 Choose Artist</button>
-                    <button type="button" class="mode-btn" data-mode="album" onclick="selectGameMode('album')" data-i18n="modeAlbum">💿 Choose Album from Artist</button>
+                    <button type="button" class="mode-btn" data-mode="genre" onclick="selectGameMode('genre')">🎸 Select Genre</button>
+                    <button type="button" class="mode-btn active" data-mode="search" onclick="selectGameMode('search')">🎤 Free Choice</button>
+                    <button type="button" class="mode-btn" data-mode="album" onclick="selectGameMode('album')">💿 Choose Album from Artist</button>
                 </div>
             </div>
 
             <div class="input-group" id="genreSelection">
-                <label for="categorySelect" data-i18n="selectCategory">📂 Kategorie wählen:</label>
+                <label for="categorySelect">📂 Choose Category:</label>
                 <select id="categorySelect" onchange="updateSubcategoryDropdown()">
-                    <option value="all" data-i18n="categoryAll">Alle Genres</option>
-                    <option value="decades" data-i18n="categoryDecades">Jahrzehnte</option>
-                    <option value="genres" data-i18n="categoryGenres">Genres</option>
-                    <option value="billboard" data-i18n="categoryBillboard">Billboard Charts</option>
-                    <option value="countries" data-i18n="categoryCountries">Länder</option>
-                    <option value="classical" data-i18n="categoryClassical">Classical</option>
+                    <option value="all">All Genres</option>
+                    <option value="decades">Decades</option>
+                    <option value="genres">Genres</option>
+                    <option value="billboard">Billboard Charts</option>
+                    <option value="countries">Countries</option>
+                    <option value="classical">Classical</option>
                 </select>
-                <label for="yearSelect" data-i18n="selectYear" style="margin-top: 10px; display: none;" id="yearSelectLabel">📅 Jahr auswählen:</label>
+                <label for="yearSelect" style="margin-top: 10px; display: none;" id="yearSelectLabel">📅 Choose Year:</label>
                 <select id="yearSelect" style="display: none; margin-top: 10px;">
                     <option value="">Jahr auswählen...</option>
                 </select>
-                <label for="subcategorySelect" data-i18n="selectSubcategory" style="margin-top: 10px;">🎵 Auswahl:</label>
+                <label for="subcategorySelect" style="margin-top: 10px;">🎵 Selection:</label>
                 <select id="subcategorySelect">
-                    <option value="Alle" data-i18n="allGenres">Alle Genres</option>
+                    <option value="Alle">All Genres</option>
                     <!-- Subgenres werden dynamisch geladen -->
                 </select>
             </div>
@@ -1721,9 +1687,9 @@
 
 
             <div class="input-group" id="searchSelection" style="display: none;">
-                <label for="searchQuery" data-i18n="searchLabel">🎤 Künstler oder Titel durchsuchen:</label>
+                <label for="searchQuery">🎤 Search artist or title:</label>
                 <div style="display: flex; gap: 8px; align-items: center;">
-                    <input type="text" id="searchQuery" data-i18n-placeholder="searchPlaceholder" placeholder="z.B. 'Taylor Swift' oder 'Bohemian Rhapsody'" style="flex: 1;">
+                    <input type="text" id="searchQuery" placeholder="e.g. 'Taylor Swift' or 'Bohemian Rhapsody'" style="flex: 1;">
                     <button id="checkArtistBtn" onclick="checkArtist()" style="display: none; min-width: 120px; padding: 9px 16px; white-space: nowrap;">✓ Check Artist</button>
                 </div>
                 <!-- Artist Bubbles Container -->
@@ -1733,8 +1699,8 @@
             <div class="error-message" id="errorMessage"></div>
 
             <div class="start-controls">
-                <button onclick="startGame()" class="start-game-btn" style="flex: 7;" data-i18n="startGame">🚀 Spiel Starten</button>
-                <button onclick="openLeaderboardModal('Global')" class="leaderboard-btn" style="flex: 3;" data-i18n="highscores">🏆 Highscores</button>
+                <button onclick="startGame()" class="start-game-btn" style="flex: 7;">🚀 Start Game</button>
+                <button onclick="openLeaderboardModal('Global')" class="leaderboard-btn" style="flex: 3;">🏆 Highscores</button>
             </div>
 
             <!-- Version Inline under buttons -->
@@ -1742,19 +1708,19 @@
                 <span id="versionText">v0.0.0</span> |
                 <a href="#" onclick="openLegalModal(); return false;" style="color: #000; text-decoration: underline; cursor: pointer;">About</a> |
                 <a href="/privacy.html" target="_blank" style="color: #000; text-decoration: underline;">Privacy</a> |
-                <span data-i18n="poweredBy">🎵 Powered by iTunes & Firebase</span>
+                <span>🎵 Powered by iTunes & Firebase</span>
             </div>
         </div>
 
         <!-- Player Search Modal -->
         <div class="modal" id="playerSearchModal" style="z-index: 10000;">
             <div class="modal-content" style="max-width: 500px; max-height: 70vh; overflow-y: auto;">
-                <div class="modal-header" data-i18n="myScores">my Scores</div>
+                <div class="modal-header">my Scores</div>
                 <div style="padding: 16px; font-size: 0.95em;">
                     <div id="playerSearchResults" style="max-height: 50vh; overflow-y: auto;"></div>
                 </div>
                 <div class="modal-buttons">
-                    <button class="modal-btn modal-btn-primary" onclick="closePlayerSearchModal()" data-i18n="close">Schließen</button>
+                    <button class="modal-btn modal-btn-primary" onclick="closePlayerSearchModal()">Close</button>
                 </div>
             </div>
         </div>
@@ -1764,8 +1730,8 @@
             <div class="stats">
                 <div class="stats-head">
                     <div class="stats-title-block">
-                        <div class="stats-title" data-i18n="title">🎵 Musik Ratespiel</div>
-                        <div class="stats-subtitle" id="statsSubtitle" data-i18n="setupSubtitle">Erkenne das Lied und gewinne!</div>
+                        <div class="stats-title">🎵 Music Quiz Game</div>
+                        <div class="stats-subtitle" id="statsSubtitle">Guess the song and win!</div>
                     </div>
                     <div class="stats-actions">
                         <button class="player-name-btn" id="statsPlayerNameBtn" onclick="openPlayerNameModal()">👤 Anon</button>
@@ -1796,8 +1762,8 @@
 
             <div class="mid-section">
                 <div class="mid-column mid-left">
-                    <button onclick="endGame()" class="control-btn btn-ghost-gray" data-i18n="endGame">🏁 Spiel Beenden</button>
-                    <button class="next-btn control-btn btn-ghost-purple" id="nextBtn" onclick="nextQuestion()" data-i18n="next">⬜ Nächste Frage</button>
+                    <button onclick="endGame()" class="control-btn btn-ghost-gray">🏁 End Game</button>
+                    <button class="next-btn control-btn btn-ghost-purple" id="nextBtn" onclick="nextQuestion()">⬜ Next Question</button>
                 </div>
                 <div class="mid-column mid-center">
                     <div class="album-cover" id="albumCover">
@@ -1805,12 +1771,12 @@
                     </div>
                 </div>
                 <div class="mid-column mid-right">
-                    <button class="reverse-btn control-btn btn-ghost-dark" id="reverseBtn" onclick="playPreviewReverse()" data-i18n="reverse">⏪ Revers</button>
-                    <button class="play-btn control-btn btn-ghost-green" id="playBtn" onclick="playPreview()" data-i18n="play">▶️ Abspielen</button>
+                    <button class="reverse-btn control-btn btn-ghost-dark" id="reverseBtn" onclick="playPreviewReverse()">⏪ Reverse</button>
+                    <button class="play-btn control-btn btn-ghost-green" id="playBtn" onclick="playPreview()">▶️ Play</button>
                 </div>
             </div>
 
-            <button class="stop-btn" id="stopBtn" onclick="stopPreview()" data-i18n="stop">⏹️</button>
+            <button class="stop-btn" id="stopBtn" onclick="stopPreview()">⏹️</button>
 
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -1819,10 +1785,10 @@
             <div class="time-display" id="timeDisplay">0:00 / 0:30</div>
 
             <div class="questions-section">
-                <div class="question-title" data-i18n="questionTitle">🎯 Welches Lied ist das?</div>
+                <div class="question-title">🎯 Which song is this?</div>
                 <div id="loadingIndicator" class="loading" style="display: none;">
                     <div class="spinner"></div>
-                    <p data-i18n="loading">Songs werden geladen...</p>
+                    <p>Loading songs...</p>
                 </div>
                 <div class="answers" id="answersContainer"></div>
                 <div class="result-message" id="resultMessage"></div>
@@ -1830,26 +1796,26 @@
 
             <!-- Motivation Leaderboard Widget: fixed to bottom position of quiz screen -->
             <div class="leaderboard-widget" id="quizLeaderboard">
-                <div class="leaderboard-title" data-i18n="top3ThisRound">🏆 Top 3 diese Runde</div>
+                <div class="leaderboard-title">🏆 Top 3 this round</div>
                 <div id="quizLeaderboardList"></div>
             </div>
 
             <!-- Song Info Popup -->
             <div class="song-info" id="songInfo" onclick="this.classList.remove('show')">
                 <div class="info-row">
-                    <span class="info-label" data-i18n="artist">Künstler:</span>
+                    <span class="info-label">Artist:</span>
                     <span class="info-value" id="infoArtist"></span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label" data-i18n="track">Titel:</span>
+                    <span class="info-label">Title:</span>
                     <span class="info-value" id="infoTrack"></span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label" data-i18n="album">Album:</span>
+                    <span class="info-label">Album:</span>
                     <span class="info-value" id="infoAlbum"></span>
                 </div>
                 <div class="info-row" id="genreRow" style="display: none;">
-                    <span class="info-label" data-i18n="genre">Genre:</span>
+                    <span class="info-label">Genre:</span>
                     <span class="info-value" id="infoGenre"></span>
                 </div>
             </div>
@@ -1858,7 +1824,7 @@
         <!-- Punkte-Countdown unten -->
         <div class="points-countdown" id="pointsCountdown" aria-live="polite">
             <div class="points-countdown-row">
-                <span class="points-countdown-label" data-i18n="pointsNow">Punkte jetzt:</span>
+                <span class="points-countdown-label">Points now:</span>
                 <span class="points-countdown-value" id="pointsCountdownValue">0</span>
             </div>
             <div class="points-countdown-track">
@@ -1869,12 +1835,12 @@
         <!-- Game Over Screen -->
         <div class="game-over" id="gameOverScreen">
             <div class="emoji">🎉</div>
-            <h2 data-i18n="gameOver">Spiel zu Ende!</h2>
+            <h2>Game Over!</h2>
             <div class="final-score" id="finalScore">0/10</div>
             <div class="score-percentage" id="scorePercentage">0%</div>
-            <div class="final-score" id="finalPoints" style="font-size: 1.8em; margin: 10px 0;">🏆 0 <span data-i18n="points">Punkte</span></div>
+            <div class="final-score" id="finalPoints" style="font-size: 1.8em; margin: 10px 0;">🏆 0 <span>Points</span></div>
             <div id="highScoreMessage" style="font-size: 1.1em; margin: 12px 0; font-weight: 600; min-height: 32px;"></div>
-            <button onclick="location.reload()" data-i18n="newGame">🔄 Neues Spiel</button>
+            <button onclick="location.reload()">🔄 New Game</button>
         </div>
     </div>
 
@@ -1882,8 +1848,8 @@
     <div class="leaderboard-modal-backdrop" id="leaderboardModal" onclick="closeLeaderboardModal(event)">
         <div class="leaderboard-modal" onclick="event.stopPropagation()">
             <div class="leaderboard-modal-header">
-                <span id="leaderboardModalTitle" data-i18n="leaderboardTitle">Highscores</span>
-                <button type="button" class="search-type-toggle" onclick="openPlayerSearchModal()" style="padding: 4px 12px; font-size: 0.9em; margin-right: 8px;" data-i18n="myScores">🔍 my Scores</button>
+                <span id="leaderboardModalTitle">Highscores</span>
+                <button type="button" class="search-type-toggle" onclick="openPlayerSearchModal()" style="padding: 4px 12px; font-size: 0.9em; margin-right: 8px;">🔍 my Scores</button>
                 <button class="leaderboard-modal-close" onclick="closeLeaderboardModal(event)">✕</button>
             </div>
             <div class="leaderboard-modal-body" id="leaderboardModalBody">

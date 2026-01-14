@@ -1,81 +1,34 @@
 const APP_VERSION = '11.01.2026 00:00';
 window.APP_VERSION = APP_VERSION;
 
-// Language system
-let currentLanguage = localStorage.getItem('gameLanguage') || 'de';
-let translations = {};
+// English strings (no more translation system)
+const strings = {
+    errorLoadingGenres: 'Error loading genres',
+    errorLoadingYears: 'Error loading years',
+    errorLoadingArtists: 'Error loading artists',
+    errorLoadingClassicalList: 'Error loading classical composers list',
+    errorLoadingCountryList: 'Error loading country list',
+    errorNoArtistsForCountry: 'No artists found for this country',
+    errorNoSongsForCountry: 'No songs found for this country',
+    errorSongDataMissing: 'Error: Song data not available',
+    errorNoSongLoaded: 'No song loaded.',
+    errorLastError: 'Last error:',
+    errorLoadingNextQuestion: 'Loading next question...',
+    errorNoPreview: 'Unfortunately, no preview is available for this song. Skipping...',
+    errorPlayback: 'Playback error. Please tap Play again or skip the song.',
+    errorReversePlayback: 'Could not play reverse preview.',
+    errorNotEnoughSongs: 'Not enough songs available! {0} found, but {1} needed. Please select a smaller number.',
+    answerCorrect: '✅ Correct!',
+    answerWrong: '❌ Wrong!',
+    points: 'Points',
+    questionsProgress: 'of',
+    questions: 'Questions',
+    allGenres: 'All Genres'
+};
 
-// Load translations
-async function loadTranslations() {
-    try {
-        const response = await fetch('/translations.json');
-        translations = await response.json();
-        updateUILanguage();
-    } catch (error) {
-        console.error('Failed to load translations:', error);
-        translations = { de: {}, en: {}, it: {} }; // Fallback
-    }
-}
-
-// Change language
-function changeLanguage(lang) {
-    currentLanguage = lang;
-    localStorage.setItem('gameLanguage', lang);
-    updateUILanguage();
-}
-
-// Update all UI elements with current language
-function updateUILanguage() {
-    const t = translations[currentLanguage] || translations['de'];
-    
-    // Update all elements with data-i18n attribute
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (t[key]) {
-            el.textContent = t[key];
-        }
-    });
-    
-    // Update placeholders
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-        const key = el.getAttribute('data-i18n-placeholder');
-        if (t[key]) {
-            el.placeholder = t[key];
-        }
-    });
-    
-    // Update titles
-    document.querySelectorAll('[data-i18n-title]').forEach(el => {
-        const key = el.getAttribute('data-i18n-title');
-        if (t[key]) {
-            el.title = t[key];
-        }
-    });
-    
-    // Update active language button
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-lang') === currentLanguage);
-    });
-    
-    // Update song count options
-    updateSongCountOptions();
-}
-
-// Update song count dropdown with translated text
-function updateSongCountOptions() {
-    const t = translations[currentLanguage] || translations['de'];
-    const select = document.getElementById('songCount');
-    if (select) {
-        Array.from(select.options).forEach(option => {
-            const count = option.value;
-            option.text = `${count} ${t.songs || 'Songs'}`;
-        });
-    }
-}
-
-// Get translation by key
+// Helper function to get strings
 function t(key) {
-    return translations[currentLanguage]?.[key] || translations['de']?.[key] || key;
+    return strings[key] || key;
 }
 
 // Detect if running on server or static hosting
@@ -425,7 +378,6 @@ async function loadVersion() {
 // Initialisierung beim Laden der Seite
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', async () => {
-        await loadTranslations();
         loadVersion();
         loadAvailableGenres();
         loadAvailableYears();
@@ -441,7 +393,6 @@ if (document.readyState === 'loading') {
 } else {
     // DOM ist bereits geladen
     (async () => {
-        await loadTranslations();
         loadVersion();
         loadAvailableGenres();
         loadAvailableYears();
