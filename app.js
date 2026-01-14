@@ -1291,6 +1291,8 @@ async function startGame() {
                 searchQuery = selectedAlbumName;
             } else {
                 searchQuery = document.getElementById('searchQuery').value.trim();
+                // Remove checkmark emoji if present
+                searchQuery = searchQuery.replace(/^✅\s*/, '');
             }
             
             if (!searchQuery) {
