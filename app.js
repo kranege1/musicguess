@@ -142,10 +142,15 @@ function updateSubcategoryDropdown() {
     
     const category = categorySelect.value;
     subcategorySelect.innerHTML = '';
+    // Determine active game mode (genre/search/album)
+    const activeModeBtn = document.querySelector('.mode-btn.active');
+    const activeGameMode = activeModeBtn ? activeModeBtn.dataset.mode : 'search';
     
     // Hide year select by default, show only for decades
     if (yearSelect) yearSelect.style.display = 'none';
     if (yearSelectLabel) yearSelectLabel.style.display = 'none';
+    // Ensure subcategory is visible by default (may be hidden for specific combos)
+    subcategorySelect.style.display = 'block';
     
     console.log(`🔄 Updating subcategory for category: ${category}`);
     console.log(`📊 genresData:`, genresData);
@@ -161,15 +166,21 @@ function updateSubcategoryDropdown() {
         // Show year select for decades
         if (yearSelect) yearSelect.style.display = 'block';
         if (yearSelectLabel) yearSelectLabel.style.display = 'block';
-        // Decades
-        console.log(`📅 Loading ${genresData.decades.length} decades...`);
-        genresData.decades.forEach(decade => {
-            const option = document.createElement('option');
-            option.value = decade;
-            option.textContent = decade;
-            subcategorySelect.appendChild(option);
-            console.log(`  ✅ Added decade: ${decade}`);
-        });
+        // If in Genre mode, hide the subcategory list (decades) to avoid confusing "Selection" list
+        if (activeGameMode === 'genre') {
+            subcategorySelect.style.display = 'none';
+            console.log('Genre mode + Decades selected — hiding subcategory selection');
+        } else {
+            // Decades
+            console.log(`📅 Loading ${genresData.decades.length} decades...`);
+            genresData.decades.forEach(decade => {
+                const option = document.createElement('option');
+                option.value = decade;
+                option.textContent = decade;
+                subcategorySelect.appendChild(option);
+                console.log(`  ✅ Added decade: ${decade}`);
+            });
+        }
         // Load available years for the first decade
         setTimeout(() => loadAvailableYears(), 100);
     } else if (category === 'genres') {
@@ -1230,7 +1241,7 @@ async function startGame() {
             }
             
             if (!searchQuery) {
-                showError('Bitte geben Sie einen Künstler oder Titel ein!');
+                showError('Please enter an Artist!');
                 document.getElementById('setupScreen').style.display = 'block';
                 document.getElementById('quizScreen').style.display = 'none';
                 hideLoadingState();
@@ -1252,7 +1263,7 @@ async function startGame() {
         hideLoadingState();
 
         if (gameState.songs.length === 0) {
-            showError('Keine Songs gefunden. Bitte versuchen Sie einen anderen Suchbegriff!');
+            showError('No Songs found!');
             document.getElementById('setupScreen').style.display = 'block';
             document.getElementById('quizScreen').style.display = 'none';
             return;
@@ -1260,7 +1271,7 @@ async function startGame() {
 
         // Check if there are enough songs for the requested count
         if (gameState.songs.length < songCount) {
-            console.warn(`⚠️ Nur ${gameState.songs.length} Songs gefunden, aber ${songCount} angefordert. Verwende alle verfügbaren Songs.`);
+            console.warn(`⚠️ Only ${gameState.songs.length} songs found, but ${songCount} requested. Using all available songs.`);
             // Don't show error - just use all available songs
         }
 
@@ -1272,8 +1283,8 @@ async function startGame() {
             showGameLeaderboard();
         }, 500);
     } catch (error) {
-        console.error('Fehler beim Laden der Songs:', error);
-        showError('Fehler beim Laden der Songs. Bitte versuchen Sie es erneut!');
+        console.error('Load error while loading songs:', error);
+        showError('Error loading songs. Please try again!');
         document.getElementById('setupScreen').style.display = 'block';
         document.getElementById('quizScreen').style.display = 'none';
         hideLoadingState();
@@ -1383,7 +1394,7 @@ async function loadSongsFromGenre(genre, limit) {
                         id: song.trackId,
                         track: song.trackName,
                         artist: song.artistName,
-                        album: song.collectionName || 'Unbekannt',
+                        album: song.collectionName || 'Unknown',
                         previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
                         image: highResCover,
                         genre: `Country:${countryCode}`
@@ -1401,7 +1412,7 @@ async function loadSongsFromGenre(genre, limit) {
         const cacheBuster = Date.now();
         const response = await fetch(`songs.json?v=${cacheBuster}`, { cache: 'no-store' });
         if (!response.ok) {
-            throw new Error('Fehler beim Laden von songs.json');
+            throw new Error('Error loading songs.json');
         }
 
         const allSongs = await response.json();
@@ -1416,30 +1427,30 @@ async function loadSongsFromGenre(genre, limit) {
         }
 
         if (filteredSongs.length === 0) {
-            throw new Error('Keine Songs für dieses Genre gefunden');
+            throw new Error('No songs found for this genre');
         }
 
-        // Mische und begrenze die Anzahl
+        // Shuffle and limit the number
         const selectedSongs = shuffleArray(filteredSongs).slice(0, Math.min(limit, filteredSongs.length));
         
         // Speichere Songs - artwork wird später von iTunes API geladen
         gameState.songs = selectedSongs;
         
-        console.log(`${gameState.songs.length} Songs aus Genre "${genre}" geladen`);
+        console.log(`${gameState.songs.length} songs loaded from genre "${genre}"`);
     } catch (error) {
-        console.error('Fehler beim Laden der Songs:', error);
+        console.error('Error loading songs:', error);
         throw error;
     }
 }
 
-// Lade Songs aus Billboard Hot 10 basierend auf Jahr
+// Load songs from Billboard Hot 10 based on year
 async function loadSongsFromBillboard(year, limit) {
     try {
         // Lade hot-10-unique.json
         const cacheBuster = Date.now();
         const response = await fetch(`hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
         if (!response.ok) {
-            throw new Error('Fehler beim Laden von hot-10-unique.json');
+            throw new Error('Error loading hot-10-unique.json');
         }
 
         const allSongs = await response.json();
@@ -1448,10 +1459,10 @@ async function loadSongsFromBillboard(year, limit) {
         const filteredSongs = allSongs.filter(song => song.chart_week.startsWith(year));
 
         if (filteredSongs.length === 0) {
-            throw new Error('Keine Songs für dieses Jahr gefunden');
+            throw new Error('No songs found for this year');
         }
 
-        // Mische und begrenze die Anzahl
+        // Shuffle and limit the number
         const selectedSongs = shuffleArray(filteredSongs).slice(0, Math.min(limit, filteredSongs.length));
         
         // Konvertiere Billboard Format zu app Format
@@ -1461,9 +1472,9 @@ async function loadSongsFromBillboard(year, limit) {
             genre: year // Jahr als Genre verwenden
         }));
         
-        console.log(`${gameState.songs.length} Billboard Songs aus Jahr "${year}" geladen`);
+        console.log(`${gameState.songs.length} Billboard Songs from year "${year}" loaded`);
     } catch (error) {
-        console.error('Fehler beim Laden der Billboard Songs:', error);
+        console.error('Error loading Billboard songs:', error);
         throw error;
     }
 }
@@ -1492,7 +1503,7 @@ function fetchItunesJsonp(searchTerm, { limit = 10, country = 'DE' } = {}) {
         window[callbackName] = (data) => {
             cleanup();
             if (!data || !data.results) {
-                reject(new Error('JSONP: Keine Ergebnisse'));
+                reject(new Error('JSONP: No results'));
             } else {
                 resolve(data.results);
             }
@@ -1549,23 +1560,23 @@ async function fetchItunes(searchTerm, { limit = 10, country = 'DE', entity = 's
         response = await fetch(url, { cache: 'no-store', mode: 'cors' });
     } catch (networkError) {
         const errCode = country === 'DE' ? 'F3' : 'F4';
-        debugLog(`❌ iTunes Fetch ${country} fehlgeschlagen: ${networkError.message}`, errCode);
-        debugLog(`↩️ Versuche JSONP ${country}`, errCode);
+        debugLog(`❌ iTunes Fetch ${country} failed: ${networkError.message}`, errCode);
+        debugLog(`↩️ Try JSONP ${country}`, errCode);
         const jsonpResults = await fetchItunesJsonp(searchTerm, { limit, country });
-        debugLog(`📦 ${jsonpResults.length} Ergebnisse (JSONP ${country})`);
+        debugLog(`📦 ${jsonpResults.length} results (JSONP ${country})`);
         return jsonpResults;
     }
     if (!response.ok) {
         const errCode = country === 'DE' ? 'F3' : 'F4';
-        debugLog(`❌ iTunes API Fehler ${country}: ${response.status} ${response.statusText || ''}`.trim(), errCode);
-        debugLog(`↩️ Versuche JSONP ${country}`, errCode);
+        debugLog(`❌ iTunes API error ${country}: ${response.status} ${response.statusText || ''}`.trim(), errCode);
+        debugLog(`↩️ Try JSONP ${country}`, errCode);
         const jsonpResults = await fetchItunesJsonp(searchTerm, { limit, country });
-        debugLog(`📦 ${jsonpResults.length} Ergebnisse (JSONP ${country})`);
+        debugLog(`📦 ${jsonpResults.length} results (JSONP ${country})`);
         return jsonpResults;
     }
     const data = await response.json();
-    console.log(`iTunes ${useLookup ? 'Lookup' : 'Suche'} ${country} für "${searchTerm}": ${data.results.length} Ergebnisse`);
-    debugLog(`📦 ${data.results.length} Ergebnisse (${country})`);
+    console.log(`iTunes ${useLookup ? 'Lookup' : 'Search'} ${country} for "${searchTerm}": ${data.results.length} results`);
+    debugLog(`📦 ${data.results.length} results (${country})`);
     return data.results;
 }
 
@@ -1579,11 +1590,11 @@ async function fetchItunesWithFallback(searchTerm, countries = ['DE', 'US', 'GB'
         } catch (err) {
             lastError = err;
             const errCode = country === 'DE' ? 'F3' : 'F4';
-            debugLog(`⚠️ ${country} fehlgeschlagen: ${err.message}`, errCode);
+            debugLog(`⚠️ ${country} failed: ${err.message}`, errCode);
         }
     }
-    debugLog(`❌ iTunes Suche komplett fehlgeschlagen: ${lastError ? lastError.message : 'Unbekannt'}`, 'F4');
-    throw lastError || new Error('iTunes Suche fehlgeschlagen');
+    debugLog(`❌ iTunes search completely failed: ${lastError ? lastError.message : 'Unknown'}`, 'F4');
+    throw lastError || new Error('iTunes search failed in all countries');
 }
 
 // Fetch artist image and fan count from Deezer API via proxy
@@ -1672,40 +1683,40 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
         );
         
         if (songsWithPreview.length === 0) {
-            debugLog(`❌ Keine Preview für "${artist} - ${track}"`, 'F5');
-            throw new Error(`Keine Preview-URL für "${artist} - ${track}" verfügbar (DE/US)`);
+            debugLog(`❌ No preview available for "${artist} - ${track}"`, 'F5');
+            throw new Error(`No preview URL available for "${artist} - ${track}" (DE/US)`);
         }
         
-        // Versuche besten Match zu finden
+        // Try to find the best match
         let song = songsWithPreview.find(result => 
             result.trackName.toLowerCase().includes(track.toLowerCase()) &&
             result.artistName.toLowerCase().includes(artist.toLowerCase())
         );
         
-        // Fallback: Nimm ersten Song mit Preview
+        // Fallback: Take the first song with preview
         if (!song) {
             song = songsWithPreview[0];
-            console.log(`Verwende Fallback: "${song.artistName} - ${song.trackName}"`);
+            console.log(`Using fallback: "${song.artistName} - ${song.trackName}"`);
         }
 
         const safePreview = (song.previewUrl || '').replace(/^http:/, 'https:');
         
-        // Nutze hochauflösendes Cover (600x600)
+        // Use high-resolution cover (600x600)
         const originalCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60 || '';
         const highResCover = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : '';
         
-        debugLog(`✅ Song geladen: "${song.trackName}" (${usedCountry})`);
+        debugLog(`✅ Song loaded: "${song.trackName}" (${usedCountry})`);
         return {
             id: song.trackId,
             track: song.trackName,
             artist: song.artistName,
-            album: song.collectionName || 'Unbekannt',
+            album: song.collectionName || 'Unknown',
             previewUrl: safePreview,
             image: highResCover,
-            genre: song.primaryGenreName || 'Unbekannt'
+            genre: song.primaryGenreName || 'Unknown'
         };
     } catch (error) {
-        console.error(`Fehler beim Laden von "${artist} - ${track}":`, error);
+        console.error(`Error loading "${artist} - ${track}":`, error);
         const errMsg = error.message || String(error);
         gameState.lastError = errMsg;
         const lower = errMsg.toLowerCase();
@@ -1715,33 +1726,33 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
                 ? 'F3/F4'
                 : 'F?';
         const icon = errCode === 'F?' ? '❓' : '⚠️';
-        debugLog(`${icon} Fehler bei "${artist} - ${track}": ${errMsg}`, errCode);
-        showError(`iTunes-Fehler: ${gameState.lastError}`);
+        debugLog(`${icon} Error loading "${artist} - ${track}": ${errMsg}`, errCode);
+        showError(`iTunes error: ${gameState.lastError}`);
         throw error;
     }
 }
 
-// Lade Songs von iTunes Search API
+// Load songs from iTunes Search API
 async function loadSongsFromItunes(searchQuery, limit) {
     try {
         let results = [];
-        let albumArtwork = null;  // Speichere das Album-Cover
+        let albumArtwork = null;  // Store the album cover
         
         if (currentSearchType === 'album') {
             // Album-Suche: Suche zuerst das Album selbst, dann alle Songs von diesem Album
             try {
-                // Schritt 1: Suche das Album
-                console.log('🔍 Album-Suche für:', searchQuery);
+                // Step 1: Search for the album
+                console.log('🔍 Album search for:', searchQuery);
                 const albumResults = await fetchItunes(searchQuery, { limit: 50, country: 'DE', entity: 'album' });
-                console.log(`📀 Album-Suche gefunden: ${albumResults.length} Alben`);
+                console.log(`📀 Album search found: ${albumResults.length} albums`);
                 
-                // Finde das beste Match für die Suchanfrage
+                // Find the best match for the search query
                 let bestMatch = null;
                 if (albumResults.length > 0) {
                     const normalizedQuery = searchQuery.toLowerCase().trim();
                     const normalizedArtist = selectedArtistForAlbums ? selectedArtistForAlbums.toLowerCase().trim() : null;
                     
-                    // Filter: Nur Alben vom ausgewählten Künstler
+                    // Filter: Only albums from the selected artist
                     let filteredAlbums = albumResults;
                     if (normalizedArtist) {
                         filteredAlbums = albumResults.filter(album => 
@@ -1749,19 +1760,19 @@ async function loadSongsFromItunes(searchQuery, limit) {
                         );
                     }
                     
-                    // 1. Priorität: Exaktes Match (mit Artist-Filter)
+                    // 1. Priority: Exact match (with artist filter)
                     bestMatch = filteredAlbums.find(album => 
                         album.collectionName && album.collectionName.toLowerCase() === normalizedQuery
                     );
                     
-                    // 2. Priorität: Album beginnt mit Suchbegriff (mit Artist-Filter)
+                    // 2. Priority: Album starts with search query (with artist filter)
                     if (!bestMatch) {
                         bestMatch = filteredAlbums.find(album => 
                             album.collectionName && album.collectionName.toLowerCase().startsWith(normalizedQuery)
                         );
                     }
                     
-                    // 3. Priorität: Kürzestes Album das Suchbegriff enthält (mit Artist-Filter)
+                    // 3. Priority: Shortest album that contains the search query (with artist filter)
                     if (!bestMatch) {
                         const matches = filteredAlbums.filter(album => 
                             album.collectionName && album.collectionName.toLowerCase().includes(normalizedQuery)
@@ -1780,13 +1791,13 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 }
                 
                 if (!bestMatch) {
-                    console.warn('DE-Album nicht gefunden, versuche US:');
+                    console.warn('DE album not found, trying US:');
                     const usAlbumResults = await fetchItunes(searchQuery, { limit: 50, country: 'US', entity: 'album' });
                     if (usAlbumResults.length > 0) {
                         const normalizedQuery = searchQuery.toLowerCase().trim();
                         const normalizedArtist = selectedArtistForAlbums ? selectedArtistForAlbums.toLowerCase().trim() : null;
                         
-                        // Filter: Nur Alben vom ausgewählten Künstler
+                        // Filter: Only albums from the selected artist
                         let filteredAlbums = usAlbumResults;
                         if (normalizedArtist) {
                             filteredAlbums = usAlbumResults.filter(album => 
@@ -1826,13 +1837,13 @@ async function loadSongsFromItunes(searchQuery, limit) {
                         results = await fetchItunes(albumId, { limit: 500, country: 'US', entity: 'song', useLookup: true });
                         results = results.filter(item => item.wrapperType === 'track');
                     } else {
-                        console.log('Versuche Album+Artist Fallback für:', searchQuery);
+                        console.log('Trying album+artist fallback for:', searchQuery);
                         const albumArtistResults = await fetchItunes(searchQuery, { limit: 50, country: 'US', entity: 'album', attribute: 'albumTerm' });
                         if (albumArtistResults.length > 0) {
                             const normalizedQuery = searchQuery.toLowerCase().trim();
                             const normalizedArtist = selectedArtistForAlbums ? selectedArtistForAlbums.toLowerCase().trim() : null;
                             
-                            // Filter: Nur Alben vom ausgewählten Künstler
+                            // Filter: Only albums from the selected artist
                             let filteredAlbums = albumArtistResults;
                             if (normalizedArtist) {
                                 filteredAlbums = albumArtistResults.filter(album => 
@@ -1882,21 +1893,21 @@ async function loadSongsFromItunes(searchQuery, limit) {
                     results = results.filter(item => item.wrapperType === 'track');
                 }
             } catch (err) {
-                console.warn('Album-Suche fehlgeschlagen:', err);
+                console.warn('Album search failed:', err);
                 try {
-                    console.log('🔍 Album-Fallback: Suche nach Songs mit albumTerm für:', searchQuery);
+                    console.log('🔍 Album fallback: Searching for songs with albumTerm for:', searchQuery);
                     results = await fetchItunes(searchQuery, { limit: 200, country: 'US', entity: 'song', attribute: 'albumTerm' });
-                    console.log(`📀 Album-Fallback gefunden: ${results.length} Songs`);
+                    console.log(`📀 Album fallback found: ${results.length} songs`);
                 } catch (err2) {
-                    console.error('Album-Fallback fehlgeschlagen:', err2);
+                    console.error('Album fallback failed:', err2);
                 }
             }
         } else {
-            // Standard Künstler/Titel Suche
+            // Standard artist/title search
             try {
                 results = await fetchItunes(searchQuery, { limit: 100, country: 'DE' });
             } catch (errDe) {
-                console.warn('DE-Suche fehlgeschlagen (Suchmodus), versuche US:', errDe);
+                console.warn('DE search failed (search mode), trying US:', errDe);
                 results = await fetchItunes(searchQuery, { limit: 100, country: 'US' });
             }
             
@@ -1926,19 +1937,19 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 const localCover = getLocalAlbumCover(firstSong.collectionName);
                 if (localCover) {
                     albumArtwork = localCover;
-                    console.log('✅ Lokales Album-Cover gesetzt:', albumArtwork);
+                    console.log('✅ Local album cover set:', albumArtwork);
                 } else {
-                    // Nutze iTunes Cover in hoher Auflösung
+                    // Use iTunes cover in high resolution
                     const iCover = firstSong.artworkUrl600 || firstSong.artworkUrl100 || firstSong.artworkUrl60;
                     albumArtwork = iCover ? iCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : iCover;
-                    console.log('✅ iTunes Album-Cover gesetzt:', albumArtwork);
+                    console.log('✅ iTunes album cover set:', albumArtwork);
                 }
             }
         }
         
         // Debug: Zeige albumArtwork Status
         if (currentSearchType === 'album') {
-            console.log(`📀 Album-Modus: albumArtwork = ${albumArtwork || 'NULL'}`);
+            console.log(`📀 Album-Mode: albumArtwork = ${albumArtwork || 'NULL'}`);
         }
 
         const songs = results
@@ -1954,11 +1965,11 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 let coverUrl = null;
                 
                 if (currentSearchType === 'album') {
-                    // Im Album-Modus: nutze das bereits gesetzte albumArtwork für ALLE Songs
+                    // In album mode: use the already set albumArtwork for ALL songs
                     coverUrl = albumArtwork;
                     console.log(`🎵 Song ${index + 1}: ${song.trackName} - Cover: ${coverUrl ? 'SET' : 'NULL'}`);
                 } else {
-                    // Bei normaler Suche: individuelles Song-Cover in hoher Auflösung
+                    // In normal search: individual song cover in high resolution
                     const originalCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60;
                     coverUrl = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : originalCover;
                 }
@@ -1970,13 +1981,13 @@ async function loadSongsFromItunes(searchQuery, limit) {
                     album: song.collectionName,
                     previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
                     image: coverUrl,
-                    genre: song.primaryGenreName || 'Unbekannt',
+                    genre: song.primaryGenreName || 'Unknown',
                     albumFans: song.albumFans || 0  // Will be set later for album mode
                 };
             });
 
         gameState.songs = shuffleArray(songs);
-        console.log(`${gameState.songs.length} Songs geladen aus: ${currentSearchType === 'album' ? 'Album' : 'Künstler/Titel'}`);
+        console.log(`${gameState.songs.length} songs loaded from: ${currentSearchType === 'album' ? 'Album' : 'Artist/Title'}`);
         
         // Fetch album fan counts for all songs
         if (gameState.songs.length > 0) {
@@ -1987,9 +1998,9 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 gameState.songs.forEach(song => {
                     song.albumFans = albumFans;
                 });
-                console.log(`📀 Album "${firstSong.album}" hat ${albumFans.toLocaleString()} fans`);
+                console.log(`📀 Album "${firstSong.album}" has ${albumFans.toLocaleString()} fans`);
             } else {
-                // In Track-Modus: Fetch fan count for each unique album
+                // In Track mode: Fetch fan count for each unique album
                 const albumCache = new Map();
                 for (const song of gameState.songs) {
                     const albumKey = `${song.album}|${song.artist}`;
@@ -2007,17 +2018,17 @@ async function loadSongsFromItunes(searchQuery, limit) {
         if (currentSearchType === 'album' && songs.length > 0) {
             const albumName = songs[0].album;
             const artistName = songs[0].artist;
-            setSubtitle(`Album '${albumName}' von '${artistName}'`);
+            setSubtitle(`Album '${albumName}' by '${artistName}'`);
         }
     } catch (error) {
-        console.error('iTunes API Fehler:', error);
+        console.error('iTunes API error:', error);
         throw error;
     }
 }
 
-// Nächste Frage laden
+// Load next question
 async function nextQuestion() {
-    // Stoppe vorherige Audio
+    // Stop previous audio
     stopPreview();
 
     if (gameState.currentQuestion >= gameState.songs.length) {
@@ -2031,12 +2042,12 @@ async function nextQuestion() {
     gameState.currentPlayedReverse = false;
     gameState.totalPlayTime = 0;
     gameState.previewFinished = false;
-    gameState.firstPlayDone = false; // WICHTIG: Reset für nächsten Song
+    gameState.firstPlayDone = false; // IMPORTANT: Reset for next song
     stopPointsCountdown(); // Ensure countdown is stopped before starting a new question
     let idx = gameState.currentQuestion;
 
     console.log('nextQuestion start, index:', idx, 'song:', gameState.songs[idx]);
-    debugLog(`🎯 Frage ${idx + 1}: Lade Song...`);
+    debugLog(`🎯 Question ${idx + 1}: Loading song...`);
 
     let attempts = 0;
     const maxAttempts = Math.min(8, gameState.songs.length);
@@ -2054,7 +2065,7 @@ async function nextQuestion() {
                 // WICHTIG: Bewahre das ursprüngliche Cover (besonders wichtig im Album-Modus!)
                 if (candidate.image) {
                     fullSongData.image = candidate.image;
-                    console.log('🖼️ Album-Cover vom Original übernommen:', candidate.image);
+                    console.log('🖼️ Album cover preserved from original:', candidate.image);
                 }
                 
                 // Check if album changed - if so, fetch new album's fan count
@@ -2066,7 +2077,7 @@ async function nextQuestion() {
                 } else if (candidate.albumFans !== undefined) {
                     // Preserve album fan count from original song if album didn't change
                     fullSongData.albumFans = candidate.albumFans;
-                    console.log('📀 Album-Fans vom Original übernommen:', candidate.albumFans);
+                    console.log('📀 Album fans preserved from original:', candidate.albumFans);
                 }
                 
                 gameState.currentSong = fullSongData;
@@ -2079,7 +2090,7 @@ async function nextQuestion() {
                 break;
             }
         } catch (error) {
-            console.error('Fehler beim Laden der Song-Daten, versuche nächsten:', error);
+            console.error('Error loading song data, trying next:', error);
             gameState.lastError = error.message || String(error);
         } finally {
             if (loadingShown) hideLoadingState();
@@ -2090,8 +2101,8 @@ async function nextQuestion() {
     }
 
     if (!gameState.currentSong || !gameState.currentSong.previewUrl) {
-        debugLog('❌ Keine abspielbaren Songs gefunden', 'F6');
-        showError('[F6] Keine abspielbaren Songs gefunden. Bitte anderes Genre oder Suchbegriff versuchen.');
+        debugLog('❌ No playable songs found', 'F6');
+        showError('[F6] No playable songs found. Please try a different genre or search term.');
         endGame();
         return;
     }
