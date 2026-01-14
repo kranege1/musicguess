@@ -1813,6 +1813,7 @@
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <input type="text" id="searchQuery" placeholder="e.g. 'Taylor Swift' or 'Bohemian Rhapsody'" style="flex: 1;">
                     <button id="checkArtistBtn" onclick="checkArtist()" style="display: none; min-width: 120px; padding: 9px 16px; white-space: nowrap;">✓ Check Artist</button>
+                    <button id="bubbleCategoryBtn" onclick="openBubbleCategoryModal()" style="display: none; min-width: 50px; padding: 9px 16px; font-size: 1.3em; white-space: nowrap;" title="Select bubble category">🫧</button>
                 </div>
                 <!-- Artist Bubbles Container -->
                 <div class="artist-bubbles-container" id="artistBubblesContainer"></div>
@@ -1831,6 +1832,19 @@
                 <a href="#" onclick="openLegalModal(); return false;" style="color: #000; text-decoration: underline; cursor: pointer;">About</a> |
                 <a href="/privacy.html" target="_blank" style="color: #000; text-decoration: underline;">Privacy</a> |
                 <span>🎵 Powered by iTunes & Firebase</span>
+            </div>
+        </div>
+
+        <!-- Bubble Category Modal -->
+        <div class="modal" id="bubbleCategoryModal" style="z-index: 10000;">
+            <div class="modal-content" style="max-width: 500px; max-height: 70vh; overflow-y: auto;">
+                <div class="modal-header">🫧 Select Bubble Category</div>
+                <div style="padding: 16px; font-size: 0.95em;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px;" id="bubbleCategoryGrid"></div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-btn modal-btn-secondary" onclick="closeBubbleCategoryModal()">Cancel</button>
+                </div>
             </div>
         </div>
 
@@ -2043,6 +2057,6 @@
 
     <audio id="audioPlayer" preload="none" playsinline webkit-playsinline crossOrigin="anonymous"></audio>
 
-    <script src="app.js?v=20260114173100"></script>
+    <script src="app.js?v=20260114173500"></script>
 </body>
 </html>

@@ -719,12 +719,14 @@ function selectGameMode(mode) {
     const subtitle = document.getElementById('gameSubtitle');
     const searchInput = document.getElementById('searchQuery');
     const checkArtistBtn = document.getElementById('checkArtistBtn');
+    const bubbleCategoryBtn = document.getElementById('bubbleCategoryBtn');
 
     if (mode === 'genre') {
         genreSelection.style.display = 'flex';
         searchSelection.style.display = 'none';
         stopArtistBubbles();
         if (checkArtistBtn) checkArtistBtn.style.display = 'none';
+        if (bubbleCategoryBtn) bubbleCategoryBtn.style.display = 'none';
         // Setze Subtitle zurück
         setSubtitle(t('setupSubtitle'));
     } else {
@@ -746,6 +748,7 @@ function selectGameMode(mode) {
                 }
             }
             if (checkArtistBtn) checkArtistBtn.style.display = 'block';
+            if (bubbleCategoryBtn) bubbleCategoryBtn.style.display = 'block';
         } else {
             currentSearchType = 'track';
             selectedArtistForAlbums = null; // Reset
@@ -757,6 +760,7 @@ function selectGameMode(mode) {
                 // Preserve existing text if present
             }
             if (checkArtistBtn) checkArtistBtn.style.display = 'block'; // Show button in Free Choice mode too
+            if (bubbleCategoryBtn) bubbleCategoryBtn.style.display = 'block';
         }
         // Setze Subtitle zurück
         setSubtitle(t('setupSubtitle'));
@@ -3586,6 +3590,136 @@ function closePlayerSearchModal() {
     const modal = document.getElementById('playerSearchModal');
     if (modal) {
         modal.classList.remove('show');
+    }
+}
+
+// Open Bubble Category Modal
+async function openBubbleCategoryModal() {
+    const modal = document.getElementById('bubbleCategoryModal');
+    const grid = document.getElementById('bubbleCategoryGrid');
+    
+    if (!modal || !grid) return;
+    
+    // Build category options from genres.json
+    const categories = [];
+    
+    // Add genre categories
+    if (genresData.genres && genresData.genres.length > 0) {
+        genresData.genres.forEach(genre => {
+            categories.push({ name: genre, type: 'genre' });
+        });
+    }
+    
+    // Add country categories
+    if (genresData.countries && genresData.countries.length > 0) {
+        genresData.countries.forEach(country => {
+            categories.push({ name: country.name, value: country.value, type: 'country' });
+        });
+    }
+    
+    // Add classical categories
+    if (genresData.classical) {
+        Object.keys(genresData.classical).forEach(key => {
+            categories.push({ name: key, type: 'classical' });
+        });
+    }
+    
+    // Add decades
+    if (genresData.decades && genresData.decades.length > 0) {
+        genresData.decades.forEach(decade => {
+            categories.push({ name: decade, type: 'decade' });
+        });
+    }
+    
+    // Create buttons
+    grid.innerHTML = '';
+    categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = 'modal-btn modal-btn-primary';
+        btn.textContent = cat.name;
+        btn.style.width = '100%';
+        btn.style.padding = '12px 8px';
+        btn.style.fontSize = '0.9em';
+        btn.onclick = () => selectBubbleCategory(cat);
+        grid.appendChild(btn);
+    });
+    
+    modal.classList.add('show');
+}
+
+// Close Bubble Category Modal
+function closeBubbleCategoryModal() {
+    const modal = document.getElementById('bubbleCategoryModal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+}
+
+// Select a bubble category and load artists
+async function selectBubbleCategory(category) {
+    closeBubbleCategoryModal();
+    
+    try {
+        let artists = [];
+        
+        if (category.type === 'genre') {
+            // Load artists from ArtistsList filtered by genre
+            const allArtists = await loadArtistNames();
+            // For genre, we'll fetch all and filter by popularity via Deezer
+            artists = allArtists.slice(0, 100); // Take first 100 for performance
+        } else if (category.type === 'country') {
+            // Load artists from ArtistsList filtered by country
+            const allArtists = await loadArtistNames();
+            // For country, fetch from songs.json filtered by country
+            const songsResponse = await fetch('songs.json', { cache: 'no-store' });
+            const songsData = await songsResponse.json();
+            const countryValue = category.value || category.name;
+            const countrySongs = songsData.filter(song => song.country === countryValue);
+            const uniqueArtists = [...new Set(countrySongs.map(song => song.artist))];
+            artists = uniqueArtists.slice(0, 100);
+        } else if (category.type === 'classical') {
+            // Load from classical subcategory
+            const classicalArtists = genresData.classical[category.name] || [];
+            artists = classicalArtists.slice(0, 100);
+        } else if (category.type === 'decade') {
+            // Load artists from decade
+            const songsResponse = await fetch('songs.json', { cache: 'no-store' });
+            const songsData = await songsResponse.json();
+            const decadeSongs = songsData.filter(song => song.genre === category.name);
+            const uniqueArtists = [...new Set(decadeSongs.map(song => song.artist))];
+            artists = uniqueArtists.slice(0, 100);
+        }
+        
+        // Fetch Deezer data for all artists to get fan counts
+        console.log(`🫧 Loading ${artists.length} artists for category "${category.name}"...`);
+        const artistsWithFans = await Promise.all(
+            artists.map(async (artistName) => {
+                const data = await fetchArtistImageFromDeezer(artistName);
+                return {
+                    name: artistName,
+                    fans: data.fans || 0,
+                    image: data.image
+                };
+            })
+        );
+        
+        // Sort by fan count (most popular first)
+        artistsWithFans.sort((a, b) => b.fans - a.fans);
+        
+        // Take top 80 most popular
+        const topArtists = artistsWithFans.slice(0, 80).map(a => a.name);
+        
+        // Update global artistNames and restart bubbles
+        artistNames = topArtists;
+        console.log(`🫧 Loaded ${artistNames.length} popular artists from "${category.name}"`);
+        
+        // Restart bubbles with new artist list
+        stopArtistBubbles();
+        startArtistBubbles();
+        
+    } catch (error) {
+        console.error('Error loading bubble category:', error);
+        showError('Error loading artists for this category');
     }
 }
 
