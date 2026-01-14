@@ -426,6 +426,7 @@ let artistNames = [];
 let artistNamesPromise = null;
 let bubbleInterval = null;
 let activeBubbles = 0;
+let currentBubbleCategory = 'All Artists';
 
 // Lade Künstlernamen aus ArtistsList.json
 async function loadArtistNames() {
@@ -440,6 +441,7 @@ async function loadArtistNames() {
             }
             const data = await response.json();
             artistNames = data.famous_song_interpreters || [];
+            currentBubbleCategory = 'All Artists';
             console.log(`${artistNames.length} Künstler für Bubbles geladen`);
             return artistNames;
         } catch (error) {
@@ -502,6 +504,9 @@ async function startArtistBubbles() {
     console.log(`🫧 Starting bubbles with ${artistNames.length} artists`);
     container.classList.add('active');
     activeBubbles = 0;
+    
+    // Update subtitle with bubble category
+    setSubtitle(`🫧 Bubbles: ${currentBubbleCategory}`);
     
     // Stoppe vorherige Animation
     if (bubbleInterval) {
@@ -3789,6 +3794,7 @@ async function selectBubbleCategory(category) {
         
         // Update global artistNames and restart bubbles
         artistNames = topArtists;
+        currentBubbleCategory = category.name;
         console.log(`🫧 Showing top ${artistNames.length} popular artists from "${category.name}"`);
         
         // Update category label
