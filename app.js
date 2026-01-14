@@ -617,6 +617,12 @@ async function createArtistBubble() {
         // Continue with empty artistData
     }
     
+    // Skip artists with less than 1000 fans
+    if (artistData.fans < 1000) {
+        console.log(`⏭️ Skipping "${bubbleText}" - only ${artistData.fans} fans (less than 1000)`);
+        return;
+    }
+    
     // Erstelle Bubble
     const bubble = document.createElement('div');
     bubble.className = 'artist-bubble';
@@ -795,14 +801,23 @@ async function showArtistSelectionModal(artists) {
 
     // Clear previous options
     list.innerHTML = '';
+    
+    let displayedCount = 0;
 
     // Create radio button options for each artist with images
     for (const [index, artist] of artists.entries()) {
+        // Fetch artist image and fan count from Deezer
+        const artistData = await fetchArtistImageFromDeezer(artist.artistName);
+        
+        // Skip artists with less than 1000 fans
+        if (artistData.fans < 1000) {
+            console.log(`⏭️ Skipping "${artist.artistName}" - only ${artistData.fans} fans (less than 1000)`);
+            continue;
+        }
+        
         const option = document.createElement('div');
         option.style.cssText = 'padding: 10px; margin: 5px 0; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.2s;';
 
-        // Fetch artist image and fan count from Deezer
-        const artistData = await fetchArtistImageFromDeezer(artist.artistName);
         const fanCountText = artistData.fans > 0 ? 
             (artistData.fans >= 1000000 ? (artistData.fans / 1000000).toFixed(1) + 'M fans' : 
              artistData.fans >= 1000 ? (artistData.fans / 1000).toFixed(0) + 'K fans' : 
@@ -817,8 +832,8 @@ async function showArtistSelectionModal(artists) {
                     }
                 </div>
                 <div style="flex: 1;">
-                    <input type="radio" name="artistChoice" value="${index}" id="artist_${index}" style="cursor: pointer; margin-right: 8px;">
-                    <label for="artist_${index}" style="cursor: pointer; margin: 0;">
+                    <input type="radio" name="artistChoice" value="${displayedCount}" id="artist_${displayedCount}" style="cursor: pointer; margin-right: 8px;">
+                    <label for="artist_${displayedCount}" style="cursor: pointer; margin: 0;">
                         <strong>${artist.artistName}</strong>
                         ${fanCountText ? `<br><small style="color: #0066cc; font-weight: 600;">${fanCountText}</small>` : ''}
                         ${artist.primaryGenreName ? `<br><small style="color: #666;">${artist.primaryGenreName}</small>` : ''}
@@ -836,6 +851,13 @@ async function showArtistSelectionModal(artists) {
         };
 
         list.appendChild(option);
+        displayedCount++;
+    }
+    
+    // Show error if no artists with 1000+ fans found
+    if (displayedCount === 0) {
+        showError('No artists found with 1000+ fans. Please search for a more popular artist.');
+        return;
     }
 
     modal.classList.add('show');
