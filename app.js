@@ -2560,12 +2560,18 @@ function showSongInfo() {
     }
 
     const songInfoEl = document.getElementById('songInfo');
+    const infoDetails = document.getElementById('infoDetails');
+
+    // Reset details area on open
+    if (infoDetails) {
+        infoDetails.textContent = '';
+        infoDetails.classList.remove('show');
+    }
     songInfoEl.classList.add('show');
 
     // Wire buttons (stop propagation to keep popup open)
     const artistBtn = document.getElementById('infoArtistBtn');
     const albumBtn = document.getElementById('infoAlbumBtn');
-    const infoDetails = document.getElementById('infoDetails');
 
     if (artistBtn) {
         artistBtn.onclick = async (e) => {
