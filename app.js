@@ -33,6 +33,41 @@ function t(key) {
     return strings[key] || key;
 }
 
+// Play winning sound effect
+function playWinSound() {
+    // Create a simple winning chime using Web Audio API
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = [
+            { freq: 523.25, duration: 0.1 }, // C5
+            { freq: 659.25, duration: 0.1 }, // E5
+            { freq: 783.99, duration: 0.3 }  // G5
+        ];
+        
+        let time = audioContext.currentTime;
+        notes.forEach(note => {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            
+            osc.frequency.value = note.freq;
+            osc.type = 'sine';
+            
+            gain.gain.setValueAtTime(0.3, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + note.duration);
+            
+            osc.start(time);
+            osc.stop(time + note.duration);
+            
+            time += note.duration;
+        });
+    } catch (e) {
+        console.log('Audio context not available, skipping win sound');
+    }
+}
+
 // Detect if running on server or static hosting
 const API_BASE = window.location.origin; // Will use /api endpoints if available
 const USE_SERVER_API = () => {
@@ -3080,6 +3115,9 @@ function endGame() {
     } else {
         highScoreMessageEl.innerHTML = `${t('scoreSavedSuccess')}<br/><small style="font-size: 0.9em; font-weight: 500;">${t('scoreInLeaderboard')}</small>`;
         highScoreMessageEl.style.color = '#2e7d32';
+        // Play winning sound and add pulsating animation for successful games
+        playWinSound();
+        document.getElementById('gameOverScreen').classList.add('pulsating');
     }
 
     stopPreview();

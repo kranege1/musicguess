@@ -51,9 +51,9 @@
         }
 
         .container {
-            background: white;
+            background: rgb(0, 0, 0);
             border-radius: 12px;
-            padding: 14px;
+            padding: 4px;
             max-width: 760px;
             width: 100%;
             box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
@@ -448,7 +448,7 @@
             gap: 8px;
             position: relative;
             border-radius: 12px;
-            padding: 14px;
+            padding: 4px;
         }
 
         .setup-screen::before {
@@ -494,7 +494,7 @@
 
         .mode-btn {
             padding: 14px 12px !important;
-            background: rgba(255, 255, 255, 0.5) !important;
+            background: rgba(255, 255, 255, 0.8) !important;
             border: 2px solid #667eea !important;
             border-radius: 9px !important;
             cursor: pointer !important;
@@ -571,7 +571,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
             color: white !important;
             border-color: #764ba2 !important;
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3) !important;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.8) !important;
         }
 
         .mode-btn[data-mode="search"].active {
@@ -749,7 +749,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 38px;
             line-height: 1;
         }
 
@@ -1393,6 +1393,28 @@
             display: block;
         }
 
+        /* Pulsating win screen animation */
+        @keyframes winPulse {
+            0% {
+                background: rgba(46, 125, 50, 0.1);
+                box-shadow: 0 0 20px rgba(46, 125, 50, 0.3);
+            }
+            50% {
+                background: rgba(255, 152, 0, 0.15);
+                box-shadow: 0 0 40px rgba(255, 152, 0, 0.5);
+            }
+            100% {
+                background: rgba(46, 125, 50, 0.1);
+                box-shadow: 0 0 20px rgba(46, 125, 50, 0.3);
+            }
+        }
+
+        .game-over.pulsating {
+            animation: winPulse 1.2s ease-in-out infinite;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
         .version-footer {
             display: flex;
             align-items: center;
@@ -1550,7 +1572,7 @@
 
         @media (max-width: 600px) {
             .container {
-                padding: 20px;
+                padding: 5px;
             }
 
             h1 {
@@ -1655,7 +1677,7 @@
                 <p class="subtitle" id="gameSubtitle">Guess the song and win!</p>
             </div>
             <div class="input-group">
-                <label>🎮 Game Mode:</label>
+                <!-- <label>🎮 Game Mode:</label> -->
                 <div class="game-mode-buttons">
                     <button type="button" class="mode-btn" data-mode="genre" onclick="selectGameMode('genre')">🎸 Select Genre</button>
                     <button type="button" class="mode-btn active" data-mode="search" onclick="selectGameMode('search')">🎤 Free Choice</button>
@@ -1687,7 +1709,7 @@
 
 
             <div class="input-group" id="searchSelection" style="display: none;">
-                <label for="searchQuery">🎤 Search artist or title:</label>
+                <label for="searchQuery">🎤 Search artist:</label>
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <input type="text" id="searchQuery" placeholder="e.g. 'Taylor Swift' or 'Bohemian Rhapsody'" style="flex: 1;">
                     <button id="checkArtistBtn" onclick="checkArtist()" style="display: none; min-width: 120px; padding: 9px 16px; white-space: nowrap;">✓ Check Artist</button>
