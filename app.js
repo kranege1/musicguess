@@ -2541,14 +2541,23 @@ function showSongInfo() {
     document.getElementById('infoTrack').textContent = song.track;
     document.getElementById('infoAlbum').textContent = song.album;
 
+    console.log('Song info images:', {
+        albumCover: song.albumCover,
+        artworkUrl: song.artworkUrl,
+        coverUrl: song.coverUrl,
+        artistImageUrl: song.artistImageUrl
+    });
+
     // Prefer album art; also use it as fallback for artist image
     const albumImg = document.getElementById('infoAlbumImage');
     const albumArt = song.albumCover || song.artworkUrl || song.coverUrl;
     if (albumArt) {
         albumImg.src = albumArt;
         albumImg.style.display = 'block';
+        console.log('Album image set to:', albumArt);
     } else {
         albumImg.style.display = 'none';
+        console.log('No album image available');
     }
 
     const artistImg = document.getElementById('infoArtistImage');
@@ -2556,8 +2565,10 @@ function showSongInfo() {
     if (artistArt) {
         artistImg.src = artistArt;
         artistImg.style.display = 'block';
+        console.log('Artist image set to:', artistArt);
     } else {
         artistImg.style.display = 'none';
+        console.log('No artist image available');
     }
 
     const songInfoEl = document.getElementById('songInfo');
