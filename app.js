@@ -1816,6 +1816,22 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 console.warn('DE-Suche fehlgeschlagen (Suchmodus), versuche US:', errDe);
                 results = await fetchItunes(searchQuery, { limit: 50, country: 'US' });
             }
+            
+            // Filter results to only include songs by the searched artist
+            // This prevents songs that just have the artist name in the title from appearing
+            if (results.length > 0) {
+                const normalizedSearchQuery = searchQuery.toLowerCase().trim();
+                const primaryArtist = results[0].artistName; // Use the first result's artist as reference
+                
+                // Filter to only keep songs by the same artist
+                results = results.filter(song => 
+                    song.artistName && 
+                    song.artistName.toLowerCase().includes(normalizedSearchQuery) ||
+                    normalizedSearchQuery.includes(song.artistName.toLowerCase())
+                );
+                
+                console.log(`Filtered to ${results.length} songs by matching artist`);
+            }
         }
 
         // Im Album-Modus: Stelle sicher dass albumArtwork gesetzt ist BEVOR wir die Songs mappen
