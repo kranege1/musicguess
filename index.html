@@ -686,15 +686,12 @@
         /* Artist Bubbles Animation */
         .artist-bubbles-container {
             position: relative;
-            height: 90px;
+            height: 100px;
             overflow: hidden;
             background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
             border-radius: 10px;
             margin-top: 8px;
             display: none;
-            padding: 0;
-            display: flex;
-            align-items: center;
         }
 
         .artist-bubbles-container.active {
@@ -703,24 +700,25 @@
 
         .artist-bubble {
             position: absolute;
-            top: 0;
-            height: 90px;
+            top: 50%;
+            transform: translateY(-50%);
             display: flex;
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 8px;
+            padding: 6px;
             border-radius: 15px;
-            font-size: 0.75em;
+            font-size: 0.7em;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
             animation: slideLeftChain 10s linear forwards;
             flex-direction: column;
-            gap: 6px;
+            gap: 3px;
             width: 80px;
             text-align: center;
+            min-height: 80px;
         }
         
         .bubble-image {
