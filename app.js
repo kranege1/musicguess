@@ -25,7 +25,9 @@ const strings = {
     questions: 'Questions',
     allGenres: 'All Genres',
     minQuestionsRequired: '⚠️ At least 10 questions required',
-    scoreNotSaved: 'Your score was not saved'
+    scoreNotSaved: 'Your score was not saved',
+    scoreSavedSuccess: '✅ Score saved successfully!',
+    scoreInLeaderboard: 'You made it to the leaderboard'
 };
 
 // Helper function to get strings
