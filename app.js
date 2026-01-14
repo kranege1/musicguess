@@ -1973,12 +1973,25 @@ async function loadSongsFromItunes(searchQuery, limit) {
             if (results.length > 0) {
                 const normalizedSearchQuery = searchQuery.toLowerCase().trim();
                 
+                // Check if this might be a classical composer search
+                // Classical composers often appear in track names but not as artistName
+                const hasClassicalResults = results.some(song => 
+                    song.trackName && song.trackName.toLowerCase().includes(normalizedSearchQuery)
+                );
+                
                 // Filter to only keep songs by the same artist (more lenient approach)
                 results = results.filter(song => {
                     if (!song.artistName) return false;
                     const artistLower = song.artistName.toLowerCase();
+                    const trackLower = (song.trackName || '').toLowerCase();
+                    
                     // Accept songs if the search query matches the artist name (in either direction)
-                    return artistLower.includes(normalizedSearchQuery) || normalizedSearchQuery.includes(artistLower);
+                    const artistMatch = artistLower.includes(normalizedSearchQuery) || normalizedSearchQuery.includes(artistLower);
+                    
+                    // For classical music: also accept if composer name appears in track name
+                    const classicalMatch = hasClassicalResults && trackLower.includes(normalizedSearchQuery);
+                    
+                    return artistMatch || classicalMatch;
                 });
                 
                 console.log(`Filtered to ${results.length} songs by matching artist from ${normalizedSearchQuery}`);
