@@ -3625,6 +3625,18 @@ async function openBubbleCategoryModal() {
         });
     }
     
+    // Add special genres (Jazz, Blues, Country, etc.)
+    if (genresData.specialGenres) {
+        Object.keys(genresData.specialGenres).forEach(key => {
+            const genreData = genresData.specialGenres[key];
+            categories.push({ 
+                name: genreData.name || key, 
+                type: 'specialGenre',
+                key: key 
+            });
+        });
+    }
+    
     // Add country categories
     if (genresData.countries && genresData.countries.length > 0) {
         genresData.countries.forEach(country => {
@@ -3632,10 +3644,20 @@ async function openBubbleCategoryModal() {
         });
     }
     
-    // Add classical categories
+    // Add classical categories (including new period-based ones)
     if (genresData.classical) {
         Object.keys(genresData.classical).forEach(key => {
-            categories.push({ name: key, type: 'classical' });
+            const classicalData = genresData.classical[key];
+            // Check if it's a period category (has 'name' property) or traditional list
+            if (classicalData.name) {
+                categories.push({ 
+                    name: classicalData.name, 
+                    type: 'classical',
+                    key: key 
+                });
+            } else if (Array.isArray(classicalData)) {
+                categories.push({ name: key, type: 'classical', key: key });
+            }
         });
     }
     
@@ -3683,6 +3705,16 @@ async function selectBubbleCategory(category) {
             console.log(`🫧 Loading artists for genre "${category.name}" (using general artist list)...`);
             const allArtists = await loadArtistNames();
             artists = allArtists.slice(0, 150); // Take more for better filtering
+        } else if (category.type === 'specialGenre') {
+            // Special genres (Jazz, Blues, Country, etc.) have artist lists in genres.json
+            const genreData = genresData.specialGenres[category.key];
+            if (genreData && genreData.artists) {
+                artists = genreData.artists;
+                console.log(`🫧 Loaded ${artists.length} artists from ${category.name}`);
+            } else {
+                console.log(`⚠️ No artist data for ${category.name}`);
+                artists = [];
+            }
         } else if (category.type === 'country') {
             // Countries have artist lists directly in genres.json
             const countryKey = (category.value || category.name).toLowerCase();
@@ -3696,9 +3728,15 @@ async function selectBubbleCategory(category) {
             }
         } else if (category.type === 'classical') {
             // Load from classical subcategory in genres.json
-            const classicalArtists = genresData.classical[category.name] || [];
-            artists = classicalArtists;
-            console.log(`🫧 Loaded ${artists.length} ${category.name} artists`);
+            const classicalData = genresData.classical[category.key || category.name];
+            if (classicalData) {
+                // Check if it's a period category (has 'artists' property) or traditional list
+                artists = classicalData.artists || classicalData;
+                console.log(`🫧 Loaded ${artists.length} ${category.name} artists`);
+            } else {
+                console.log(`⚠️ No artist data for ${category.name}`);
+                artists = [];
+            }
         } else if (category.type === 'decade') {
             // Load artists from songs.json filtered by decade
             const songsResponse = await fetch('songs.json', { cache: 'no-store' });
