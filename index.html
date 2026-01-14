@@ -954,6 +954,7 @@
             margin: 12px 0 10px;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
         }
 
         .album-cover img {
@@ -963,6 +964,21 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+        }
+        
+        .album-fan-badge {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            font-weight: 700;
+            font-size: 1.1em;
+            padding: 6px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(255, 107, 107, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            white-space: nowrap;
         }
 
         .album-cover.expanded {

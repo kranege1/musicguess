@@ -1662,6 +1662,28 @@ async function fetchArtistImageFromDeezer(artistName) {
     }
 }
 
+// Fetch album fan count from Deezer API
+async function fetchAlbumFanCount(albumName, artistName) {
+    try {
+        const searchQuery = `${albumName} ${artistName}`;
+        const response = await fetch(`https://api.deezer.com/search/album?q=${encodeURIComponent(searchQuery)}&limit=1`);
+        
+        if (!response.ok) {
+            return 0;
+        }
+
+        const data = await response.json();
+        if (data.data && data.data.length > 0) {
+            return data.data[0].fans || 0;
+        }
+
+        return 0;
+    } catch (error) {
+        console.warn(`Failed to fetch album fan count for "${albumName}": ${error.message}`);
+        return 0;
+    }
+}
+
 // Lade Song-Daten live von iTunes API basierend auf Suchbegriffen (mit Länder-Fallback DE -> US)
 async function loadSongDataLive(artist, track, cachedPreview = null) {
     try {
@@ -1975,12 +1997,24 @@ async function loadSongsFromItunes(searchQuery, limit) {
                     album: song.collectionName,
                     previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
                     image: coverUrl,
-                    genre: song.primaryGenreName || 'Unbekannt'
+                    genre: song.primaryGenreName || 'Unbekannt',
+                    albumFans: song.albumFans || 0  // Will be set later for album mode
                 };
             });
 
         gameState.songs = shuffleArray(songs);
         console.log(`${gameState.songs.length} Songs geladen aus: ${currentSearchType === 'album' ? 'Album' : 'Künstler/Titel'}`);
+        
+        // In Album-Modus: Fetch fan count für das Album
+        if (currentSearchType === 'album' && gameState.songs.length > 0) {
+            const firstSong = gameState.songs[0];
+            const albumFans = await fetchAlbumFanCount(firstSong.album, firstSong.artist);
+            // Set fan count for all songs in this album
+            gameState.songs.forEach(song => {
+                song.albumFans = albumFans;
+            });
+            console.log(`📀 Album "${firstSong.album}" hat ${albumFans.toLocaleString()} fans`);
+        }
         
         // Aktualisiere Subtitle im Album-Modus
         if (currentSearchType === 'album' && songs.length > 0) {
@@ -2084,6 +2118,18 @@ function displayAlbumCover() {
 
     if (song.image) {
         albumCover.innerHTML = `<img src="${song.image}" alt="Album Cover" onerror="this.parentElement.innerHTML='<div class=&quot;cover-placeholder&quot;></div>'">`;
+        
+        // Add fan count badge if available
+        if (song.albumFans && song.albumFans > 0) {
+            const badge = document.createElement('div');
+            badge.className = 'album-fan-badge';
+            const fanCount = song.albumFans >= 1000000 ? (song.albumFans / 1000000).toFixed(1) + 'M' : 
+                            song.albumFans >= 1000 ? (song.albumFans / 1000).toFixed(0) + 'K' : 
+                            song.albumFans;
+            badge.textContent = fanCount;
+            badge.title = `${song.albumFans.toLocaleString()} album fans`;
+            albumCover.appendChild(badge);
+        }
     } else {
         albumCover.innerHTML = '<div class="cover-placeholder"></div>';
     }
