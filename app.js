@@ -483,7 +483,7 @@ function startArtistBubbles() {
     container.innerHTML = '';
     
     // Erstelle kontinuierlich neue Bubbles
-    // Intervall für ~10px Abstand bei durchschnittlich 120px Bubble-Breite
+    // Intervall für ~10px Abstand bei durchschnittlich 180px Bubble-Breite
     bubbleInterval = setInterval(() => {
         // Call async function without awaiting (fire and forget)
         createArtistBubble().catch(err => console.error('Bubble creation error:', err));
