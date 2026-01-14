@@ -1295,7 +1295,7 @@ async function startGame() {
             if (currentSearchType === 'album' && selectedAlbumName && selectedArtistForAlbums) {
                 subtitleText = `Album: ${selectedAlbumName} by ${selectedArtistForAlbums}`;
             } else {
-                subtitleText = `Songs von ${searchQuery}`;
+                subtitleText = `Songs by ${searchQuery}`;
             }
             setSubtitle(subtitleText);
             gameState.currentGameMode = subtitleText;
@@ -3119,8 +3119,12 @@ function endGame() {
         highScoreMessageEl.innerHTML = `${t('scoreSavedSuccess')}<br/><small style="font-size: 0.9em; font-weight: 500;">${t('scoreInLeaderboard')}</small>`;
         highScoreMessageEl.style.color = '#2e7d32';
         // Play winning sound and add pulsating animation for successful games
+        console.log('🎉 Triggering win animation and sound, total questions:', total);
         playWinSound();
-        document.getElementById('gameOverScreen').classList.add('pulsating');
+        const gameOverEl = document.getElementById('gameOverScreen');
+        console.log('Game over element:', gameOverEl);
+        gameOverEl.classList.add('pulsating');
+        console.log('Pulsating class added:', gameOverEl.classList);
     }
 
     stopPreview();
@@ -3693,7 +3697,7 @@ async function saveGameScore() {
         const data = await res.json();
         
         if (data.success) {
-            console.log('✅ Score gespeichert:', data.score);
+            console.log('✅ Score saved:', data.score);
             return true;
         } else {
             console.error('❌ Score-Speichern fehlgeschlagen:', data.error);
@@ -3722,7 +3726,7 @@ function getSelectedGameMode() {
         return selectedYear ? `Billboard Charts aus ${selectedYear}` : 'Billboard Hot 100';
     } else if (value === 'search') {
         const searchQuery = document.getElementById('searchQuery')?.value?.trim();
-        return searchQuery ? `Songs von ${searchQuery}` : 'Freie Wahl (iTunes Suche)';
+        return searchQuery ? `Songs by ${searchQuery}` : 'Free Choice (iTunes Search)';
     }
     
     return 'Genre';

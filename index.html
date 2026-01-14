@@ -1394,18 +1394,22 @@
         }
 
         /* Pulsating win screen animation */
+        /* Pulsating win screen animation */
         @keyframes winPulse {
             0% {
-                background: rgba(46, 125, 50, 0.1);
-                box-shadow: 0 0 20px rgba(46, 125, 50, 0.3);
+                background: rgba(76, 175, 80, 0.2);
+                box-shadow: 0 0 30px rgba(76, 175, 80, 0.6), inset 0 0 30px rgba(76, 175, 80, 0.3);
+                transform: scale(0.98);
             }
             50% {
-                background: rgba(255, 152, 0, 0.15);
-                box-shadow: 0 0 40px rgba(255, 152, 0, 0.5);
+                background: rgba(255, 193, 7, 0.25);
+                box-shadow: 0 0 50px rgba(255, 193, 7, 0.8), inset 0 0 50px rgba(255, 193, 7, 0.4);
+                transform: scale(1.02);
             }
             100% {
-                background: rgba(46, 125, 50, 0.1);
-                box-shadow: 0 0 20px rgba(46, 125, 50, 0.3);
+                background: rgba(76, 175, 80, 0.2);
+                box-shadow: 0 0 30px rgba(76, 175, 80, 0.6), inset 0 0 30px rgba(76, 175, 80, 0.3);
+                transform: scale(0.98);
             }
         }
 
@@ -1933,6 +1937,6 @@
 
     <audio id="audioPlayer" preload="none" playsinline webkit-playsinline crossOrigin="anonymous"></audio>
 
-    <script src="app.js?v=20260114164000"></script>
+    <script src="app.js?v=20260114164100"></script>
 </body>
 </html>
