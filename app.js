@@ -530,11 +530,12 @@ function startArtistBubbles() {
     // Erstelle kontinuierlich neue Bubbles
     // Intervall für ~10px Abstand bei durchschnittlich 120px Bubble-Breite
     bubbleInterval = setInterval(() => {
-        createArtistBubble();
+        // Call async function without awaiting (fire and forget)
+        createArtistBubble().catch(err => console.error('Bubble creation error:', err));
     }, 1350);
     
     // Erstelle erste Bubble sofort
-    createArtistBubble();
+    createArtistBubble().catch(err => console.error('Bubble creation error:', err));
 }
 
 // Stoppe Artist Bubbles Animation
