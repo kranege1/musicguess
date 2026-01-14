@@ -3638,9 +3638,14 @@ async function openBubbleCategoryModal() {
     }
     
     // Add country categories
-    if (genresData.countries && genresData.countries.length > 0) {
-        genresData.countries.forEach(country => {
-            categories.push({ name: country.name, value: country.value, type: 'country' });
+    if (genresData.countries) {
+        Object.keys(genresData.countries).forEach(countryKey => {
+            const countryData = genresData.countries[countryKey];
+            categories.push({ 
+                name: countryData.name, 
+                value: countryKey, 
+                type: 'country' 
+            });
         });
     }
     
