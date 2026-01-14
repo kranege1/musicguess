@@ -732,29 +732,41 @@ async function checkArtist() {
 }
 
 // Show artist selection modal
-function showArtistSelectionModal(artists) {
+async function showArtistSelectionModal(artists) {
     const modal = document.getElementById('artistSelectionModal');
     const list = document.getElementById('artistSelectionList');
-    
+
     if (!modal || !list) return;
-    
+
     // Clear previous options
     list.innerHTML = '';
-    
-    // Create radio button options for each artist
-    artists.forEach((artist, index) => {
+
+    // Create radio button options for each artist with images
+    for (const [index, artist] of artists.entries()) {
         const option = document.createElement('div');
         option.style.cssText = 'padding: 10px; margin: 5px 0; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.2s;';
+
+        // Fetch artist image from Deezer
+        const artistImage = await fetchArtistImageFromDeezer(artist.artistName);
+
         option.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <input type="radio" name="artistChoice" value="${index}" id="artist_${index}" style="cursor: pointer;">
-                <label for="artist_${index}" style="cursor: pointer; flex: 1; margin: 0;">
-                    <strong>${artist.artistName}</strong>
-                    ${artist.primaryGenreName ? `<br><small style="color: #666;">${artist.primaryGenreName}</small>` : ''}
-                </label>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 50px; height: 50px; border-radius: 8px; overflow: hidden; background: #f0f0f0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    ${artistImage ?
+                        `<img src="${artistImage}" alt="${artist.artistName}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'font-size: 20px; color: #999;\\'>🎤</div>';">` :
+                        '<div style="font-size: 20px; color: #999;">🎤</div>'
+                    }
+                </div>
+                <div style="flex: 1;">
+                    <input type="radio" name="artistChoice" value="${index}" id="artist_${index}" style="cursor: pointer; margin-right: 8px;">
+                    <label for="artist_${index}" style="cursor: pointer; margin: 0;">
+                        <strong>${artist.artistName}</strong>
+                        ${artist.primaryGenreName ? `<br><small style="color: #666;">${artist.primaryGenreName}</small>` : ''}
+                    </label>
+                </div>
             </div>
         `;
-        
+
         option.onclick = (e) => {
             if (e.target.tagName !== 'INPUT') {
                 option.querySelector('input').checked = true;
@@ -762,10 +774,10 @@ function showArtistSelectionModal(artists) {
             selectArtistAndLoadAlbums(artist);
             closeArtistSelectionModal();
         };
-        
+
         list.appendChild(option);
-    });
-    
+    }
+
     modal.classList.add('show');
 }
 
@@ -1540,6 +1552,31 @@ async function fetchItunesWithFallback(searchTerm, countries = ['DE', 'US', 'GB'
     }
     debugLog(`❌ iTunes Suche komplett fehlgeschlagen: ${lastError ? lastError.message : 'Unbekannt'}`, 'F4');
     throw lastError || new Error('iTunes Suche fehlgeschlagen');
+}
+
+// Fetch artist image from Deezer API
+async function fetchArtistImageFromDeezer(artistName) {
+    try {
+        const encodedArtist = encodeURIComponent(artistName);
+        const response = await fetch(`https://api.deezer.com/search/artist?q=${encodedArtist}&limit=1`);
+
+        if (!response.ok) {
+            throw new Error(`Deezer API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.data && data.data.length > 0) {
+            const artist = data.data[0];
+            // Return the medium-sized image (500x500)
+            return artist.picture_medium || artist.picture_big || artist.picture_small || null;
+        }
+
+        return null;
+    } catch (error) {
+        debugLog(`❌ Deezer API error for "${artistName}": ${error.message}`, 'D1');
+        return null;
+    }
 }
 
 // Lade Song-Daten live von iTunes API basierend auf Suchbegriffen (mit Länder-Fallback DE -> US)
