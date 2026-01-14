@@ -516,8 +516,12 @@ async function loadAlbumList() {
 // Starte Artist Bubbles Animation
 function startArtistBubbles() {
     const container = document.getElementById('artistBubblesContainer');
-    if (!container || artistNames.length === 0) return;
+    if (!container || artistNames.length === 0) {
+        console.warn('Cannot start bubbles: container exists:', !!container, 'artistNames:', artistNames.length);
+        return;
+    }
     
+    console.log(`🫧 Starting bubbles with ${artistNames.length} artists`);
     container.classList.add('active');
     activeBubbles = 0;
     
@@ -579,7 +583,14 @@ function stopReversePlayback() {
 // Erstelle eine einzelne Artist Bubble (oder Album Bubble im Album-Modus)
 async function createArtistBubble() {
     const container = document.getElementById('artistBubblesContainer');
-    if (!container || !container.classList.contains('active')) return;
+    if (!container) {
+        console.warn('Container not found');
+        return;
+    }
+    if (!container.classList.contains('active')) {
+        console.warn('Container not active');
+        return;
+    }
     
     let bubbleText = '';
     
@@ -587,6 +598,7 @@ async function createArtistBubble() {
     if (artistNames.length > 0) {
         bubbleText = artistNames[Math.floor(Math.random() * artistNames.length)];
     } else {
+        console.warn('No artist names available');
         return;
     }
     
