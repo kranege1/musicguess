@@ -394,6 +394,59 @@ app.get('/api/deezer/artist', async (req, res) => {
     }
 });
 
+// Proxy endpoint for Deezer album search to bypass CORS
+app.get('/api/deezer/album', async (req, res) => {
+    try {
+        const searchQuery = req.query.q;
+        if (!searchQuery) {
+            return res.status(400).json({ error: 'Search query required' });
+        }
+
+        const encodedQuery = encodeURIComponent(searchQuery);
+        const deezerUrl = `https://api.deezer.com/search/album?q=${encodedQuery}&limit=1`;
+
+        const response = await fetch(deezerUrl, {
+            headers: {
+                'User-Agent': 'MusicGuess/1.0'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Deezer API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Deezer album API proxy error:', error);
+        res.status(500).json({ error: 'Failed to fetch album data from Deezer' });
+    }
+});
+
+// Proxy endpoint for Deezer album details by ID to bypass CORS
+app.get('/api/deezer/album/:id', async (req, res) => {
+    try {
+        const albumId = req.params.id;
+        const deezerUrl = `https://api.deezer.com/album/${albumId}`;
+
+        const response = await fetch(deezerUrl, {
+            headers: {
+                'User-Agent': 'MusicGuess/1.0'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Deezer API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Deezer album details API proxy error:', error);
+        res.status(500).json({ error: 'Failed to fetch album details from Deezer' });
+    }
+});
+
 // Static files (AFTER API routes to avoid conflicts)
 // Add no-cache headers to prevent browser caching
 app.use((req, res, next) => {

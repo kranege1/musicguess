@@ -1662,21 +1662,43 @@ async function fetchArtistImageFromDeezer(artistName) {
     }
 }
 
-// Fetch album fan count from Deezer API
+// Fetch album fan count from Deezer API via server proxy
 async function fetchAlbumFanCount(albumName, artistName) {
     try {
-        const searchQuery = `${albumName} ${artistName}`;
-        const response = await fetch(`https://api.deezer.com/search/album?q=${encodeURIComponent(searchQuery)}&limit=1`);
+        // Clean album name - remove common suffixes that don't match in Deezer
+        let cleanAlbum = albumName
+            .replace(/\s*\(.*?(Remaster|Deluxe|Edition|Version|Anniversary|Expanded|Special|Archive|Collection|Bonus).*?\)/gi, '')
+            .replace(/\s*\[.*?(Remaster|Deluxe|Edition|Version|Anniversary|Expanded|Special|Archive|Collection|Bonus).*?\]/gi, '')
+            .replace(/\s*-\s*(Remaster|Deluxe|Edition|Version|Anniversary|Expanded|Special).*/gi, '')
+            .trim();
+        
+        const searchQuery = `${cleanAlbum} ${artistName}`;
+        console.log(`🔍 Fetching album fans for: "${cleanAlbum}" (original: "${albumName}") by ${artistName}`);
+        const response = await fetch(`/api/deezer/album?q=${encodeURIComponent(searchQuery)}`);
         
         if (!response.ok) {
+            console.log(`❌ Album fetch failed with status: ${response.status}`);
             return 0;
         }
 
         const data = await response.json();
+        console.log('📀 Deezer album search response:', data);
         if (data.data && data.data.length > 0) {
-            return data.data[0].fans || 0;
+            const albumId = data.data[0].id;
+            console.log(`🔍 Fetching full album details for ID: ${albumId}`);
+            
+            // Fetch full album details to get fan count via server proxy
+            const detailResponse = await fetch(`/api/deezer/album/${albumId}`);
+            if (detailResponse.ok) {
+                const albumDetails = await detailResponse.json();
+                console.log('📀 Full album details:', albumDetails);
+                const fans = albumDetails.fans || 0;
+                console.log(`✅ Album has ${fans.toLocaleString()} fans`);
+                return fans;
+            }
         }
 
+        console.log('⚠️ No album found in Deezer');
         return 0;
     } catch (error) {
         console.warn(`Failed to fetch album fan count for "${albumName}": ${error.message}`);
@@ -2005,15 +2027,29 @@ async function loadSongsFromItunes(searchQuery, limit) {
         gameState.songs = shuffleArray(songs);
         console.log(`${gameState.songs.length} Songs geladen aus: ${currentSearchType === 'album' ? 'Album' : 'Künstler/Titel'}`);
         
-        // In Album-Modus: Fetch fan count für das Album
-        if (currentSearchType === 'album' && gameState.songs.length > 0) {
-            const firstSong = gameState.songs[0];
-            const albumFans = await fetchAlbumFanCount(firstSong.album, firstSong.artist);
-            // Set fan count for all songs in this album
-            gameState.songs.forEach(song => {
-                song.albumFans = albumFans;
-            });
-            console.log(`📀 Album "${firstSong.album}" hat ${albumFans.toLocaleString()} fans`);
+        // Fetch album fan counts for all songs
+        if (gameState.songs.length > 0) {
+            if (currentSearchType === 'album') {
+                // In Album-Modus: All songs have the same album
+                const firstSong = gameState.songs[0];
+                const albumFans = await fetchAlbumFanCount(firstSong.album, firstSong.artist);
+                gameState.songs.forEach(song => {
+                    song.albumFans = albumFans;
+                });
+                console.log(`📀 Album "${firstSong.album}" hat ${albumFans.toLocaleString()} fans`);
+            } else {
+                // In Track-Modus: Fetch fan count for each unique album
+                const albumCache = new Map();
+                for (const song of gameState.songs) {
+                    const albumKey = `${song.album}|${song.artist}`;
+                    if (!albumCache.has(albumKey)) {
+                        const albumFans = await fetchAlbumFanCount(song.album, song.artist);
+                        albumCache.set(albumKey, albumFans);
+                        console.log(`📀 Album "${song.album}" by ${song.artist} hat ${albumFans.toLocaleString()} fans`);
+                    }
+                    song.albumFans = albumCache.get(albumKey);
+                }
+            }
         }
         
         // Aktualisiere Subtitle im Album-Modus
@@ -2070,6 +2106,18 @@ async function nextQuestion() {
                     console.log('🖼️ Album-Cover vom Original übernommen:', candidate.image);
                 }
                 
+                // Check if album changed - if so, fetch new album's fan count
+                if (fullSongData.album !== candidate.album) {
+                    console.log(`⚠️ Album changed from "${candidate.album}" to "${fullSongData.album}" - fetching new fan count`);
+                    const newAlbumFans = await fetchAlbumFanCount(fullSongData.album, fullSongData.artist);
+                    fullSongData.albumFans = newAlbumFans;
+                    console.log(`📀 New album has ${newAlbumFans.toLocaleString()} fans`);
+                } else if (candidate.albumFans !== undefined) {
+                    // Preserve album fan count from original song if album didn't change
+                    fullSongData.albumFans = candidate.albumFans;
+                    console.log('📀 Album-Fans vom Original übernommen:', candidate.albumFans);
+                }
+                
                 gameState.currentSong = fullSongData;
             } else {
                 gameState.currentSong = candidate;
@@ -2116,11 +2164,14 @@ function displayAlbumCover() {
     const container = document.querySelector('.container');
     const song = gameState.currentSong;
 
+    console.log('🎨 displayAlbumCover - Album:', song.album, 'Fans:', song.albumFans);
+
     if (song.image) {
         albumCover.innerHTML = `<img src="${song.image}" alt="Album Cover" onerror="this.parentElement.innerHTML='<div class=&quot;cover-placeholder&quot;></div>'">`;
         
         // Add fan count badge if available
         if (song.albumFans && song.albumFans > 0) {
+            console.log('✅ Creating badge with', song.albumFans, 'fans');
             const badge = document.createElement('div');
             badge.className = 'album-fan-badge';
             const fanCount = song.albumFans >= 1000000 ? (song.albumFans / 1000000).toFixed(1) + 'M' : 
