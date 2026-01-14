@@ -1670,7 +1670,9 @@ async function loadSongsFromItunes(searchQuery, limit) {
             // Album-Suche: Suche zuerst das Album selbst, dann alle Songs von diesem Album
             try {
                 // Schritt 1: Suche das Album
-                const albumResults = await fetchItunes(searchQuery, { limit: 10, country: 'DE', entity: 'album' });
+                console.log('🔍 Album-Suche für:', searchQuery);
+                const albumResults = await fetchItunes(searchQuery, { limit: 50, country: 'DE', entity: 'album' });
+                console.log(`📀 Album-Suche gefunden: ${albumResults.length} Alben`);
                 
                 // Finde das beste Match für die Suchanfrage
                 let bestMatch = null;
@@ -1718,7 +1720,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 
                 if (!bestMatch) {
                     console.warn('DE-Album nicht gefunden, versuche US:');
-                    const usAlbumResults = await fetchItunes(searchQuery, { limit: 10, country: 'US', entity: 'album' });
+                    const usAlbumResults = await fetchItunes(searchQuery, { limit: 50, country: 'US', entity: 'album' });
                     if (usAlbumResults.length > 0) {
                         const normalizedQuery = searchQuery.toLowerCase().trim();
                         const normalizedArtist = selectedArtistForAlbums ? selectedArtistForAlbums.toLowerCase().trim() : null;
@@ -1760,7 +1762,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
                         const coverUrl = bestMatch.artworkUrl100 || '';
                         albumArtwork = coverUrl.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2');
                         console.log('Album Cover URL (US):', albumArtwork, 'für:', bestMatch.collectionName);
-                        results = await fetchItunes(albumId, { limit: 300, country: 'US', entity: 'song', useLookup: true });
+                        results = await fetchItunes(albumId, { limit: 500, country: 'US', entity: 'song', useLookup: true });
                         results = results.filter(item => item.wrapperType === 'track');
                     } else {
                         console.log('Versuche Album+Artist Fallback für:', searchQuery);
@@ -1806,7 +1808,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
                             const coverUrl = bestMatch.artworkUrl100 || '';
                             albumArtwork = coverUrl.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2');
                             console.log('Album Cover URL (Fallback):', albumArtwork, 'für:', bestMatch.collectionName);
-                            results = await fetchItunes(albumId, { limit: 300, country: 'US', entity: 'song', useLookup: true });
+                            results = await fetchItunes(albumId, { limit: 500, country: 'US', entity: 'song', useLookup: true });
                             results = results.filter(item => item.wrapperType === 'track');
                         }
                     }
@@ -1815,13 +1817,15 @@ async function loadSongsFromItunes(searchQuery, limit) {
                     const coverUrl = bestMatch.artworkUrl100 || '';
                     albumArtwork = coverUrl.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2');
                     console.log('Album Cover URL (DE):', albumArtwork, 'für:', bestMatch.collectionName);
-                    results = await fetchItunes(albumId, { limit: 300, country: 'DE', entity: 'song', useLookup: true });
+                    results = await fetchItunes(albumId, { limit: 500, country: 'DE', entity: 'song', useLookup: true });
                     results = results.filter(item => item.wrapperType === 'track');
                 }
             } catch (err) {
                 console.warn('Album-Suche fehlgeschlagen:', err);
                 try {
+                    console.log('🔍 Album-Fallback: Suche nach Songs mit albumTerm für:', searchQuery);
                     results = await fetchItunes(searchQuery, { limit: 200, country: 'US', entity: 'song', attribute: 'albumTerm' });
+                    console.log(`📀 Album-Fallback gefunden: ${results.length} Songs`);
                 } catch (err2) {
                     console.error('Album-Fallback fehlgeschlagen:', err2);
                 }
@@ -1829,10 +1833,10 @@ async function loadSongsFromItunes(searchQuery, limit) {
         } else {
             // Standard Künstler/Titel Suche
             try {
-                results = await fetchItunes(searchQuery, { limit: 50, country: 'DE' });
+                results = await fetchItunes(searchQuery, { limit: 100, country: 'DE' });
             } catch (errDe) {
                 console.warn('DE-Suche fehlgeschlagen (Suchmodus), versuche US:', errDe);
-                results = await fetchItunes(searchQuery, { limit: 50, country: 'US' });
+                results = await fetchItunes(searchQuery, { limit: 100, country: 'US' });
             }
             
             // Filter results to only include songs by the searched artist
