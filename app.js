@@ -2607,6 +2607,7 @@ function showSongInfo() {
     // Wire buttons (stop propagation to keep popup open)
     const artistBtn = document.getElementById('infoArtistBtn');
     const albumBtn = document.getElementById('infoAlbumBtn');
+    const listenBtn = document.getElementById('infoListenBtn');
 
     if (artistBtn) {
         artistBtn.onclick = async (e) => {
@@ -2628,6 +2629,15 @@ function showSongInfo() {
             const albumImgSrc = song.image || song.albumCover || song.artworkUrl;
             const imgHtml = albumImgSrc ? `<img class="info-detail-img" src="${albumImgSrc}" alt="${song.album}">` : '';
             infoDetails.innerHTML = `<div class="info-detail-row">${imgHtml}<div class="info-detail-text">${details || 'No album summary found.'}</div></div>`;
+        };
+    }
+
+    if (listenBtn) {
+        listenBtn.onclick = (e) => {
+            e.stopPropagation();
+            const searchQuery = encodeURIComponent(`${song.artist} ${song.track}`);
+            const youtubeMusicUrl = `https://music.youtube.com/search?q=${searchQuery}`;
+            window.open(youtubeMusicUrl, '_blank');
         };
     }
 
