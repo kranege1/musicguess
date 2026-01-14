@@ -126,7 +126,6 @@ let genresData = {
 
 // Lade verfügbare Genres beim Seitenstart
 async function loadAvailableGenres() {
-    console.log('loadAvailableGenres() wird aufgerufen...');
     debugLog('🔄 Lade Genres...');
     try {
         // Load consolidated genres.json
@@ -181,12 +180,6 @@ function updateSubcategoryDropdown() {
 
     const category = categorySelect.value;
     subcategorySelect.innerHTML = '';
-    // Hide year select by default
-    if (yearSelect) yearSelect.style.display = 'none';
-    if (yearSelectLabel) yearSelectLabel.style.display = 'none';
-    subcategorySelect.style.display = 'block';
-
-    console.log(`🔄 Updating subcategory for category: ${category}`);
 
     if (category === 'all') {
         const option = document.createElement('option');
@@ -3119,12 +3112,8 @@ function endGame() {
         highScoreMessageEl.innerHTML = `${t('scoreSavedSuccess')}<br/><small style="font-size: 0.9em; font-weight: 500;">${t('scoreInLeaderboard')}</small>`;
         highScoreMessageEl.style.color = '#2e7d32';
         // Play winning sound and add pulsating animation for successful games
-        console.log('🎉 Triggering win animation and sound, total questions:', total);
         playWinSound();
-        const gameOverEl = document.getElementById('gameOverScreen');
-        console.log('Game over element:', gameOverEl);
-        gameOverEl.classList.add('pulsating');
-        console.log('Pulsating class added:', gameOverEl.classList);
+        document.getElementById('gameOverScreen').classList.add('pulsating');
     }
 
     stopPreview();
