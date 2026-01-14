@@ -3663,35 +3663,44 @@ async function selectBubbleCategory(category) {
         let artists = [];
         
         if (category.type === 'genre') {
-            // Load artists from ArtistsList filtered by genre
+            // For music genres (Pop, Rock, etc.), use ArtistsList.json as base
+            // We'll filter by popularity since we don't have genre-specific artist lists
+            console.log(`🫧 Loading artists for genre "${category.name}" (using general artist list)...`);
             const allArtists = await loadArtistNames();
-            // For genre, we'll fetch all and filter by popularity via Deezer
-            artists = allArtists.slice(0, 100); // Take first 100 for performance
+            artists = allArtists.slice(0, 150); // Take more for better filtering
         } else if (category.type === 'country') {
-            // Load artists from ArtistsList filtered by country
-            const allArtists = await loadArtistNames();
-            // For country, fetch from songs.json filtered by country
-            const songsResponse = await fetch('songs.json', { cache: 'no-store' });
-            const songsData = await songsResponse.json();
-            const countryValue = category.value || category.name;
-            const countrySongs = songsData.filter(song => song.country === countryValue);
-            const uniqueArtists = [...new Set(countrySongs.map(song => song.artist))];
-            artists = uniqueArtists.slice(0, 100);
+            // Countries have artist lists directly in genres.json
+            const countryKey = (category.value || category.name).toLowerCase();
+            const countryData = genresData.countries[countryKey];
+            if (countryData && countryData.artists) {
+                artists = countryData.artists;
+                console.log(`🫧 Loaded ${artists.length} artists from ${category.name}`);
+            } else {
+                console.log(`⚠️ No artist data for country ${category.name}`);
+                artists = [];
+            }
         } else if (category.type === 'classical') {
-            // Load from classical subcategory
+            // Load from classical subcategory in genres.json
             const classicalArtists = genresData.classical[category.name] || [];
-            artists = classicalArtists.slice(0, 100);
+            artists = classicalArtists;
+            console.log(`🫧 Loaded ${artists.length} ${category.name} artists`);
         } else if (category.type === 'decade') {
-            // Load artists from decade
+            // Load artists from songs.json filtered by decade
             const songsResponse = await fetch('songs.json', { cache: 'no-store' });
             const songsData = await songsResponse.json();
             const decadeSongs = songsData.filter(song => song.genre === category.name);
             const uniqueArtists = [...new Set(decadeSongs.map(song => song.artist))];
-            artists = uniqueArtists.slice(0, 100);
+            artists = uniqueArtists;
+            console.log(`🫧 Loaded ${artists.length} artists from ${category.name}`);
         }
         
-        // Fetch Deezer data for all artists to get fan counts
-        console.log(`🫧 Loading ${artists.length} artists for category "${category.name}"...`);
+        if (artists.length === 0) {
+            showError(`No artists found for ${category.name}`);
+            return;
+        }
+        
+        // Fetch Deezer data for all artists to get fan counts and sort by popularity
+        console.log(`🫧 Fetching popularity data for ${artists.length} artists...`);
         const artistsWithFans = await Promise.all(
             artists.map(async (artistName) => {
                 const data = await fetchArtistImageFromDeezer(artistName);
@@ -3711,7 +3720,7 @@ async function selectBubbleCategory(category) {
         
         // Update global artistNames and restart bubbles
         artistNames = topArtists;
-        console.log(`🫧 Loaded ${artistNames.length} popular artists from "${category.name}"`);
+        console.log(`🫧 Showing top ${artistNames.length} popular artists from "${category.name}"`);
         
         // Restart bubbles with new artist list
         stopArtistBubbles();
