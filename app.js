@@ -729,7 +729,10 @@ function selectGameMode(mode) {
             if (searchInput) {
                 searchInput.placeholder = "Enter artist name (e.g. 'The Beatles')";
                 searchInput.disabled = false;
-                searchInput.value = '';
+                // Preserve existing text if present, only clear if empty
+                if (!searchInput.value || searchInput.value.trim() === '') {
+                    searchInput.value = '';
+                }
             }
             if (checkArtistBtn) checkArtistBtn.style.display = 'block';
         } else {
@@ -740,6 +743,7 @@ function selectGameMode(mode) {
             if (searchInput) {
                 searchInput.placeholder = "e.g. 'Taylor Swift' or 'Bohemian Rhapsody'";
                 searchInput.disabled = false;
+                // Preserve existing text if present
             }
             if (checkArtistBtn) checkArtistBtn.style.display = 'block'; // Show button in Free Choice mode too
         }
