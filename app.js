@@ -2528,10 +2528,60 @@ function showSongInfo() {
     document.getElementById('infoTrack').textContent = song.track;
     document.getElementById('infoAlbum').textContent = song.album;
 
-    const genreRow = document.getElementById('genreRow');
-    genreRow.style.display = 'none';
+    // Set artist image
+    const artistImg = document.getElementById('infoArtistImage');
+    if (song.artistImageUrl) {
+        artistImg.src = song.artistImageUrl;
+        artistImg.style.display = 'block';
+    } else {
+        artistImg.style.display = 'none';
+    }
 
-    document.getElementById('songInfo').classList.add('show');
+    // Set album image
+    const albumImg = document.getElementById('infoAlbumImage');
+    if (song.albumCover || song.artworkUrl) {
+        albumImg.src = song.albumCover || song.artworkUrl;
+        albumImg.style.display = 'block';
+    } else {
+        albumImg.style.display = 'none';
+    }
+
+    // Create Deezer search link
+    const deezerBtn = document.getElementById('infoDeezerBtn');
+    const searchQuery = encodeURIComponent(`${song.artist} ${song.track}`);
+    deezerBtn.href = `https://www.deezer.com/search/${searchQuery}`;
+    deezerBtn.style.display = 'inline-block';
+
+    // Create Spotify search link
+    const spotifyBtn = document.getElementById('infoSpotifyBtn');
+    spotifyBtn.href = `https://open.spotify.com/search/${searchQuery}`;
+    spotifyBtn.style.display = 'inline-block';
+
+    const songInfoEl = document.getElementById('songInfo');
+    songInfoEl.classList.add('show');
+    songInfoEl.classList.remove('frozen');
+
+    // Click to freeze/unfreeze
+    songInfoEl.onclick = function(e) {
+        // Don't toggle if clicking on buttons/links
+        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
+            return;
+        }
+        this.classList.toggle('frozen');
+    };
+
+    // Auto-hide after 3 seconds if not frozen
+    setTimeout(() => {
+        if (!songInfoEl.classList.contains('frozen')) {
+            songInfoEl.classList.remove('show');
+        }
+    }, 3000);
+}
+
+function closeSongInfo() {
+    const songInfoEl = document.getElementById('songInfo');
+    songInfoEl.classList.remove('show');
+    songInfoEl.classList.remove('frozen');
 }
 
 // Berechne Punkte für richtige Antwort

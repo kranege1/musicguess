@@ -1322,19 +1322,56 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 25px;
+            padding: 0;
             border-radius: 16px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(102, 126, 234, 0.6);
             display: none;
             z-index: 2000;
-            max-width: 500px;
+            max-width: 550px;
             width: 90%;
             border: 3px solid #fff;
+            cursor: pointer;
         }
 
         .song-info.show {
             display: block;
             animation: flyInGlow 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .song-info.frozen {
+            cursor: default;
+            border-color: #ffc107;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 193, 7, 0.8);
+        }
+
+        .song-info-header {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 13px 13px 0 0;
+        }
+
+        .song-info-images {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .song-info-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .song-info-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         @keyframes flyInGlow {
@@ -1354,34 +1391,63 @@
         }
 
         .info-row {
-            display: flex;
-            justify-content: space-between;
-            margin: 8px 0;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
+            margin: 6px 0;
+            padding: 0;
         }
 
         .info-label {
             font-weight: 600;
-            color: #fff;
-            font-size: 0.95em;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8em;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            display: block;
+            margin-bottom: 2px;
         }
 
         .info-value {
             color: #fff;
-            font-weight: 500;
-            font-size: 0.95em;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+            font-size: 1.05em;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            display: block;
         }
 
         #infoArtist {
             font-weight: 700;
-            font-size: 1.1em;
+            font-size: 1.2em;
+        }
+
+        .song-info-actions {
+            padding: 15px 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 13px 13px;
+        }
+
+        .info-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .info-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .info-btn:active {
+            transform: translateY(0);
         }
 
         .game-over {
@@ -1827,22 +1893,31 @@
             </div>
 
             <!-- Song Info Popup -->
-            <div class="song-info" id="songInfo" onclick="this.classList.remove('show')">
-                <div class="info-row">
-                    <span class="info-label">Artist:</span>
-                    <span class="info-value" id="infoArtist"></span>
+            <div class="song-info" id="songInfo">
+                <div class="song-info-header">
+                    <div class="song-info-images">
+                        <img class="song-info-image" id="infoArtistImage" src="" alt="Artist" style="display: none;">
+                        <img class="song-info-image" id="infoAlbumImage" src="" alt="Album" style="display: none;">
+                    </div>
+                    <div class="song-info-content">
+                        <div class="info-row">
+                            <span class="info-label">Artist:</span>
+                            <span class="info-value" id="infoArtist"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Title:</span>
+                            <span class="info-value" id="infoTrack"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Album:</span>
+                            <span class="info-value" id="infoAlbum"></span>
+                        </div>
+                    </div>
                 </div>
-                <div class="info-row">
-                    <span class="info-label">Title:</span>
-                    <span class="info-value" id="infoTrack"></span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Album:</span>
-                    <span class="info-value" id="infoAlbum"></span>
-                </div>
-                <div class="info-row" id="genreRow" style="display: none;">
-                    <span class="info-label">Genre:</span>
-                    <span class="info-value" id="infoGenre"></span>
+                <div class="song-info-actions">
+                    <a class="info-btn" id="infoDeezerBtn" href="#" target="_blank" style="display: none;">🎵 Deezer</a>
+                    <a class="info-btn" id="infoSpotifyBtn" href="#" target="_blank" style="display: none;">🎧 Spotify</a>
+                    <button class="info-btn" onclick="closeSongInfo()">✕ Close</button>
                 </div>
             </div>
         </div>
@@ -1937,6 +2012,6 @@
 
     <audio id="audioPlayer" preload="none" playsinline webkit-playsinline crossOrigin="anonymous"></audio>
 
-    <script src="app.js?v=20260114164200"></script>
+    <script src="app.js?v=20260114165000"></script>
 </body>
 </html>
