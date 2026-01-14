@@ -23,7 +23,9 @@ const strings = {
     points: 'Points',
     questionsProgress: 'of',
     questions: 'Questions',
-    allGenres: 'All Genres'
+    allGenres: 'All Genres',
+    minQuestionsRequired: '⚠️ At least 10 questions required',
+    scoreNotSaved: 'Your score was not saved'
 };
 
 // Helper function to get strings
@@ -134,56 +136,44 @@ function updateSubcategoryDropdown() {
     const subcategorySelect = document.getElementById('subcategorySelect');
     const yearSelect = document.getElementById('yearSelect');
     const yearSelectLabel = document.getElementById('yearSelectLabel');
-    
+
     if (!categorySelect || !subcategorySelect) {
         console.error('Category or subcategory select not found!');
         return;
     }
-    
+
     const category = categorySelect.value;
     subcategorySelect.innerHTML = '';
-    // Determine active game mode (genre/search/album)
-    const activeModeBtn = document.querySelector('.mode-btn.active');
-    const activeGameMode = activeModeBtn ? activeModeBtn.dataset.mode : 'search';
-    
-    // Hide year select by default, show only for decades
+    // Hide year select by default
     if (yearSelect) yearSelect.style.display = 'none';
     if (yearSelectLabel) yearSelectLabel.style.display = 'none';
-    // Ensure subcategory is visible by default (may be hidden for specific combos)
     subcategorySelect.style.display = 'block';
-    
+
     console.log(`🔄 Updating subcategory for category: ${category}`);
-    console.log(`📊 genresData:`, genresData);
-    
+
     if (category === 'all') {
-        // All Genres
         const option = document.createElement('option');
-        option.value = 'Alle';
-        option.setAttribute('data-i18n', 'allGenres');
-        option.textContent = translations && currentLanguage ? t('allGenres') : 'All Genres';
+        option.value = 'All';
+        option.textContent = 'All Genres';
         subcategorySelect.appendChild(option);
     } else if (category === 'decades') {
-        // Decades: do NOT show the year select dropdown here
-        if (yearSelect) yearSelect.style.display = 'none';
-        if (yearSelectLabel) yearSelectLabel.style.display = 'none';
-        // If in Genre mode, hide the subcategory list (decades) to avoid confusing "Selection" list
-        if (activeGameMode === 'genre') {
-            subcategorySelect.style.display = 'none';
-            console.log('Genre mode + Decades selected — hiding subcategory selection');
-        } else {
-            // Decades
-            console.log(`📅 Loading ${genresData.decades.length} decades...`);
-            genresData.decades.forEach(decade => {
-                const option = document.createElement('option');
-                option.value = decade;
-                option.textContent = decade;
-                subcategorySelect.appendChild(option);
-                console.log(`  ✅ Added decade: ${decade}`);
-            });
+        // Populate decades
+        genresData.decades.forEach(decade => {
+            const option = document.createElement('option');
+            option.value = decade;
+            option.textContent = decade;
+            subcategorySelect.appendChild(option);
+        });
+        // On decade change, update artist bubbles
+        subcategorySelect.onchange = () => {
+            const val = subcategorySelect.value;
+            if (val) updateDecadeArtists(val);
+        };
+        if (subcategorySelect.options.length > 0) {
+            // Initialize with first decade
+            setTimeout(() => updateDecadeArtists(subcategorySelect.options[0].value), 50);
         }
     } else if (category === 'genres') {
-        // Regular genres
-        console.log(`🎵 Loading ${genresData.genres.length} genres...`);
         genresData.genres.forEach(genre => {
             const option = document.createElement('option');
             option.value = genre;
@@ -191,8 +181,6 @@ function updateSubcategoryDropdown() {
             subcategorySelect.appendChild(option);
         });
     } else if (category === 'countries') {
-        // Countries
-        console.log(`🌍 Loading ${genresData.countries.length} countries...`);
         genresData.countries.forEach(country => {
             const option = document.createElement('option');
             option.value = country.value;
@@ -200,26 +188,13 @@ function updateSubcategoryDropdown() {
             subcategorySelect.appendChild(option);
         });
     } else if (category === 'classical') {
-        // Classical subcategories (Komponist, Oper, Operette, etc.)
-        console.log(`🎼 Loading classical subcategories...`);
-        const subcategories = [
-            { key: 'Komponist', i18nKey: 'classicalKomponist' },
-            { key: 'Oper', i18nKey: 'classicalOper' },
-            { key: 'Operette', i18nKey: 'classicalOperette' },
-            { key: 'Symphonie', i18nKey: 'classicalSymphonie' },
-            { key: 'Kammermusik', i18nKey: 'classicalKammermusik' },
-            { key: 'Kirchenmusik', i18nKey: 'classicalKirchenmusik' }
-        ];
-        subcategories.forEach(sub => {
+        (genresData.classical || []).forEach(sub => {
             const option = document.createElement('option');
-            option.value = `Classical:${sub.key}`;
-            option.textContent = translations && currentLanguage ? t(sub.i18nKey) : sub.key;
+            option.value = `Classical:${sub.key || sub}`;
+            option.textContent = sub.key || sub;
             subcategorySelect.appendChild(option);
-            console.log(`  ✅ Added classical subcategory: ${sub.key}`);
         });
     } else if (category === 'billboard') {
-        // Billboard years
-        console.log(`🔥 Loading Billboard years...`);
         loadBillboardYears().then(years => {
             subcategorySelect.innerHTML = '';
             years.forEach(year => {
@@ -228,12 +203,9 @@ function updateSubcategoryDropdown() {
                 option.textContent = year;
                 subcategorySelect.appendChild(option);
             });
-            console.log(`  ✅ Added ${years.length} Billboard years`);
-        }).catch(err => {
-            console.error('Error loading Billboard years:', err);
-        });
+        }).catch(err => console.error('Error loading Billboard years:', err));
     }
-    
+
     console.log(`✅ Subcategory dropdown updated: ${subcategorySelect.options.length} options`);
 }
 
@@ -500,6 +472,40 @@ function startArtistBubbles() {
     
     // Erstelle erste Bubble sofort
     createArtistBubble().catch(err => console.error('Bubble creation error:', err));
+}
+
+// Update artist list based on selected decade (loads artists from songs.json)
+async function updateDecadeArtists(decade) {
+    try {
+        const cacheBuster = new Date().getTime();
+        const resp = await fetch(`songs.json?v=${cacheBuster}`, { cache: 'no-store' });
+        if (!resp.ok) {
+            console.warn('Could not load songs.json for decade artists');
+            return;
+        }
+        const allSongs = await resp.json();
+        const artistsSet = new Set();
+        for (const s of allSongs) {
+            if (!s) continue;
+            const g = s.genre || s.genres || '';
+            if (g === decade || (Array.isArray(g) && g.includes(decade))) {
+                if (s.artist) artistsSet.add(s.artist);
+            }
+        }
+        const artists = Array.from(artistsSet);
+        if (artists.length === 0) {
+            console.log(`No artists found for decade ${decade}`);
+            return;
+        }
+        // Shuffle and limit list for performance
+        const shuffled = shuffleArray(artists);
+        artistNames = shuffled.slice(0, Math.min(80, shuffled.length));
+        // Restart bubbles with new artist list
+        stopArtistBubbles();
+        startArtistBubbles();
+    } catch (err) {
+        console.error('Error updating decade artists:', err);
+    }
 }
 
 // Stoppe Artist Bubbles Animation
