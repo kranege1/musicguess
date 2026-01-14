@@ -1241,13 +1241,8 @@ async function startGame() {
 
         // Check if there are enough songs for the requested count
         if (gameState.songs.length < songCount) {
-            const errorMsg = t('errorNotEnoughSongs')
-                .replace('{0}', gameState.songs.length)
-                .replace('{1}', songCount);
-            showError(errorMsg);
-            document.getElementById('setupScreen').style.display = 'block';
-            document.getElementById('quizScreen').style.display = 'none';
-            return;
+            console.warn(`⚠️ Nur ${gameState.songs.length} Songs gefunden, aber ${songCount} angefordert. Verwende alle verfügbaren Songs.`);
+            // Don't show error - just use all available songs
         }
 
         // Starte erste Frage
