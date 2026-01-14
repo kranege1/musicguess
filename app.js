@@ -2550,7 +2550,7 @@ function showSongInfo() {
 
     // Prefer album art; also use it as fallback for artist image
     const albumImg = document.getElementById('infoAlbumImage');
-    const albumArt = song.albumCover || song.artworkUrl || song.coverUrl;
+    const albumArt = song.image || song.albumCover || song.artworkUrl || song.coverUrl;
     if (albumArt) {
         albumImg.src = albumArt;
         albumImg.style.display = 'block';
@@ -2602,7 +2602,7 @@ function showSongInfo() {
             infoDetails.classList.add('show');
             infoDetails.innerHTML = 'Loading album summary...';
             const details = await fetchAlbumSummary(song.artist, song.album);
-            const albumImgSrc = song.albumCover || song.artworkUrl;
+            const albumImgSrc = song.image || song.albumCover || song.artworkUrl;
             const imgHtml = albumImgSrc ? `<img class="info-detail-img" src="${albumImgSrc}" alt="${song.album}">` : '';
             infoDetails.innerHTML = `<div class="info-detail-row">${imgHtml}<div class="info-detail-text">${details || 'No album summary found.'}</div></div>`;
         };
