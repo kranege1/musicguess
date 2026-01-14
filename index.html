@@ -704,7 +704,7 @@
             transform: translateY(-50%);
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 10px 16px;
+            padding: 6px 12px;
             border-radius: 25px;
             font-size: 0.85em;
             font-weight: 600;
@@ -712,6 +712,22 @@
             white-space: nowrap;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
             animation: slideLeftChain 10s linear forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .bubble-image {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            flex-shrink: 0;
+        }
+        
+        .bubble-text {
+            display: inline-block;
         }
 
         .artist-bubble:hover {

@@ -576,7 +576,7 @@ function stopReversePlayback() {
 }
 
 // Erstelle eine einzelne Artist Bubble (oder Album Bubble im Album-Modus)
-function createArtistBubble() {
+async function createArtistBubble() {
     const container = document.getElementById('artistBubblesContainer');
     if (!container || !container.classList.contains('active')) return;
     
@@ -589,10 +589,26 @@ function createArtistBubble() {
         return;
     }
     
+    // Fetch artist image from Deezer
+    const imageUrl = await fetchArtistImageFromDeezer(bubbleText);
+    
     // Erstelle Bubble
     const bubble = document.createElement('div');
     bubble.className = 'artist-bubble';
-    bubble.textContent = bubbleText;
+    
+    // Create bubble content with image and text
+    if (imageUrl) {
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.alt = bubbleText;
+        img.className = 'bubble-image';
+        bubble.appendChild(img);
+    }
+    
+    const textSpan = document.createElement('span');
+    textSpan.className = 'bubble-text';
+    textSpan.textContent = bubbleText;
+    bubble.appendChild(textSpan);
     
     // Starte immer rechts außerhalb (100%)
     bubble.style.left = '100%';
@@ -601,7 +617,9 @@ function createArtistBubble() {
     activeBubbles++;
     
     // Click Handler
-    bubble.onclick = () => {
+    bubble.onclick = (e) => {
+        // Prevent text selection on click
+        e.preventDefault();
         const searchInput = document.getElementById('searchQuery');
         
         if (currentSearchType === 'album' && !selectedArtistForAlbums) {
