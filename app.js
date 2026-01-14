@@ -142,7 +142,7 @@ async function loadAvailableGenres() {
         // Populate genresData from consolidated file
         genresData.decades = genresFileData.decades || [];
         genresData.genres = genresFileData.genres || [];
-        genresData.classical = (genresFileData.classical && genresFileData.classical.composers) || [];
+        genresData.classical = genresFileData.classical || {};
         
         // Convert countries object to array format
         genresData.countries = Object.keys(genresFileData.countries || {}).map(code => ({
@@ -225,10 +225,11 @@ function updateSubcategoryDropdown() {
             subcategorySelect.appendChild(option);
         });
     } else if (category === 'classical') {
-        (genresData.classical || []).forEach(sub => {
+        const classicalKeys = Object.keys(genresData.classical || {});
+        classicalKeys.forEach(key => {
             const option = document.createElement('option');
-            option.value = `Classical:${sub.key || sub}`;
-            option.textContent = sub.key || sub;
+            option.value = `Classical:${key}`;
+            option.textContent = key;
             subcategorySelect.appendChild(option);
         });
     } else if (category === 'billboard') {
