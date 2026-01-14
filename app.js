@@ -2557,9 +2557,9 @@ function showSongInfo() {
         artistBtn.onclick = async (e) => {
             e.stopPropagation();
             infoDetails.classList.add('show');
-            infoDetails.textContent = 'Loading artist info...';
-            const details = await fetchArtistInfo(song.artist);
-            infoDetails.textContent = details || 'No artist details found.';
+            infoDetails.textContent = 'Loading artist summary...';
+            const details = await fetchArtistSummary(song.artist);
+            infoDetails.textContent = details || 'No artist summary found.';
         };
     }
 
@@ -2567,9 +2567,9 @@ function showSongInfo() {
         albumBtn.onclick = async (e) => {
             e.stopPropagation();
             infoDetails.classList.add('show');
-            infoDetails.textContent = 'Loading album info...';
-            const details = await fetchAlbumInfo(song.artist, song.album);
-            infoDetails.textContent = details || 'No album details found.';
+            infoDetails.textContent = 'Loading album summary...';
+            const details = await fetchAlbumSummary(song.artist, song.album);
+            infoDetails.textContent = details || 'No album summary found.';
         };
     }
 
@@ -2584,54 +2584,44 @@ function closeSongInfo() {
     document.getElementById('songInfo').classList.remove('show');
 }
 
-// Fetch artist details from Deezer; fallback to iTunes if needed
-async function fetchArtistInfo(artistName) {
-    try {
-        const resp = await fetch(`https://api.deezer.com/search/artist?q=${encodeURIComponent(artistName)}`);
-        if (!resp.ok) throw new Error('Deezer artist search failed');
-        const data = await resp.json();
-        const artist = (data.data && data.data[0]) || null;
-        if (!artist) return null;
-        return `${artist.name} — ${artist.nb_fan?.toLocaleString() || 'n/a'} fans`;
-    } catch (e) {
-        // Fallback: iTunes
+// Fetch a short summary from Wikipedia (returns first matching sentence or two)
+async function fetchWikiSummary(titleCandidates) {
+    for (const title of titleCandidates) {
         try {
-            const itResp = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artistName)}&entity=musicArtist&limit=1`);
-            if (!itResp.ok) throw new Error('iTunes artist search failed');
-            const itData = await itResp.json();
-            const itArtist = (itData.results && itData.results[0]) || null;
-            if (!itArtist) return null;
-            return `${itArtist.artistName} — ${itArtist.primaryGenreName || 'Artist'}`;
-        } catch (err) {
-            console.warn('Artist info lookup failed:', err.message);
-            return null;
+            const searchResp = await fetch(`https://en.wikipedia.org/w/rest.php/v1/search/title?q=${encodeURIComponent(title)}&limit=1`);
+            if (!searchResp.ok) continue;
+            const searchData = await searchResp.json();
+            const hit = searchData.pages && searchData.pages[0];
+            const pageTitle = hit && hit.key ? hit.key : title;
+            const summaryResp = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(pageTitle)}`);
+            if (!summaryResp.ok) continue;
+            const summaryData = await summaryResp.json();
+            if (summaryData.extract) {
+                return summaryData.extract;
+            }
+        } catch (e) {
+            // continue trying other candidates
+            continue;
         }
     }
+    return null;
 }
 
-// Fetch album details from Deezer; fallback to iTunes
-async function fetchAlbumInfo(artistName, albumName) {
-    try {
-        const resp = await fetch(`https://api.deezer.com/search/album?q=${encodeURIComponent(albumName + ' ' + artistName)}`);
-        if (!resp.ok) throw new Error('Deezer album search failed');
-        const data = await resp.json();
-        const album = (data.data && data.data[0]) || null;
-        if (!album) return null;
-        return `${album.title} — ${album.nb_tracks || '?'} tracks, ${album.release_date || 'unknown date'}, ${album.record_type || 'Album'}`;
-    } catch (e) {
-        // Fallback: iTunes
-        try {
-            const itResp = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(albumName + ' ' + artistName)}&entity=album&limit=1`);
-            if (!itResp.ok) throw new Error('iTunes album search failed');
-            const itData = await itResp.json();
-            const itAlbum = (itData.results && itData.results[0]) || null;
-            if (!itAlbum) return null;
-            return `${itAlbum.collectionName} — ${itAlbum.trackCount || '?'} tracks, ${itAlbum.releaseDate ? itAlbum.releaseDate.slice(0,10) : 'unknown date'}`;
-        } catch (err) {
-            console.warn('Album info lookup failed:', err.message);
-            return null;
-        }
-    }
+async function fetchArtistSummary(artistName) {
+    return fetchWikiSummary([
+        artistName,
+        `${artistName} (musician)`,
+        `${artistName} (singer)`,
+        `${artistName} (band)`
+    ]);
+}
+
+async function fetchAlbumSummary(artistName, albumName) {
+    return fetchWikiSummary([
+        `${albumName} (${artistName} album)`,
+        `${albumName} album`,
+        `${albumName} ${artistName}`
+    ]);
 }
 
 // Berechne Punkte für richtige Antwort
