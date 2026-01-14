@@ -3,6 +3,7 @@ window.APP_VERSION = APP_VERSION;
 
 // English strings (no more translation system)
 const strings = {
+    setupSubtitle: 'Select your game mode and start playing!',
     errorLoadingGenres: 'Error loading genres',
     errorLoadingYears: 'Error loading years',
     errorLoadingArtists: 'Error loading artists',
