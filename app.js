@@ -1754,6 +1754,9 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
         const originalCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60 || '';
         const highResCover = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : '';
         
+        // Fetch artist image from Deezer
+        const artistData = await fetchArtistImageFromDeezer(song.artistName);
+        
         debugLog(`✅ Song loaded: "${song.trackName}" (${usedCountry})`);
         return {
             id: song.trackId,
@@ -1762,6 +1765,7 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
             album: song.collectionName || 'Unknown',
             previewUrl: safePreview,
             image: highResCover,
+            artistImageUrl: artistData.image,
             genre: song.primaryGenreName || 'Unknown'
         };
     } catch (error) {
