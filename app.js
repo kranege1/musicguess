@@ -2559,29 +2559,19 @@ function showSongInfo() {
 
     const songInfoEl = document.getElementById('songInfo');
     songInfoEl.classList.add('show');
-    songInfoEl.classList.remove('frozen');
 
-    // Click to freeze/unfreeze
+    // Click to close
     songInfoEl.onclick = function(e) {
-        // Don't toggle if clicking on buttons/links
+        // Don't close if clicking on buttons/links
         if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
             return;
         }
-        this.classList.toggle('frozen');
+        this.classList.remove('show');
     };
-
-    // Auto-hide after 3 seconds if not frozen
-    setTimeout(() => {
-        if (!songInfoEl.classList.contains('frozen')) {
-            songInfoEl.classList.remove('show');
-        }
-    }, 3000);
 }
 
 function closeSongInfo() {
-    const songInfoEl = document.getElementById('songInfo');
-    songInfoEl.classList.remove('show');
-    songInfoEl.classList.remove('frozen');
+    document.getElementById('songInfo').classList.remove('show');
 }
 
 // Berechne Punkte für richtige Antwort
