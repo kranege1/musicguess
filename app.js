@@ -1,4 +1,4 @@
-const APP_VERSION = '11.01.2026 00:00';
+const APP_VERSION = '14.01.2026 16:40';
 window.APP_VERSION = APP_VERSION;
 
 // English strings (no more translation system)
