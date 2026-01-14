@@ -367,6 +367,26 @@ app.get('/api/deezer/artist', async (req, res) => {
         }
 
         const data = await response.json();
+        
+        // If we found an artist, fetch their full details to get fan count
+        if (data.data && data.data.length > 0) {
+            const artistId = data.data[0].id;
+            const detailUrl = `https://api.deezer.com/artist/${artistId}`;
+            
+            const detailResponse = await fetch(detailUrl, {
+                headers: {
+                    'User-Agent': 'MusicGuess/1.0'
+                }
+            });
+            
+            if (detailResponse.ok) {
+                const detailData = await detailResponse.json();
+                // Enrich the search result with fan count
+                data.data[0].nb_fan = detailData.nb_fan;
+                data.data[0].fans = detailData.nb_fan;
+            }
+        }
+        
         res.json(data);
     } catch (error) {
         console.error('Deezer API proxy error:', error);

@@ -589,17 +589,17 @@ async function createArtistBubble() {
         return;
     }
     
-    // Fetch artist image from Deezer
-    const imageUrl = await fetchArtistImageFromDeezer(bubbleText);
+    // Fetch artist image and fan count from Deezer
+    const artistData = await fetchArtistImageFromDeezer(bubbleText);
     
     // Erstelle Bubble
     const bubble = document.createElement('div');
     bubble.className = 'artist-bubble';
     
     // Create bubble content with image and text
-    if (imageUrl) {
+    if (artistData.image) {
         const img = document.createElement('img');
-        img.src = imageUrl;
+        img.src = artistData.image;
         img.alt = bubbleText;
         img.className = 'bubble-image';
         bubble.appendChild(img);
@@ -609,6 +609,18 @@ async function createArtistBubble() {
     textSpan.className = 'bubble-text';
     textSpan.textContent = bubbleText;
     bubble.appendChild(textSpan);
+    
+    // Add fan count badge if available
+    if (artistData.fans > 0) {
+        const fanBadge = document.createElement('div');
+        fanBadge.className = 'fan-badge';
+        const fanCount = artistData.fans >= 1000000 ? (artistData.fans / 1000000).toFixed(1) + 'M' : 
+                         artistData.fans >= 1000 ? (artistData.fans / 1000).toFixed(0) + 'K' : 
+                         artistData.fans;
+        fanBadge.textContent = fanCount;
+        fanBadge.title = `${artistData.fans.toLocaleString()} fans`;
+        bubble.appendChild(fanBadge);
+    }
     
     // Starte immer rechts außerhalb (100%)
     bubble.style.left = '100%';
@@ -764,14 +776,18 @@ async function showArtistSelectionModal(artists) {
         const option = document.createElement('div');
         option.style.cssText = 'padding: 10px; margin: 5px 0; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.2s;';
 
-        // Fetch artist image from Deezer
-        const artistImage = await fetchArtistImageFromDeezer(artist.artistName);
+        // Fetch artist image and fan count from Deezer
+        const artistData = await fetchArtistImageFromDeezer(artist.artistName);
+        const fanCountText = artistData.fans > 0 ? 
+            (artistData.fans >= 1000000 ? (artistData.fans / 1000000).toFixed(1) + 'M fans' : 
+             artistData.fans >= 1000 ? (artistData.fans / 1000).toFixed(0) + 'K fans' : 
+             artistData.fans + ' fans') : '';
 
         option.innerHTML = `
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="width: 50px; height: 50px; border-radius: 8px; overflow: hidden; background: #f0f0f0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    ${artistImage ?
-                        `<img src="${artistImage}" alt="${artist.artistName}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'font-size: 20px; color: #999;\\'>🎤</div>';">` :
+                    ${artistData.image ?
+                        `<img src="${artistData.image}" alt="${artist.artistName}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'font-size: 20px; color: #999;\\'>🎤</div>';">` :
                         '<div style="font-size: 20px; color: #999;">🎤</div>'
                     }
                 </div>
@@ -779,6 +795,7 @@ async function showArtistSelectionModal(artists) {
                     <input type="radio" name="artistChoice" value="${index}" id="artist_${index}" style="cursor: pointer; margin-right: 8px;">
                     <label for="artist_${index}" style="cursor: pointer; margin: 0;">
                         <strong>${artist.artistName}</strong>
+                        ${fanCountText ? `<br><small style="color: #0066cc; font-weight: 600;">${fanCountText}</small>` : ''}
                         ${artist.primaryGenreName ? `<br><small style="color: #666;">${artist.primaryGenreName}</small>` : ''}
                     </label>
                 </div>
@@ -1567,7 +1584,7 @@ async function fetchItunesWithFallback(searchTerm, countries = ['DE', 'US', 'GB'
     throw lastError || new Error('iTunes Suche fehlgeschlagen');
 }
 
-// Fetch artist image from Deezer API via proxy
+// Fetch artist image and fan count from Deezer API via proxy
 async function fetchArtistImageFromDeezer(artistName) {
     try {
         const response = await fetch(`/api/deezer/artist?q=${encodeURIComponent(artistName)}`);
@@ -1580,14 +1597,17 @@ async function fetchArtistImageFromDeezer(artistName) {
 
         if (data.data && data.data.length > 0) {
             const artist = data.data[0];
-            // Return the medium-sized image (500x500)
-            return artist.picture_medium || artist.picture_big || artist.picture_small || null;
+            // Return object with image and fan count
+            return {
+                image: artist.picture_medium || artist.picture_big || artist.picture_small || null,
+                fans: artist.nb_fan || artist.fans || 0
+            };
         }
 
-        return null;
+        return { image: null, fans: 0 };
     } catch (error) {
         debugLog(`❌ Deezer API proxy error for "${artistName}": ${error.message}`, 'D1');
-        return null;
+        return { image: null, fans: 0 };
     }
 }
 
