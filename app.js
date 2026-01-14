@@ -3661,11 +3661,11 @@ async function saveGameScore() {
     
     // Only save if more than 9 questions were answered
     if (answeredQuestions <= 9) {
-        console.log('⚠️ Score nicht gespeichert: Weniger als 10 Fragen beantwortet');
+        console.log('⚠️ Score not saved: Less than 10 questions answered');
         return false;
     }
     
-    console.log('💾 Speichere Score:', {
+    console.log('💾 Saving score:', {
         playerName,
         playerId,
         gameMode,
