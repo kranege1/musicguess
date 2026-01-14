@@ -2598,44 +2598,30 @@ function closeSongInfo() {
     document.getElementById('songInfo').classList.remove('show');
 }
 
-// Fetch a short summary from Wikipedia (returns first matching sentence or two)
-async function fetchWikiSummary(titleCandidates) {
-    for (const title of titleCandidates) {
-        try {
-            const searchResp = await fetch(`https://en.wikipedia.org/w/rest.php/v1/search/title?q=${encodeURIComponent(title)}&limit=1`);
-            if (!searchResp.ok) continue;
-            const searchData = await searchResp.json();
-            const hit = searchData.pages && searchData.pages[0];
-            const pageTitle = hit && hit.key ? hit.key : title;
-            const summaryResp = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(pageTitle)}`);
-            if (!summaryResp.ok) continue;
-            const summaryData = await summaryResp.json();
-            if (summaryData.extract) {
-                return summaryData.extract;
-            }
-        } catch (e) {
-            // continue trying other candidates
-            continue;
-        }
+// Fetch a short summary from Wikipedia (single search + summary fetch to avoid noisy 404s)
+async function fetchWikiSummary(title) {
+    try {
+        const cleaned = title.replace(/\s*&\s*/g, ' and ');
+        const searchResp = await fetch(`https://en.wikipedia.org/w/rest.php/v1/search/title?q=${encodeURIComponent(cleaned)}&limit=1`);
+        if (!searchResp.ok) return null;
+        const searchData = await searchResp.json();
+        const hit = searchData.pages && searchData.pages[0];
+        if (!hit || !hit.key) return null;
+        const summaryResp = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(hit.key)}`);
+        if (!summaryResp.ok) return null;
+        const summaryData = await summaryResp.json();
+        return summaryData.extract || null;
+    } catch (e) {
+        return null;
     }
-    return null;
 }
 
 async function fetchArtistSummary(artistName) {
-    return fetchWikiSummary([
-        artistName,
-        `${artistName} (musician)`,
-        `${artistName} (singer)`,
-        `${artistName} (band)`
-    ]);
+    return fetchWikiSummary(artistName);
 }
 
 async function fetchAlbumSummary(artistName, albumName) {
-    return fetchWikiSummary([
-        `${albumName} (${artistName} album)`,
-        `${albumName} album`,
-        `${albumName} ${artistName}`
-    ]);
+    return fetchWikiSummary(`${albumName} ${artistName}`);
 }
 
 // Berechne Punkte für richtige Antwort
