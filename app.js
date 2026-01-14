@@ -163,9 +163,9 @@ function updateSubcategoryDropdown() {
         option.textContent = translations && currentLanguage ? t('allGenres') : 'All Genres';
         subcategorySelect.appendChild(option);
     } else if (category === 'decades') {
-        // Show year select for decades
-        if (yearSelect) yearSelect.style.display = 'block';
-        if (yearSelectLabel) yearSelectLabel.style.display = 'block';
+        // Decades: do NOT show the year select dropdown here
+        if (yearSelect) yearSelect.style.display = 'none';
+        if (yearSelectLabel) yearSelectLabel.style.display = 'none';
         // If in Genre mode, hide the subcategory list (decades) to avoid confusing "Selection" list
         if (activeGameMode === 'genre') {
             subcategorySelect.style.display = 'none';
@@ -181,8 +181,6 @@ function updateSubcategoryDropdown() {
                 console.log(`  ✅ Added decade: ${decade}`);
             });
         }
-        // Load available years for the first decade
-        setTimeout(() => loadAvailableYears(), 100);
     } else if (category === 'genres') {
         // Regular genres
         console.log(`🎵 Loading ${genresData.genres.length} genres...`);
