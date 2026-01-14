@@ -1821,16 +1821,16 @@ async function loadSongsFromItunes(searchQuery, limit) {
             // This prevents songs that just have the artist name in the title from appearing
             if (results.length > 0) {
                 const normalizedSearchQuery = searchQuery.toLowerCase().trim();
-                const primaryArtist = results[0].artistName; // Use the first result's artist as reference
                 
-                // Filter to only keep songs by the same artist
-                results = results.filter(song => 
-                    song.artistName && 
-                    song.artistName.toLowerCase().includes(normalizedSearchQuery) ||
-                    normalizedSearchQuery.includes(song.artistName.toLowerCase())
-                );
+                // Filter to only keep songs by the same artist (more lenient approach)
+                results = results.filter(song => {
+                    if (!song.artistName) return false;
+                    const artistLower = song.artistName.toLowerCase();
+                    // Accept songs if the search query matches the artist name (in either direction)
+                    return artistLower.includes(normalizedSearchQuery) || normalizedSearchQuery.includes(artistLower);
+                });
                 
-                console.log(`Filtered to ${results.length} songs by matching artist`);
+                console.log(`Filtered to ${results.length} songs by matching artist from ${normalizedSearchQuery}`);
             }
         }
 
