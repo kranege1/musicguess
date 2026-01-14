@@ -2152,7 +2152,6 @@ async function nextQuestion() {
     document.getElementById('nextBtn').classList.remove('show');
     document.getElementById('resultMessage').textContent = '';
     document.getElementById('errorMessage').classList.remove('show');
-    document.getElementById('songInfo').classList.remove('show');
 }
 
 // Zeige Albumcover an
