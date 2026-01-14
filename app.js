@@ -3790,6 +3790,13 @@ async function selectBubbleCategory(category) {
         artistNames = topArtists;
         console.log(`🫧 Showing top ${artistNames.length} popular artists from "${category.name}"`);
         
+        // Update category label
+        const categoryLabel = document.getElementById('bubbleCategoryLabel');
+        if (categoryLabel) {
+            categoryLabel.textContent = `🫧 Bubbles: ${category.name} (${artistNames.length} artists)`;
+            categoryLabel.style.display = 'block';
+        }
+        
         // Restart bubbles with new artist list
         stopArtistBubbles();
         startArtistBubbles();
