@@ -1460,6 +1460,26 @@
             display: block;
         }
 
+        .info-detail-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .info-detail-img {
+            width: 72px;
+            height: 72px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .info-detail-text {
+            flex: 1;
+        }
+
         .game-over {
             display: none;
             text-align: center;
@@ -2023,6 +2043,6 @@
 
     <audio id="audioPlayer" preload="none" playsinline webkit-playsinline crossOrigin="anonymous"></audio>
 
-    <script src="app.js?v=20260114171500"></script>
+    <script src="app.js?v=20260114172000"></script>
 </body>
 </html>

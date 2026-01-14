@@ -2577,9 +2577,10 @@ function showSongInfo() {
         artistBtn.onclick = async (e) => {
             e.stopPropagation();
             infoDetails.classList.add('show');
-            infoDetails.textContent = 'Loading artist summary...';
+            infoDetails.innerHTML = 'Loading artist summary...';
             const details = await fetchArtistSummary(song.artist);
-            infoDetails.textContent = details || 'No artist summary found.';
+            const imgHtml = song.artistImageUrl ? `<img class="info-detail-img" src="${song.artistImageUrl}" alt="${song.artist}">` : '';
+            infoDetails.innerHTML = `<div class="info-detail-row">${imgHtml}<div class="info-detail-text">${details || 'No artist summary found.'}</div></div>`;
         };
     }
 
@@ -2587,9 +2588,11 @@ function showSongInfo() {
         albumBtn.onclick = async (e) => {
             e.stopPropagation();
             infoDetails.classList.add('show');
-            infoDetails.textContent = 'Loading album summary...';
+            infoDetails.innerHTML = 'Loading album summary...';
             const details = await fetchAlbumSummary(song.artist, song.album);
-            infoDetails.textContent = details || 'No album summary found.';
+            const albumImgSrc = song.albumCover || song.artworkUrl;
+            const imgHtml = albumImgSrc ? `<img class="info-detail-img" src="${albumImgSrc}" alt="${song.album}">` : '';
+            infoDetails.innerHTML = `<div class="info-detail-row">${imgHtml}<div class="info-detail-text">${details || 'No album summary found.'}</div></div>`;
         };
     }
 
