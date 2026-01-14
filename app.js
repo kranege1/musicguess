@@ -2541,22 +2541,23 @@ function showSongInfo() {
     document.getElementById('infoTrack').textContent = song.track;
     document.getElementById('infoAlbum').textContent = song.album;
 
-    // Set artist image
-    const artistImg = document.getElementById('infoArtistImage');
-    if (song.artistImageUrl) {
-        artistImg.src = song.artistImageUrl;
-        artistImg.style.display = 'block';
-    } else {
-        artistImg.style.display = 'none';
-    }
-
-    // Set album image
+    // Prefer album art; also use it as fallback for artist image
     const albumImg = document.getElementById('infoAlbumImage');
-    if (song.albumCover || song.artworkUrl) {
-        albumImg.src = song.albumCover || song.artworkUrl;
+    const albumArt = song.albumCover || song.artworkUrl || song.coverUrl;
+    if (albumArt) {
+        albumImg.src = albumArt;
         albumImg.style.display = 'block';
     } else {
         albumImg.style.display = 'none';
+    }
+
+    const artistImg = document.getElementById('infoArtistImage');
+    const artistArt = song.artistImageUrl || albumArt;
+    if (artistArt) {
+        artistImg.src = artistArt;
+        artistImg.style.display = 'block';
+    } else {
+        artistImg.style.display = 'none';
     }
 
     const songInfoEl = document.getElementById('songInfo');
