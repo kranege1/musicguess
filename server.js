@@ -345,6 +345,35 @@ app.get('/api/all-scores', async (req, res) => {
     }
 });
 
+// Proxy endpoint for Deezer API to bypass CORS
+app.get('/api/deezer/artist', async (req, res) => {
+    try {
+        const artistName = req.query.q;
+        if (!artistName) {
+            return res.status(400).json({ error: 'Artist name required' });
+        }
+
+        const encodedArtist = encodeURIComponent(artistName);
+        const deezerUrl = `https://api.deezer.com/search/artist?q=${encodedArtist}&limit=1`;
+
+        const response = await fetch(deezerUrl, {
+            headers: {
+                'User-Agent': 'MusicGuess/1.0'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Deezer API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error('Deezer API proxy error:', error);
+        res.status(500).json({ error: 'Failed to fetch artist data from Deezer' });
+    }
+});
+
 // Static files (AFTER API routes to avoid conflicts)
 // Add no-cache headers to prevent browser caching
 app.use((req, res, next) => {

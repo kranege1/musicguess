@@ -1554,14 +1554,13 @@ async function fetchItunesWithFallback(searchTerm, countries = ['DE', 'US', 'GB'
     throw lastError || new Error('iTunes Suche fehlgeschlagen');
 }
 
-// Fetch artist image from Deezer API
+// Fetch artist image from Deezer API via proxy
 async function fetchArtistImageFromDeezer(artistName) {
     try {
-        const encodedArtist = encodeURIComponent(artistName);
-        const response = await fetch(`https://api.deezer.com/search/artist?q=${encodedArtist}&limit=1`);
+        const response = await fetch(`/api/deezer/artist?q=${encodeURIComponent(artistName)}`);
 
         if (!response.ok) {
-            throw new Error(`Deezer API error: ${response.status}`);
+            throw new Error(`Proxy API error: ${response.status}`);
         }
 
         const data = await response.json();
@@ -1574,7 +1573,7 @@ async function fetchArtistImageFromDeezer(artistName) {
 
         return null;
     } catch (error) {
-        debugLog(`❌ Deezer API error for "${artistName}": ${error.message}`, 'D1');
+        debugLog(`❌ Deezer API proxy error for "${artistName}": ${error.message}`, 'D1');
         return null;
     }
 }
