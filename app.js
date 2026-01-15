@@ -117,6 +117,14 @@ let gameState = {
     firstPlayDone: false, // Flag ob bereits einmal abgespielt wurde
 };
 
+// Classical/Opera mappings (generated)
+let mappingComposers = null;
+let mappingOperas = null;
+let mappingOperettas = null;
+let mappingActive = false; // when true, bubbles represent mapping keys (works/composers)
+let mappingType = null; // 'composer' | 'opera' | 'operetta'
+
+
 // Store genres, decades, and countries for two-tier dropdown
 let genresData = {
     decades: [],
@@ -161,6 +169,8 @@ async function loadAvailableGenres() {
 
         // Load classical performer map
         await loadClassicalPerformers();
+        // Load generated mappings if available
+        await loadClassicalMappings();
         
         // Initialize subcategory dropdown with "All Genres"
         updateSubcategoryDropdown();
@@ -190,6 +200,32 @@ async function loadClassicalPerformers() {
     } catch (error) {
         classicalPerformersMap = {};
         console.warn('⚠️ Could not load classical performer map:', error.message);
+    }
+}
+
+// Load generated composers/operas/operettas mappings
+async function loadClassicalMappings() {
+    const cacheBuster = new Date().getTime();
+    try {
+        const base = 'json/mappings';
+        const [cRes, oRes, opRes] = await Promise.all([
+            fetch(`${base}/composers.json?v=${cacheBuster}`, { cache: 'no-store' }),
+            fetch(`${base}/operas.json?v=${cacheBuster}`, { cache: 'no-store' }),
+            fetch(`${base}/operettas.json?v=${cacheBuster}`, { cache: 'no-store' })
+        ]);
+
+        if (cRes.ok) mappingComposers = await cRes.json(); else mappingComposers = null;
+        if (oRes.ok) mappingOperas = await oRes.json(); else mappingOperas = null;
+        if (opRes.ok) mappingOperettas = await opRes.json(); else mappingOperettas = null;
+
+        console.log('📚 Classical mappings loaded:', {
+            composers: mappingComposers ? Object.keys(mappingComposers).length : 0,
+            operas: mappingOperas ? Object.keys(mappingOperas).length : 0,
+            operettas: mappingOperettas ? Object.keys(mappingOperettas).length : 0
+        });
+    } catch (err) {
+        mappingComposers = mappingOperas = mappingOperettas = null;
+        console.warn('⚠️ Could not load classical mappings:', err.message);
     }
 }
 
@@ -645,38 +681,68 @@ async function createArtistBubble() {
         return;
     }
     
-    // Fetch artist image and fan count from Deezer with timeout
+    // If mappingActive, show mapping-style bubble; otherwise fetch Deezer data
     let artistData = { image: null, fans: 0 };
-    try {
-        const timeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Timeout')), 2000)
-        );
-        artistData = await Promise.race([
-            fetchArtistImageFromDeezer(bubbleText),
-            timeoutPromise
-        ]);
-    } catch (err) {
-        console.warn(`Deezer fetch skipped for "${bubbleText}": ${err.message}`);
-        // Continue with empty artistData
-    }
-    
-    // Skip artists with less than 1000 fans
-    if (artistData.fans < 1000) {
-        console.log(`⏭️ Skipping "${bubbleText}" - only ${artistData.fans} fans (less than 1000)`);
-        return;
-    }
-    
-    // Erstelle Bubble
     const bubble = document.createElement('div');
     bubble.className = 'artist-bubble';
-    
-    // Create bubble content with image and text
-    if (artistData.image) {
-        const img = document.createElement('img');
-        img.src = artistData.image;
-        img.alt = bubbleText;
-        img.className = 'bubble-image';
-        bubble.appendChild(img);
+
+    if (mappingActive) {
+        // Mapping bubbles: show simple icon and track-count badge
+        const icon = document.createElement('div');
+        icon.className = 'bubble-image mapping-icon';
+        icon.textContent = '🎼';
+        bubble.appendChild(icon);
+        // show badge with number of mapped tracks if available
+        let count = 0;
+        if (mappingType === 'operetta' && mappingOperettas && mappingOperettas[bubbleText]) count = mappingOperettas[bubbleText].length;
+        if (mappingType === 'opera' && mappingOperas && mappingOperas[bubbleText]) count = mappingOperas[bubbleText].length;
+        if (mappingType === 'composer' && mappingComposers && mappingComposers[bubbleText]) count = mappingComposers[bubbleText].length;
+        if (count > 0) {
+            const fanBadge = document.createElement('div');
+            fanBadge.className = 'fan-badge';
+            fanBadge.textContent = count >= 1000 ? (count/1000).toFixed(0)+'K' : String(count);
+            fanBadge.title = `${count} recordings available`;
+            bubble.appendChild(fanBadge);
+        }
+    } else {
+        try {
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Timeout')), 2000)
+            );
+            artistData = await Promise.race([
+                fetchArtistImageFromDeezer(bubbleText),
+                timeoutPromise
+            ]);
+        } catch (err) {
+            console.warn(`Deezer fetch skipped for "${bubbleText}": ${err.message}`);
+            // Continue with empty artistData
+        }
+
+        // Skip artists with less than 1000 fans
+        if (artistData.fans < 1000) {
+            console.log(`⏭️ Skipping "${bubbleText}" - only ${artistData.fans} fans (less than 1000)`);
+            return;
+        }
+
+        // Create bubble content with image and text
+        if (artistData.image) {
+            const img = document.createElement('img');
+            img.src = artistData.image;
+            img.alt = bubbleText;
+            img.className = 'bubble-image';
+            bubble.appendChild(img);
+        }
+        // Add fan badge if available
+        if (artistData.fans > 0) {
+            const fanBadge = document.createElement('div');
+            fanBadge.className = 'fan-badge';
+            const fanCount = artistData.fans >= 1000000 ? (artistData.fans / 1000000).toFixed(1) + 'M' : 
+                             artistData.fans >= 1000 ? (artistData.fans / 1000).toFixed(0) + 'K' : 
+                             artistData.fans;
+            fanBadge.textContent = fanCount;
+            fanBadge.title = `${artistData.fans.toLocaleString()} fans`;
+            bubble.appendChild(fanBadge);
+        }
     }
     
     const textSpan = document.createElement('span');
@@ -704,10 +770,45 @@ async function createArtistBubble() {
     
     // Click Handler
     bubble.onclick = (e) => {
-        // Prevent text selection on click
         e.preventDefault();
         const searchInput = document.getElementById('searchQuery');
-        
+
+        if (mappingActive) {
+            // If mapping is active, treat bubbleText as a work/composer and play one of its recordings
+            try {
+                let candidates = [];
+                if (mappingType === 'operetta' && mappingOperettas && mappingOperettas[bubbleText]) candidates = mappingOperettas[bubbleText];
+                else if (mappingType === 'opera' && mappingOperas && mappingOperas[bubbleText]) candidates = mappingOperas[bubbleText];
+                else if (mappingType === 'composer' && mappingComposers && mappingComposers[bubbleText]) candidates = mappingComposers[bubbleText];
+
+                if (candidates && candidates.length > 0) {
+                    // pick random recording
+                    const rec = candidates[Math.floor(Math.random() * candidates.length)];
+                    // Normalize to expected song object shape
+                    const songObj = {
+                        artist: rec.artist || 'Unknown',
+                        track: rec.track || rec.title || 'Unknown',
+                        previewUrl: (rec.previewUrl || '').replace(/^http:/, 'https:'),
+                        album: rec.album || null
+                    };
+                    gameState.currentSong = songObj;
+                    // ensure UI updates that a mapped selection is active
+                    currentBubbleCategory = `${category.name} (mapped)`;
+                    setSubtitle(`🎼 Playing ${bubbleText}`);
+                    // play directly
+                    playPreview();
+                    return;
+                } else {
+                    showError('No recordings found for this selection');
+                    return;
+                }
+            } catch (err) {
+                console.error('Error playing mapped recording:', err);
+                showError('Could not play mapped recording');
+                return;
+            }
+        }
+
         if (currentSearchType === 'album' && !selectedArtistForAlbums) {
             // Artist bubble clicked in album mode -> trigger check artist to show album modal
             if (searchInput) {
@@ -3875,6 +3976,26 @@ async function selectBubbleCategory(category) {
             } else {
                 console.log(`⚠️ No artist data for ${category.name}`);
                 artists = [];
+            }
+            // detect mapping categories (composer/opera/operetta)
+            const lower = (category.name || '').toLowerCase();
+            if ((lower.includes('operett') || lower.includes('operetta')) && mappingOperettas) {
+                // Use operettas mapping keys as bubbles
+                artists = Object.keys(mappingOperettas || {});
+                mappingActive = true;
+                mappingType = 'operetta';
+            } else if (lower.includes('opera') && mappingOperas) {
+                artists = Object.keys(mappingOperas || {});
+                mappingActive = true;
+                mappingType = 'opera';
+            } else if ((lower.includes('kompon') || lower.includes('composer') || lower.includes('componist')) && mappingComposers) {
+                artists = Object.keys(mappingComposers || {});
+                mappingActive = true;
+                mappingType = 'composer';
+            } else {
+                // Not a mapping category
+                mappingActive = false;
+                mappingType = null;
             }
         } else if (category.type === 'decade') {
             // Load artists from songs.json filtered by decade
