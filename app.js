@@ -793,7 +793,7 @@ async function createArtistBubble() {
                     };
                     gameState.currentSong = songObj;
                     // ensure UI updates that a mapped selection is active
-                    currentBubbleCategory = `${category.name} (mapped)`;
+                    currentBubbleCategory = `${currentBubbleCategory} (mapped)`;
                     setSubtitle(`🎼 Playing ${bubbleText}`);
                     // play directly
                     playPreview();
