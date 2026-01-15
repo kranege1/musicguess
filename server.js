@@ -229,7 +229,7 @@ app.post('/api/score', async (req, res) => {
     }
 });
 
-// GET /api/leaderboard/:mode - Top 10 für einen Modus (Firestore)
+// GET /api/leaderboard/:mode - All scores for a mode (Firestore)
 app.get('/api/leaderboard/:mode', async (req, res) => {
     try {
         const mode = decodeURIComponent(req.params.mode);
@@ -238,7 +238,6 @@ app.get('/api/leaderboard/:mode', async (req, res) => {
         if (mode === 'Global') {
             const snapshot = await db.collection('scores')
                 .orderBy('points', 'desc')
-                .limit(10)
                 .get();
             
             const leaderboard = [];
@@ -275,8 +274,7 @@ app.get('/api/leaderboard/:mode', async (req, res) => {
         });
         
         const leaderboard = allScores
-            .sort((a, b) => (b.points || 0) - (a.points || 0))
-            .slice(0, 10);
+            .sort((a, b) => (b.points || 0) - (a.points || 0));
         
         res.json({
             mode: mode,
