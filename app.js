@@ -794,9 +794,7 @@ async function createArtistBubble() {
                     gameState.currentSong = songObj;
                     // ensure UI updates that a mapped selection is active
                     currentBubbleCategory = `${currentBubbleCategory} (mapped)`;
-                    setSubtitle(`🎼 Playing ${bubbleText}`);
-                    // play directly
-                    playPreview();
+                    setSubtitle(`🎼 Prepared: ${bubbleText} - Click START GAME to play`);
                     return;
                 } else {
                     showError('No recordings found for this selection');
