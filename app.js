@@ -3909,22 +3909,8 @@ async function openBubbleCategoryModal() {
         });
     }
     
-    // Add classical categories (including new period-based ones)
-    if (genresData.classical) {
-        Object.keys(genresData.classical).forEach(key => {
-            const classicalData = genresData.classical[key];
-            // Check if it's a period category (has 'name' property) or traditional list
-            if (classicalData.name) {
-                categories.push({ 
-                    name: classicalData.name, 
-                    type: 'classical',
-                    key: key 
-                });
-            } else if (Array.isArray(classicalData)) {
-                categories.push({ name: key, type: 'classical', key: key });
-            }
-        });
-    }
+    // Classical categories removed from bubble selector
+    // (keeping classical-performers.json and mapping functionality for potential future use)
     
     // Add decades
     if (genresData.decades && genresData.decades.length > 0) {
