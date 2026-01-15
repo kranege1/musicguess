@@ -3979,19 +3979,23 @@ async function selectBubbleCategory(category) {
             }
             // detect mapping categories (composer/opera/operetta)
             const lower = (category.name || '').toLowerCase();
-            if ((lower.includes('operett') || lower.includes('operetta')) && mappingOperettas) {
+            const key = (category.key || category.name || '').toLowerCase();
+            if ((lower.includes('operett') || lower.includes('operetta') || key === 'operette') && mappingOperettas) {
                 // Use operettas mapping keys as bubbles
                 artists = Object.keys(mappingOperettas || {});
                 mappingActive = true;
                 mappingType = 'operetta';
-            } else if (lower.includes('opera') && mappingOperas) {
+                console.log(`🎼 Loaded ${artists.length} Operetta mappings`);
+            } else if ((lower.includes('opera') || key === 'oper') && mappingOperas) {
                 artists = Object.keys(mappingOperas || {});
                 mappingActive = true;
                 mappingType = 'opera';
-            } else if ((lower.includes('kompon') || lower.includes('composer') || lower.includes('componist')) && mappingComposers) {
+                console.log(`🎼 Loaded ${artists.length} Opera mappings`);
+            } else if ((lower.includes('kompon') || lower.includes('composer') || lower.includes('componist') || key === 'komponist') && mappingComposers) {
                 artists = Object.keys(mappingComposers || {});
                 mappingActive = true;
                 mappingType = 'composer';
+                console.log(`🎼 Loaded ${artists.length} Composer mappings`);
             } else {
                 // Not a mapping category
                 mappingActive = false;
