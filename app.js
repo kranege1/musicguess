@@ -1,4 +1,4 @@
-const APP_VERSION = '15.01.2026 18:30';
+const APP_VERSION = '15.01.2026 18:35';
 window.APP_VERSION = APP_VERSION;
 
 // English strings (no more translation system)
@@ -702,11 +702,11 @@ async function startArtistBubbles() {
     container.innerHTML = '';
     
     // Erstelle kontinuierlich neue Bubbles
-    // Intervall für ~10px Abstand bei durchschnittlich 180px Bubble-Breite
+    // Intervall für größeren Abstand zwischen Bubbles
     bubbleInterval = setInterval(() => {
         // Call async function without awaiting (fire and forget)
         createArtistBubble().catch(err => console.error('Bubble creation error:', err));
-    }, 1350);
+    }, 2000);
     
     // Erstelle erste Bubble sofort
     createArtistBubble().catch(err => console.error('Bubble creation error:', err));
