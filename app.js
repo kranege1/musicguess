@@ -125,6 +125,9 @@ let genresData = {
     classical: []
 };
 
+// Composer -> performer/hint mapping for classical/opera searches
+let classicalPerformersMap = {};
+
 // Lade verfügbare Genres beim Seitenstart
 async function loadAvailableGenres() {
     debugLog('🔄 Lade Genres...');
@@ -155,6 +158,9 @@ async function loadAvailableGenres() {
         console.log('📅 Decades found:', genresData.decades);
         console.log('🎵 Genres found:', genresData.genres);
         console.log('🌍 Countries found:', genresData.countries.map(c => c.name));
+
+        // Load classical performer map
+        await loadClassicalPerformers();
         
         // Initialize subcategory dropdown with "All Genres"
         updateSubcategoryDropdown();
@@ -164,6 +170,26 @@ async function loadAvailableGenres() {
     } catch (error) {
         console.error(t('errorLoadingGenres') + ':', error);
         debugLog(`[F1] ❌ Load failed: ${error.message}`, 'F1');
+    }
+}
+
+// Load composer -> performer map for classical/opera searches
+async function loadClassicalPerformers() {
+    const cacheBuster = new Date().getTime();
+    try {
+        const response = await fetch(`classical-performers.json?v=${cacheBuster}`, { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error('Failed to load classical performer map');
+        }
+        const data = await response.json();
+        classicalPerformersMap = {};
+        Object.keys(data).forEach(name => {
+            classicalPerformersMap[name.toLowerCase()] = data[name];
+        });
+        console.log(`🎼 Classical performer map loaded: ${Object.keys(classicalPerformersMap).length} composers`);
+    } catch (error) {
+        classicalPerformersMap = {};
+        console.warn('⚠️ Could not load classical performer map:', error.message);
     }
 }
 
@@ -833,10 +859,14 @@ async function showArtistSelectionModal(artists) {
     for (const [index, artist] of artists.entries()) {
         // Fetch artist image and fan count from Deezer
         const artistData = await fetchArtistImageFromDeezer(artist.artistName);
-        
-        // Skip artists with less than 1000 fans
-        if (artistData.fans < 1000) {
-            console.log(`⏭️ Skipping "${artist.artistName}" - only ${artistData.fans} fans (less than 1000)`);
+        const artistLower = artist.artistName.toLowerCase();
+        const isClassicalComposer = !!classicalPerformersMap[artistLower];
+        const isClassicalGenre = (artist.primaryGenreName || '').toLowerCase().includes('classical');
+        const minFans = (isClassicalComposer || isClassicalGenre) ? 0 : 1000;
+
+        // Skip only if below threshold for non-classical artists
+        if (artistData.fans < minFans) {
+            console.log(`⏭️ Skipping "${artist.artistName}" - only ${artistData.fans} fans (threshold: ${minFans})`);
             continue;
         }
         
@@ -1797,11 +1827,74 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
     }
 }
 
+// Heuristic to detect classical/opera style results
+function isClassicalLikeSong(song) {
+    const artist = (song.artistName || '').toLowerCase();
+    const genre = (song.primaryGenreName || '').toLowerCase();
+    const track = (song.trackName || '').toLowerCase();
+    return genre.includes('classical') ||
+           genre.includes('klassik') ||
+           artist.includes('philharmon') ||
+           artist.includes('orchestra') ||
+           artist.includes('symphony') ||
+           artist.includes('sinfon') ||
+           artist.includes('chamber') ||
+           artist.includes('quartet') ||
+           artist.includes('ensemble') ||
+           artist.includes('opera') ||
+           artist.includes('chor') ||
+           artist.includes('choir') ||
+           artist.includes('kapell') ||
+           track.includes('aria') ||
+           track.includes('requiem') ||
+           track.includes('concerto') ||
+           track.includes('suite');
+}
+
+// For composer queries: try targeted performer/hint searches before generic search
+async function tryComposerPerformerSearch(searchQuery) {
+    const composerKey = searchQuery.toLowerCase().trim();
+    const entry = classicalPerformersMap[composerKey];
+    if (!entry) return null;
+
+    const searchTerms = [];
+    (entry.preferredPerformers || []).forEach(performer => {
+        searchTerms.push(`${searchQuery} ${performer}`);
+        searchTerms.push(`${performer} ${searchQuery}`);
+    });
+    (entry.searchHints || []).forEach(hint => searchTerms.push(hint));
+
+    const tried = new Set();
+    for (const term of searchTerms) {
+        const key = term.toLowerCase();
+        if (tried.has(key)) continue;
+        tried.add(key);
+
+        try {
+            let candidateResults = await fetchItunes(term, { limit: 80, country: 'DE' });
+            if (candidateResults.length === 0) {
+                candidateResults = await fetchItunes(term, { limit: 80, country: 'US' });
+            }
+
+            const filtered = candidateResults.filter(song => song.previewUrl && isClassicalLikeSong(song));
+            if (filtered.length > 0) {
+                console.log(`✅ Composer search hit for ${searchQuery} via "${term}" -> ${filtered.length} tracks`);
+                return { composer: searchQuery, results: filtered };
+            }
+        } catch (err) {
+            console.warn(`Composer search term failed (${term}):`, err.message);
+        }
+    }
+
+    return null;
+}
+
 // Load songs from iTunes Search API
 async function loadSongsFromItunes(searchQuery, limit) {
     try {
         let results = [];
         let albumArtwork = null;  // Store the album cover
+        let composerForResults = null; // Store composer if we searched via performer map
         
         if (currentSearchType === 'album') {
             // Album-Suche: Suche zuerst das Album selbst, dann alle Songs von diesem Album
@@ -1969,11 +2062,18 @@ async function loadSongsFromItunes(searchQuery, limit) {
             }
         } else {
             // Standard artist/title search
-            try {
-                results = await fetchItunes(searchQuery, { limit: 100, country: 'DE' });
-            } catch (errDe) {
-                console.warn('DE search failed (search mode), trying US:', errDe);
-                results = await fetchItunes(searchQuery, { limit: 100, country: 'US' });
+            const composerHit = await tryComposerPerformerSearch(searchQuery);
+            if (composerHit && composerHit.results.length > 0) {
+                results = composerHit.results;
+                composerForResults = composerHit.composer;
+                console.log(`🎼 Using performer map for composer: ${composerForResults}`);
+            } else {
+                try {
+                    results = await fetchItunes(searchQuery, { limit: 100, country: 'DE' });
+                } catch (errDe) {
+                    console.warn('DE search failed (search mode), trying US:', errDe);
+                    results = await fetchItunes(searchQuery, { limit: 100, country: 'US' });
+                }
             }
             
             // Filter results to only include songs by the searched artist
@@ -1988,17 +2088,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 );
 
                 // Check if results look like classical music (orchestras, conductors, etc.)
-                const looksLikeClassical = results.some(song => {
-                    const artist = (song.artistName || '').toLowerCase();
-                    const genre = (song.primaryGenreName || '').toLowerCase();
-                    return genre.includes('classical') ||
-                           artist.includes('philharmon') ||
-                           artist.includes('orchestra') ||
-                           artist.includes('symphony') ||
-                           artist.includes('chamber') ||
-                           artist.includes('quartet') ||
-                           artist.includes('piano') && artist.includes('solo');
-                });
+                const looksLikeClassical = results.some(song => isClassicalLikeSong(song));
 
                 // Filter to only keep songs by the same artist (more lenient approach)
                 results = results.filter(song => {
@@ -2069,6 +2159,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
                     id: song.trackId,
                     track: song.trackName,
                     artist: song.artistName,
+                    composer: composerForResults,
                     album: song.collectionName,
                     previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
                     image: coverUrl,
@@ -2582,6 +2673,18 @@ function showSongInfo() {
     document.getElementById('infoArtist').textContent = song.artist;
     document.getElementById('infoTrack').textContent = song.track;
     document.getElementById('infoAlbum').textContent = song.album;
+
+    const composerRow = document.getElementById('infoComposerRow');
+    const composerNote = document.getElementById('infoComposerNote');
+    if (composerRow && composerNote) {
+        if (song.composer && song.composer !== song.artist) {
+            composerRow.style.display = 'flex';
+            composerNote.textContent = `${song.composer} (performed by ${song.artist})`;
+        } else {
+            composerRow.style.display = 'none';
+            composerNote.textContent = '';
+        }
+    }
 
     console.log('Song info images:', {
         albumCover: song.albumCover,
