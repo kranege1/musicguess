@@ -115,6 +115,7 @@ let gameState = {
     pointsCountdownInitial: 0,
     pointsCountdownStartTime: null,
     firstPlayDone: false, // Flag ob bereits einmal abgespielt wurde
+    fadeOutInterval: null, // Interval for audio fade-out
 };
 
 // Classical/Opera mappings (generated)
@@ -2670,7 +2671,9 @@ function selectAnswer(answer, index) {
     if (gameState.isAnswered) return;
 
     gameState.isAnswered = true;
-    stopPreview();
+    
+    // Fade out audio over 3 seconds instead of stopping abruptly
+    fadeOutAndStop(3000);
 
     const isCorrect = answer === gameState.currentSong.track;
     const buttons = document.querySelectorAll('.answer-btn');
@@ -3291,6 +3294,7 @@ function stopPreview() {
     // Stoppe Audio Element
     audio.pause();
     audio.currentTime = 0;
+    audio.volume = 1.0; // Reset volume
     
     // Stoppe Progress Animation
     if (gameState.progressInterval) {
@@ -3303,12 +3307,48 @@ function stopPreview() {
         clearTimeout(gameState.stopTimeout);
         gameState.stopTimeout = null;
     }
+    
+    // Stoppe fade-out interval if any
+    if (gameState.fadeOutInterval) {
+        clearInterval(gameState.fadeOutInterval);
+        gameState.fadeOutInterval = null;
+    }
 
     // Aktiviere Play-Button wieder
     if (playBtn) playBtn.disabled = false;
     stopBtn.classList.remove('active');
     document.getElementById('progressFill').style.width = '0%';
     updateTimeDisplay(0, 15);
+}
+
+// Fade out audio over duration (in milliseconds) and then stop
+function fadeOutAndStop(duration = 3000) {
+    const audio = document.getElementById('audioPlayer');
+    
+    // If audio is not playing, just stop immediately
+    if (audio.paused || !audio.src) {
+        stopPreview();
+        return;
+    }
+    
+    const startVolume = audio.volume;
+    const fadeSteps = 60; // 60 steps for smooth fade
+    const stepDuration = duration / fadeSteps;
+    const volumeDecrement = startVolume / fadeSteps;
+    
+    let currentStep = 0;
+    
+    gameState.fadeOutInterval = setInterval(() => {
+        currentStep++;
+        const newVolume = Math.max(0, startVolume - (volumeDecrement * currentStep));
+        audio.volume = newVolume;
+        
+        if (currentStep >= fadeSteps || newVolume <= 0) {
+            clearInterval(gameState.fadeOutInterval);
+            gameState.fadeOutInterval = null;
+            stopPreview();
+        }
+    }, stepDuration);
 }
 
 // Entfernt: disableDurationButtons - nicht mehr benötigt
