@@ -1,4 +1,4 @@
-const APP_VERSION = '15.01.2026 18:00';
+const APP_VERSION = '15.01.2026 18:15';
 window.APP_VERSION = APP_VERSION;
 
 // English strings (no more translation system)
@@ -4460,13 +4460,13 @@ function renderLeaderboardTicker(scores, gameMode) {
         return;
     }
 
-    // Sortiere nach Punkten (fallback auf totalPoints) und zeige nur Top 10
+    // Sortiere nach Punkten (fallback auf totalPoints)
     const sorted = [...scores].sort((a, b) => {
         const ap = (a.points ?? a.totalPoints ?? 0);
         const bp = (b.points ?? b.totalPoints ?? 0);
         return bp - ap; // absteigend
     });
-    const topScores = sorted.slice(0, 10);
+    const topScores = sorted; // Show all scores
 
     const items = topScores.map((score, idx) => {
         const points = score.points ?? score.totalPoints ?? 0; // show per-score points, avoid summed totals
