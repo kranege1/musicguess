@@ -1400,6 +1400,19 @@ async function startGame() {
     showLoadingState();
 
     try {
+        // Check if a mapped song is already prepared (from operetta/opera/composer bubbles)
+        if (gameState.currentSong && mappingActive && gameState.currentSong.previewUrl) {
+            // Mapped selection is ready — start game directly
+            const subtitleText = `🎼 ${currentBubbleCategory || 'Mapped'}`;
+            setSubtitle(subtitleText);
+            gameState.currentGameMode = subtitleText;
+            // Initialize game with the prepared mapped song
+            gameState.songs = [gameState.currentSong];
+            hideLoadingState();
+            nextQuestion();
+            return;
+        }
+        
         if (gameMode === 'genre') {
             // Genre-Modus: Lade Songs aus songs.json
             const selectedGenre = document.getElementById('subcategorySelect').value;
