@@ -36,7 +36,7 @@ async function checkPreview(artist, track) {
 
 async function validateSongs() {
     console.log('Lade songs.json...');
-    const songs = JSON.parse(fs.readFileSync('songs.json', 'utf8'));
+    const songs = JSON.parse(fs.readFileSync('json/songs.json', 'utf8'));
     
     console.log(`Überprüfe ${songs.length} Songs...\n`);
     
@@ -76,12 +76,12 @@ async function validateSongs() {
     });
     
     // Speichere validierte Songs
-    fs.writeFileSync('songs-validated.json', JSON.stringify(validSongs, null, 2));
-    console.log(`\n✅ Validierte Songs gespeichert in songs-validated.json`);
+    fs.writeFileSync('json/songs-validated.json', JSON.stringify(validSongs, null, 2));
+    console.log(`\n✅ Validierte Songs gespeichert in json/songs-validated.json`);
     
     // Speichere auch die invaliden zur Info
-    fs.writeFileSync('songs-invalid.json', JSON.stringify(invalidSongs, null, 2));
-    console.log(`ℹ️  Ungültige Songs gespeichert in songs-invalid.json`);
+    fs.writeFileSync('json/songs-invalid.json', JSON.stringify(invalidSongs, null, 2));
+    console.log(`ℹ️  Ungültige Songs gespeichert in json/songs-invalid.json`);
 }
 
 validateSongs();

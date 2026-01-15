@@ -4,7 +4,7 @@ const https = require('https');
 const http = require('http');
 
 // Lade AlbumList.json
-const albumListPath = path.join(__dirname, 'AlbumList.json');
+const albumListPath = path.join(__dirname, 'json', 'AlbumList.json');
 console.log('📂 Lese Datei:', albumListPath);
 
 let albumList = [];

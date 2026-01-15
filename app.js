@@ -134,7 +134,7 @@ async function loadAvailableGenres() {
     try {
         // Load consolidated genres.json
         const cacheBuster = new Date().getTime();
-        const genresResponse = await fetch(`genres.json?v=${cacheBuster}`, { cache: 'no-store' });
+            const genresResponse = await fetch(`json/genres.json?v=${cacheBuster}`, { cache: 'no-store' });
         
         if (!genresResponse.ok) {
             throw new Error(t('errorLoadingGenres'));
@@ -177,7 +177,7 @@ async function loadAvailableGenres() {
 async function loadClassicalPerformers() {
     const cacheBuster = new Date().getTime();
     try {
-        const response = await fetch(`classical-performers.json?v=${cacheBuster}`, { cache: 'no-store' });
+        const response = await fetch(`json/classical-performers.json?v=${cacheBuster}`, { cache: 'no-store' });
         if (!response.ok) {
             throw new Error('Failed to load classical performer map');
         }
@@ -272,7 +272,7 @@ async function loadBillboardYears() {
     console.log('🔥 loadBillboardYears() wird aufgerufen...');
     try {
         const cacheBuster = new Date().getTime();
-        const response = await fetch(`hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
+        const response = await fetch(`json/hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
         
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Billboard Daten');
@@ -301,7 +301,7 @@ async function loadAvailableYears() {
     console.log('loadAvailableYears() wird aufgerufen...');
     try {
         const cacheBuster = new Date().getTime();
-        const response = await fetch(`hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
+        const response = await fetch(`json/hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
         
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Billboard Daten');
@@ -358,7 +358,7 @@ async function loadBillboardSongsForYear() {
     
     try {
         const cacheBuster = new Date().getTime();
-        const response = await fetch(`hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
+        const response = await fetch(`json/hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
         
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Billboard Daten');
@@ -392,7 +392,7 @@ async function loadBillboardSongsForYear() {
 // Lade Version
 async function loadVersion() {
     try {
-        const response = await fetch('version.json');
+        const response = await fetch('json/version.json');
         if (response.ok) {
             const data = await response.json();
             const versionSpan = document.getElementById('version');
@@ -461,7 +461,7 @@ async function loadArtistNames() {
     artistNamesPromise = (async () => {
         try {
             const cacheBuster = new Date().getTime();
-            const response = await fetch(`ArtistsList.json?v=${cacheBuster}`, { cache: 'no-store' });
+            const response = await fetch(`json/ArtistsList.json?v=${cacheBuster}`, { cache: 'no-store' });
             if (!response.ok) {
                 throw new Error(t('errorLoadingArtists'));
             }
@@ -496,7 +496,7 @@ function getLocalAlbumCover(albumName) {
 async function loadAlbumList() {
     try {
         const cacheBuster = new Date().getTime();
-        const response = await fetch(`AlbumList.json?v=${cacheBuster}`, { cache: 'no-store' });
+        const response = await fetch(`json/AlbumList.json?v=${cacheBuster}`, { cache: 'no-store' });
         
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Alben');
@@ -555,7 +555,7 @@ async function startArtistBubbles() {
 async function updateDecadeArtists(decade) {
     try {
         const cacheBuster = new Date().getTime();
-        const resp = await fetch(`songs.json?v=${cacheBuster}`, { cache: 'no-store' });
+        const resp = await fetch(`json/songs.json?v=${cacheBuster}`, { cache: 'no-store' });
         if (!resp.ok) {
             console.warn('Could not load songs.json for decade artists');
             return;
@@ -1390,7 +1390,7 @@ async function loadSongsFromGenre(genre, limit) {
         // Handle Classical genre (subcategory selection like Classical:Oper, Classical:Komponist, etc.)
         if (genre === 'Classical' || genre.startsWith('Classical:')) {
             const cacheBuster = Date.now();
-            const response = await fetch(`genres.json?v=${cacheBuster}`, { cache: 'no-store' });
+            const response = await fetch(`json/genres.json?v=${cacheBuster}`, { cache: 'no-store' });
             if (!response.ok) {
                 throw new Error(t('errorLoadingClassicalList'));
             }
@@ -1453,7 +1453,7 @@ async function loadSongsFromGenre(genre, limit) {
         if (genre.startsWith('Country:')) {
             const countryCode = genre.replace('Country:', '');
             const cacheBuster = Date.now();
-            const response = await fetch(`genres.json?v=${cacheBuster}`, { cache: 'no-store' });
+            const response = await fetch(`json/genres.json?v=${cacheBuster}`, { cache: 'no-store' });
             if (!response.ok) {
                 throw new Error(t('errorLoadingCountryList'));
             }
@@ -1503,7 +1503,7 @@ async function loadSongsFromGenre(genre, limit) {
         
         // Lade songs.json for regular genres
         const cacheBuster = Date.now();
-        const response = await fetch(`songs.json?v=${cacheBuster}`, { cache: 'no-store' });
+        const response = await fetch(`json/songs.json?v=${cacheBuster}`, { cache: 'no-store' });
         if (!response.ok) {
             throw new Error('Error loading songs.json');
         }
@@ -1541,7 +1541,7 @@ async function loadSongsFromBillboard(year, limit) {
     try {
         // Lade hot-10-unique.json
         const cacheBuster = Date.now();
-        const response = await fetch(`hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
+        const response = await fetch(`json/hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
         if (!response.ok) {
             throw new Error('Error loading hot-10-unique.json');
         }
@@ -3878,7 +3878,7 @@ async function selectBubbleCategory(category) {
             }
         } else if (category.type === 'decade') {
             // Load artists from songs.json filtered by decade
-            const songsResponse = await fetch('songs.json', { cache: 'no-store' });
+            const songsResponse = await fetch('json/songs.json', { cache: 'no-store' });
             const songsData = await songsResponse.json();
             const decadeSongs = songsData.filter(song => song.genre === category.name);
             const uniqueArtists = [...new Set(decadeSongs.map(song => song.artist))];

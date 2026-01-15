@@ -1,7 +1,7 @@
 // Lade lokale Album-Cover aus dem covers/ Verzeichnis
 async function loadLocalAlbumCovers() {
     try {
-        const albumListPath = './AlbumList.json';
+        const albumListPath = './json/AlbumList.json';
         const response = await fetch(albumListPath);
         const albums = await response.json();
         

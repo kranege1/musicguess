@@ -1,7 +1,7 @@
 import json
 
 # Read the file
-with open('songs.json', 'r', encoding='utf-8') as f:
+with open('json/songs.json', 'r', encoding='utf-8') as f:
     songs = json.load(f)
 
 # Replace decade names
@@ -23,7 +23,7 @@ for song in songs:
         count += 1
 
 # Write back
-with open('songs.json', 'w', encoding='utf-8') as f:
+with open('json/songs.json', 'w', encoding='utf-8') as f:
     json.dump(songs, f, ensure_ascii=False, indent=2)
 
 print(f"✅ Replaced {count} decade names")

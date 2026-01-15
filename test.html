@@ -13,7 +13,7 @@
         async function loadGenres() {
             try {
                 console.log('Starte Laden der Genres...');
-                const response = await fetch('songs.json');
+                const response = await fetch('json/songs.json');
                 console.log('Response:', response);
                 
                 const songs = await response.json();

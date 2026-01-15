@@ -7,7 +7,7 @@ async function migrateScores() {
         console.log('🚀 Starting score migration to Firestore...\n');
         
         // Read highscores.json
-        const highscoresPath = path.join(__dirname, 'highscores.json');
+        const highscoresPath = path.join(__dirname, 'json', 'highscores.json');
         const data = JSON.parse(fs.readFileSync(highscoresPath, 'utf8'));
         
         let totalMigrated = 0;

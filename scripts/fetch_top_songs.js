@@ -2,9 +2,9 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const ARTISTS_FILE = path.join(__dirname, '..', 'ArtistsList.json');
-const SONGS_FILE = path.join(__dirname, '..', 'songs.json');
-const BACKUP_FILE = path.join(__dirname, '..', 'songs.json.bak');
+const ARTISTS_FILE = path.join(__dirname, '..', 'json', 'ArtistsList.json');
+const SONGS_FILE = path.join(__dirname, '..', 'json', 'songs.json');
+const BACKUP_FILE = path.join(__dirname, '..', 'json', 'songs.json.bak');
 
 function searchItunes(term, limit = 200, country='US') {
   return new Promise((resolve, reject) => {

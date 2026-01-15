@@ -30,7 +30,7 @@
     
     <script>
         // Simulate version update without breaking links
-        fetch('version.json')
+        fetch('json/version.json')
             .then(r => r.json())
             .then(data => {
                 const versionText = document.getElementById('versionText');

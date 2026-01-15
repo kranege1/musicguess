@@ -53,7 +53,7 @@ def main():
     
     # Load songs.json
     try:
-        with open('songs.json', 'r', encoding='utf-8') as f:
+        with open('json/songs.json', 'r', encoding='utf-8') as f:
             songs = json.load(f)
     except Exception as e:
         print(f"❌ Error loading songs.json: {e}")
@@ -94,7 +94,7 @@ def main():
         # Save progress every 10 songs
         if i % 10 == 0:
             try:
-                with open('songs.json', 'w', encoding='utf-8') as f:
+                with open('json/songs.json', 'w', encoding='utf-8') as f:
                     json.dump(songs, f, indent=2, ensure_ascii=False)
                 print(f"\n💾 Progress saved ({enriched} enriched, {failed} failed, {skipped} skipped)\n")
             except Exception as e:
@@ -102,7 +102,7 @@ def main():
     
     # Final save
     try:
-        with open('songs.json', 'w', encoding='utf-8') as f:
+        with open('json/songs.json', 'w', encoding='utf-8') as f:
             json.dump(songs, f, indent=2, ensure_ascii=False)
         print(f"\n✅ Done! Final stats:")
         print(f"   - Enriched: {enriched}")

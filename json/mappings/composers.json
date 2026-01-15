@@ -1,0 +1,35 @@
+{
+  "Johann Sebastian Bach": [],
+  "George Frideric Handel": [],
+  "Antonio Vivaldi": [],
+  "Wolfgang Amadeus Mozart": [],
+  "Joseph Haydn": [],
+  "Ludwig van Beethoven": [],
+  "Franz Schubert": [],
+  "Johannes Brahms": [],
+  "Robert Schumann": [],
+  "Felix Mendelssohn": [],
+  "Frédéric Chopin": [],
+  "Franz Liszt": [
+    {
+      "artist": "Bertrand Chamayou",
+      "track": "Lied opus 34 no.2, transcription Franz Liszt: Auf Flügeln Des Gesanges",
+      "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/ab/cf/46/abcf46ea-b9ad-872a-78fa-eb08772cad41/mzaf_4796747766739060028.plus.aac.p.m4a",
+      "album": null
+    }
+  ],
+  "Richard Wagner": [],
+  "Giuseppe Verdi": [],
+  "Giacomo Puccini": [],
+  "Georges Bizet": [],
+  "Gioachino Rossini": [],
+  "Gaetano Donizetti": [],
+  "Vincenzo Bellini": [],
+  "Jacques Offenbach": [],
+  "Johann Strauss II": [],
+  "Antonín Dvořák": [],
+  "Pyotr Ilyich Tchaikovsky": [],
+  "Sergei Rachmaninoff": [],
+  "Gustav Mahler": [],
+  "Anton Bruckner": []
+}

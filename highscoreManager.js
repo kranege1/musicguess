@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const HIGHSCORES_FILE = path.join(__dirname, 'highscores.json');
+const HIGHSCORES_FILE = path.join(__dirname, 'json', 'highscores.json');
 const MAX_SCORES_PER_MODE = 10;
 const MAX_SCORES_PER_PLAYER = 100;
 

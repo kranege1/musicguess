@@ -79,7 +79,7 @@ async function fetchFromItunes(searchTerm, countries = ['DE', 'US', 'GB', 'FR', 
  */
 app.get('/api/songs', (req, res) => {
     try {
-        const songs = require('./songs.json');
+        const songs = require('./json/songs.json');
         res.json(songs);
     } catch (err) {
         console.error('Error loading songs.json:', err);
