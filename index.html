@@ -1763,11 +1763,11 @@
         <div class="setup-screen" id="setupScreen">
             <div class="setup-header">
                 <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                    <select id="songCount" style="padding: 5px 6px; border-radius: 4px; border: 2px solid #8170e2; font-size: 0.65em; width: 50px; background: rgb(109, 137, 231); color: white; font-weight: 700; margin-top: 0px;">
-                        <option value="5">5</option>
-                        <option value="10" selected>10</option>
-                        <option value="15">15</option>
-                        <option value="20">20</option>
+                    <select id="playDurationSelect" style="padding: 5px 6px; border-radius: 4px; border: 2px solid #8170e2; font-size: 0.65em; width: 70px; background: rgb(109, 137, 231); color: white; font-weight: 700; margin-top: 0px;">
+                        <option value="5">5 sec</option>
+                        <option value="10">10 sec</option>
+                        <option value="15" selected>15 sec</option>
+                        <option value="30">30 sec</option>
                     </select>
                 </div>
                 <div class="setup-header-controls">
@@ -1957,6 +1957,10 @@
                         <div class="info-row">
                             <span class="info-label">Album:</span>
                             <span class="info-value" id="infoAlbum"></span>
+                        </div>
+                        <div class="info-row" id="infoComposerRow" style="display: none;">
+                            <span class="info-label">Composer:</span>
+                            <span class="info-value" id="infoComposerNote"></span>
                         </div>
                     </div>
                 </div>

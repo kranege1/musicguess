@@ -1275,10 +1275,12 @@ async function startGame() {
     // Finde den aktiven Mode-Button statt Radio-Button
     const activeButton = document.querySelector('.mode-btn.active');
     const gameMode = activeButton ? activeButton.dataset.mode : 'search'; // Default zu 'search'
-    const songCount = parseInt(document.getElementById('songCount').value);
+    const songCount = 10; // Always play 10 questions
 
-    // State speichern (previewDuration wird während des Spiels per Button gewählt)
-    gameState.previewDuration = 5; // Standard-Wert, wird beim Klicken auf Duration-Button überschrieben
+    // State speichern (previewDuration jetzt vom Dropdown)
+    const durationSelect = document.getElementById('playDurationSelect');
+    const selectedDuration = durationSelect ? parseInt(durationSelect.value, 10) : 15;
+    gameState.previewDuration = isNaN(selectedDuration) ? 15 : selectedDuration;
     gameState.currentQuestion = 0;
     gameState.correctAnswers = 0;
     gameState.wrongAnswers = 0;
@@ -3101,8 +3103,8 @@ function playPreview() {
     // Setze Flags zurück
     gameState.previewFinished = false;
     
-    // Feste Preview-Dauer: 15 Sekunden
-    const previewDuration = 15;
+    // Preview-Dauer aus Auswahl (Default bereits gesetzt beim Start)
+    const previewDuration = gameState.previewDuration || 15;
     
     console.log('Versuche Preview abzuspielen:', gameState.currentSong.previewUrl);
     debugLog(`▶️ Starte Preview...`);
