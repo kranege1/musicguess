@@ -1,0 +1,332 @@
+{
+  "Johann Sebastian Bach": {
+    "preferredPerformers": [
+      "John Eliot Gardiner",
+      "Nikolaus Harnoncourt",
+      "Amsterdam Baroque Orchestra",
+      "Ton Koopman",
+      "Academy of St Martin in the Fields"
+    ],
+    "searchHints": [
+      "Bach Brandenburg Concerto",
+      "Bach Cello Suite No. 1",
+      "Bach Mass in B Minor"
+    ]
+  },
+  "George Frideric Handel": {
+    "preferredPerformers": [
+      "English Concert",
+      "Academy of Ancient Music",
+      "Les Arts Florissants",
+      "René Jacobs",
+      "John Eliot Gardiner"
+    ],
+    "searchHints": [
+      "Handel Messiah",
+      "Handel Water Music"
+    ]
+  },
+  "Antonio Vivaldi": {
+    "preferredPerformers": [
+      "Il Giardino Armonico",
+      "Venice Baroque Orchestra",
+      "Europa Galante",
+      "Fabio Biondi",
+      "Academy of St Martin in the Fields"
+    ],
+    "searchHints": [
+      "Vivaldi Four Seasons"
+    ]
+  },
+  "Wolfgang Amadeus Mozart": {
+    "preferredPerformers": [
+      "Academy of St Martin in the Fields",
+      "Vienna Philharmonic",
+      "Berliner Philharmoniker",
+      "Sir Neville Marriner",
+      "Nikolaus Harnoncourt",
+      "James Levine"
+    ],
+    "searchHints": [
+      "Mozart Requiem",
+      "Mozart Symphony No. 40",
+      "Mozart The Magic Flute",
+      "Mozart Piano Concerto No. 21"
+    ]
+  },
+  "Joseph Haydn": {
+    "preferredPerformers": [
+      "Austro Hungarian Haydn Orchestra",
+      "Royal Concertgebouw Orchestra",
+      "Academy of St Martin in the Fields",
+      "Frans Brüggen",
+      "Trevor Pinnock"
+    ],
+    "searchHints": [
+      "Haydn Symphony No. 94",
+      "Haydn The Creation"
+    ]
+  },
+  "Ludwig van Beethoven": {
+    "preferredPerformers": [
+      "Berliner Philharmoniker",
+      "Vienna Philharmonic",
+      "Herbert von Karajan",
+      "Leonard Bernstein",
+      "Claudio Abbado"
+    ],
+    "searchHints": [
+      "Beethoven Symphony No. 5",
+      "Beethoven Piano Concerto No. 5"
+    ]
+  },
+  "Franz Schubert": {
+    "preferredPerformers": [
+      "Wiener Philharmoniker",
+      "Dietrich Fischer-Dieskau",
+      "Elisabeth Schwarzkopf",
+      "Alfred Brendel",
+      "Claudio Abbado"
+    ],
+    "searchHints": [
+      "Schubert Symphony No. 8",
+      "Schubert Winterreise"
+    ]
+  },
+  "Johannes Brahms": {
+    "preferredPerformers": [
+      "Berliner Philharmoniker",
+      "Vienna Philharmonic",
+      "Leonard Bernstein",
+      "Claudio Abbado",
+      "Carlos Kleiber"
+    ],
+    "searchHints": [
+      "Brahms Symphony No. 1",
+      "Brahms Piano Concerto No. 2"
+    ]
+  },
+  "Robert Schumann": {
+    "preferredPerformers": [
+      "Gewandhausorchester Leipzig",
+      "Berlin Philharmonic",
+      "Riccardo Chailly",
+      "Claudio Abbado",
+      "Martha Argerich"
+    ],
+    "searchHints": [
+      "Schumann Symphony No. 3",
+      "Schumann Piano Concerto"
+    ]
+  },
+  "Felix Mendelssohn": {
+    "preferredPerformers": [
+      "Gewandhausorchester Leipzig",
+      "Royal Concertgebouw Orchestra",
+      "Riccardo Chailly",
+      "Kurt Masur",
+      "Claudio Abbado"
+    ],
+    "searchHints": [
+      "Mendelssohn Violin Concerto",
+      "Mendelssohn Symphony No. 4"
+    ]
+  },
+  "Frédéric Chopin": {
+    "preferredPerformers": [
+      "Martha Argerich",
+      "Krystian Zimerman",
+      "Maurizio Pollini",
+      "Arthur Rubinstein",
+      "Vladimir Ashkenazy"
+    ],
+    "searchHints": [
+      "Chopin Nocturne",
+      "Chopin Ballade No. 1"
+    ]
+  },
+  "Franz Liszt": {
+    "preferredPerformers": [
+      "Lang Lang",
+      "Martha Argerich",
+      "Valentina Lisitsa",
+      "Krystian Zimerman",
+      "Claudio Arrau"
+    ],
+    "searchHints": [
+      "Liszt Hungarian Rhapsody",
+      "Liszt Piano Concerto No. 1"
+    ]
+  },
+  "Richard Wagner": {
+    "preferredPerformers": [
+      "Bayreuth Festival Orchestra",
+      "Vienna Philharmonic",
+      "James Levine",
+      "Daniel Barenboim",
+      "Christian Thielemann"
+    ],
+    "searchHints": [
+      "Wagner Die Walküre",
+      "Wagner Tristan und Isolde"
+    ]
+  },
+  "Giuseppe Verdi": {
+    "preferredPerformers": [
+      "Luciano Pavarotti",
+      "Plácido Domingo",
+      "Teatro alla Scala Orchestra",
+      "Riccardo Muti",
+      "Herbert von Karajan"
+    ],
+    "searchHints": [
+      "Verdi La Traviata",
+      "Verdi Rigoletto"
+    ]
+  },
+  "Giacomo Puccini": {
+    "preferredPerformers": [
+      "Luciano Pavarotti",
+      "Plácido Domingo",
+      "Teatro alla Scala Orchestra",
+      "Herbert von Karajan",
+      "Maria Callas"
+    ],
+    "searchHints": [
+      "Puccini La Bohème",
+      "Puccini Tosca"
+    ]
+  },
+  "Georges Bizet": {
+    "preferredPerformers": [
+      "Orchestre de Paris",
+      "Sir Thomas Beecham",
+      "Placido Domingo",
+      "Maria Callas"
+    ],
+    "searchHints": [
+      "Bizet Carmen"
+    ]
+  },
+  "Gioachino Rossini": {
+    "preferredPerformers": [
+      "Orchestra Sinfonica di Milano",
+      "Riccardo Chailly",
+      "Teatro alla Scala Orchestra",
+      "Juan Diego Flórez"
+    ],
+    "searchHints": [
+      "Rossini Il Barbiere di Siviglia",
+      "Rossini La Cenerentola"
+    ]
+  },
+  "Gaetano Donizetti": {
+    "preferredPerformers": [
+      "Luciano Pavarotti",
+      "Plácido Domingo",
+      "Teatro alla Scala Orchestra",
+      "Riccardo Muti"
+    ],
+    "searchHints": [
+      "Donizetti L'elisir d'amore",
+      "Donizetti Lucia di Lammermoor"
+    ]
+  },
+  "Vincenzo Bellini": {
+    "preferredPerformers": [
+      "Maria Callas",
+      "Orchestra del Teatro alla Scala",
+      "Joan Sutherland",
+      "Plácido Domingo"
+    ],
+    "searchHints": [
+      "Bellini Norma",
+      "Bellini I Puritani"
+    ]
+  },
+  "Jacques Offenbach": {
+    "preferredPerformers": [
+      "Orchestre National de France",
+      "Marc Minkowski",
+      "Les Musiciens du Louvre",
+      "Michel Plasson"
+    ],
+    "searchHints": [
+      "Offenbach Orphée aux enfers",
+      "Offenbach Les Contes d'Hoffmann"
+    ]
+  },
+  "Johann Strauss II": {
+    "preferredPerformers": [
+      "Vienna Philharmonic",
+      "Wiener Johann Strauss Orchester",
+      "André Rieu",
+      "Willi Boskovsky"
+    ],
+    "searchHints": [
+      "Strauss An der schönen blauen Donau",
+      "Strauss Kaiserwalzer"
+    ]
+  },
+  "Antonín Dvořák": {
+    "preferredPerformers": [
+      "Czech Philharmonic",
+      "Berliner Philharmoniker",
+      "Rafael Kubelik",
+      "Václav Neumann"
+    ],
+    "searchHints": [
+      "Dvořák Symphony No. 9",
+      "Dvořák Cello Concerto"
+    ]
+  },
+  "Pyotr Ilyich Tchaikovsky": {
+    "preferredPerformers": [
+      "Berlin Philharmonic",
+      "Valery Gergiev",
+      "Mariinsky Theatre Orchestra",
+      "Yuri Temirkanov"
+    ],
+    "searchHints": [
+      "Tchaikovsky Swan Lake",
+      "Tchaikovsky Symphony No. 6"
+    ]
+  },
+  "Sergei Rachmaninoff": {
+    "preferredPerformers": [
+      "Vladimir Ashkenazy",
+      "Martha Argerich",
+      "Evgeny Kissin",
+      "Philadelphia Orchestra",
+      "Yuja Wang"
+    ],
+    "searchHints": [
+      "Rachmaninoff Piano Concerto No. 2",
+      "Rachmaninoff Rhapsody on a Theme of Paganini"
+    ]
+  },
+  "Gustav Mahler": {
+    "preferredPerformers": [
+      "Bernard Haitink",
+      "Gustavo Dudamel",
+      "New York Philharmonic",
+      "Leonard Bernstein"
+    ],
+    "searchHints": [
+      "Mahler Symphony No. 5",
+      "Mahler Symphony No. 2"
+    ]
+  },
+  "Anton Bruckner": {
+    "preferredPerformers": [
+      "Vienna Philharmonic",
+      "Staatskapelle Dresden",
+      "Herbert von Karajan",
+      "Eugen Jochum"
+    ],
+    "searchHints": [
+      "Bruckner Symphony No. 7",
+      "Bruckner Symphony No. 8"
+    ]
+  }
+}
