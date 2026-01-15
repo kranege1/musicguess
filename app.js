@@ -3210,49 +3210,63 @@ function playPreview() {
     console.log('Versuche Preview abzuspielen:', gameState.currentSong.previewUrl);
     debugLog(`▶️ Starte Preview...`);
     
-    // Starte Playback
-    audio.play().then(() => {
-        console.log('Playback gestartet');
-        debugLog(`🔊 Playback läuft`);
-        
-        // Tracking: Erhöhe Play-Count und addiere Abspielzeit
-        gameState.currentPlayCount++;
-        gameState.totalPlayTime += previewDuration;
-        updatePlayTimeDisplay();
-        
-        // Deaktiviere Play-Button während Playback
-        if (playBtn) playBtn.disabled = true;
-        stopBtn.classList.add('active');
+    // Starte Playback — mit Sicherheitsmaßnahmen gegen Abbruchfehler
+    const playAttempt = () => {
+        audio.play()
+            .then(() => {
+                console.log('Playback gestartet');
+                debugLog(`🔊 Playback läuft`);
+                
+                // Tracking: Erhöhe Play-Count und addiere Abspielzeit
+                gameState.currentPlayCount++;
+                gameState.totalPlayTime += previewDuration;
+                updatePlayTimeDisplay();
+                
+                // Deaktiviere Play-Button während Playback
+                if (playBtn) playBtn.disabled = true;
+                stopBtn.classList.add('active');
 
-        // Update Progress
-        const updateProgress = () => {
-            const progress = Math.min((audio.currentTime / previewDuration) * 100, 100);
-            document.getElementById('progressFill').style.width = progress + '%';
-            updateTimeDisplay(audio.currentTime, previewDuration);
+                // Update Progress
+                const updateProgress = () => {
+                    const progress = Math.min((audio.currentTime / previewDuration) * 100, 100);
+                    document.getElementById('progressFill').style.width = progress + '%';
+                    updateTimeDisplay(audio.currentTime, previewDuration);
 
-            if (audio.currentTime < previewDuration && !audio.paused) {
-                gameState.progressInterval = requestAnimationFrame(updateProgress);
-            } else if (audio.currentTime >= previewDuration) {
-                gameState.previewFinished = true;
-                audio.pause();
-                stopPreview();
-            }
-        };
+                    if (audio.currentTime < previewDuration && !audio.paused) {
+                        gameState.progressInterval = requestAnimationFrame(updateProgress);
+                    } else if (audio.currentTime >= previewDuration) {
+                        gameState.previewFinished = true;
+                        audio.pause();
+                        stopPreview();
+                    }
+                };
 
-        // Stoppe nach Preview-Duration (15 Sekunden)
-        gameState.stopTimeout = setTimeout(() => {
-            gameState.previewFinished = true;
-            audio.pause();
-            stopPreview();
-        }, previewDuration * 1000);
+                // Stoppe nach Preview-Duration (15 Sekunden)
+                gameState.stopTimeout = setTimeout(() => {
+                    gameState.previewFinished = true;
+                    audio.pause();
+                    stopPreview();
+                }, previewDuration * 1000);
 
-        updateProgress();
-    }).catch(error => {
-        console.error('Playback error:', error);
-        debugLog(`❌ Playback-Fehler: ${error.message}`, 'F7');
-        alert('[F7] ' + t('errorPlayback'));
-        stopPreview();
-    });
+                updateProgress();
+            })
+            .catch(error => {
+                console.error('Playback error:', error);
+                // If it's an AbortError, retry once
+                if (error.name === 'AbortError' && !playAttempt.retried) {
+                    console.log('Retrying playback after AbortError...');
+                    playAttempt.retried = true;
+                    setTimeout(playAttempt, 100);
+                } else {
+                    debugLog(`❌ Playback-Fehler: ${error.message}`, 'F7');
+                    alert('[F7] ' + t('errorPlayback'));
+                    stopPreview();
+                }
+            });
+    };
+    
+    // Starte Playback sofort
+    playAttempt();
 }
 
 // Stoppe Preview (iOS-kompatibel)
