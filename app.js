@@ -1,4 +1,4 @@
-const APP_VERSION = '14.01.2026 16:40';
+const APP_VERSION = '15.01.2026 18:00';
 window.APP_VERSION = APP_VERSION;
 
 // English strings (no more translation system)
@@ -4501,7 +4501,8 @@ async function openLeaderboardModal(gameMode) {
 
     const scores = await loadLeaderboard(gameMode);
     if (titleEl) {
-        titleEl.textContent = `Highscores – ${gameMode}`;
+        const scoreCount = scores ? scores.length : 0;
+        titleEl.innerHTML = `Highscores – ${gameMode}<br><small style="font-size: 0.65em; font-weight: 400; color: #888;">${scoreCount} registered score${scoreCount !== 1 ? 's' : ''}</small>`;
     }
 
     if (!scores || scores.length === 0) {
