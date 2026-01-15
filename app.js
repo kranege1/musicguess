@@ -137,6 +137,9 @@ let genresData = {
 // Composer -> performer/hint mapping for classical/opera searches
 let classicalPerformersMap = {};
 
+// Curated classical works loaded from JSON (per sub area)
+let classicalWorks = {};
+
 // Lade verfügbare Genres beim Seitenstart
 async function loadAvailableGenres() {
     debugLog('🔄 Lade Genres...');
@@ -170,8 +173,14 @@ async function loadAvailableGenres() {
 
         // Load classical performer map
         await loadClassicalPerformers();
+        // Load curated classical works per sub area
+        await loadClassicalWorks();
         // Load generated mappings if available
         await loadClassicalMappings();
+
+        // Initialize dedicated classical dropdowns
+        populateClassicalAreaDropdown();
+        handleClassicalAreaChange();
         
         // Initialize subcategory dropdown with "All Genres"
         updateSubcategoryDropdown();
@@ -201,6 +210,22 @@ async function loadClassicalPerformers() {
     } catch (error) {
         classicalPerformersMap = {};
         console.warn('⚠️ Could not load classical performer map:', error.message);
+    }
+}
+
+// Load curated classical works per sub area
+async function loadClassicalWorks() {
+    const cacheBuster = new Date().getTime();
+    try {
+        const response = await fetch(`json/classical-works.json?v=${cacheBuster}`, { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error('Failed to load classical works list');
+        }
+        classicalWorks = await response.json();
+        console.log('🎼 Classical works loaded:', Object.keys(classicalWorks));
+    } catch (error) {
+        classicalWorks = {};
+        console.warn('⚠️ Could not load classical works:', error.message);
     }
 }
 
@@ -302,6 +327,105 @@ function updateSubcategoryDropdown() {
     }
 
     console.log(`✅ Subcategory dropdown updated: ${subcategorySelect.options.length} options`);
+}
+
+// Populate dedicated classical area dropdown (new mode)
+function populateClassicalAreaDropdown() {
+    const areaSelect = document.getElementById('classicalAreaSelect');
+    if (!areaSelect) return;
+
+    const classicalOrder = ['Baroque', 'Classical', 'Romantic', 'Modern', 'Komponist', 'Oper', 'Operette', 'Symphonie', 'Kammermusik', 'Kirchenmusik'];
+    const availableKeys = Object.keys(genresData.classical || {});
+    const orderedKeys = classicalOrder.filter(key => availableKeys.includes(key)).concat(availableKeys.filter(key => !classicalOrder.includes(key)));
+
+    areaSelect.innerHTML = '<option value="">Select a sub area...</option>';
+    orderedKeys.forEach(key => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = key;
+        areaSelect.appendChild(option);
+    });
+}
+
+// React to classical area changes (show/hide work selector)
+function handleClassicalAreaChange() {
+    const areaSelect = document.getElementById('classicalAreaSelect');
+    const workGroup = document.getElementById('classicalWorkGroup');
+    const workSelect = document.getElementById('classicalWorkSelect');
+    const area = areaSelect ? areaSelect.value : '';
+
+    if (!workGroup) return;
+
+    const areaData = classicalWorks[area] || {};
+    const worksForArea = areaData.works || areaData || [];
+    const hasWorks = worksForArea && worksForArea.length > 0;
+
+    if (hasWorks || area === 'Oper' || area === 'Operette') {
+        populateClassicalWorkDropdown(area);
+    } else {
+        workGroup.style.display = 'none';
+        if (workSelect) {
+            workSelect.innerHTML = '<option value="">Select a work...</option>';
+        }
+    }
+}
+
+// Populate opera/operetta dropdowns using mapping data
+async function populateClassicalWorkDropdown(area) {
+    const workGroup = document.getElementById('classicalWorkGroup');
+    const workSelect = document.getElementById('classicalWorkSelect');
+    if (!workGroup || !workSelect) return;
+
+    workSelect.innerHTML = '<option value="">Select a work...</option>';
+
+    const areaData = classicalWorks[area] || {};
+    const worksForArea = areaData.works || areaData || [];
+
+    // Use curated works list from JSON for every sub area
+    if (worksForArea && worksForArea.length > 0) {
+        worksForArea.forEach(item => {
+            const option = document.createElement('option');
+            // Handle both old format (string) and new format (object with title/composer)
+            const title = typeof item === 'string' ? item : (item.title || '');
+            option.value = title;
+            option.textContent = title;
+            option.dataset.composer = typeof item === 'string' ? '' : (item.composer || '');
+            workSelect.appendChild(option);
+        });
+        workGroup.style.display = 'block';
+        return;
+    }
+
+    // Fallback for Opera using mappings with previews
+    try {
+        if (area === 'Oper' && !mappingOperas) {
+            await loadClassicalMappings();
+        }
+    } catch (err) {
+        console.warn('Could not load classical mappings for dropdown:', err.message);
+    }
+
+    const mapping = mappingOperas;
+    if (!mapping) {
+        workGroup.style.display = 'none';
+        return;
+    }
+
+    const workNames = Object.keys(mapping)
+        .filter(name => {
+            const recs = mapping[name] || [];
+            return recs.some(rec => rec && rec.previewUrl);
+        })
+        .sort((a, b) => a.localeCompare(b));
+
+    workNames.forEach(name => {
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        workSelect.appendChild(option);
+    });
+
+    workGroup.style.display = workNames.length ? 'block' : 'none';
 }
 
 // Load Billboard years for genre category
@@ -848,6 +972,7 @@ function selectGameMode(mode) {
     
     const genreSelection = document.getElementById('genreSelection');
     const searchSelection = document.getElementById('searchSelection');
+    const classicalSelection = document.getElementById('classicalSelection');
     const subtitle = document.getElementById('gameSubtitle');
     const searchInput = document.getElementById('searchQuery');
     const checkArtistBtn = document.getElementById('checkArtistBtn');
@@ -856,44 +981,41 @@ function selectGameMode(mode) {
     if (mode === 'genre') {
         genreSelection.style.display = 'flex';
         searchSelection.style.display = 'none';
+        if (classicalSelection) classicalSelection.style.display = 'none';
         stopArtistBubbles();
         if (checkArtistBtn) checkArtistBtn.style.display = 'none';
         if (bubbleCategoryBtn) bubbleCategoryBtn.style.display = 'none';
         // Setze Subtitle zurück
         setSubtitle(t('setupSubtitle'));
+    } else if (mode === 'classical') {
+        genreSelection.style.display = 'none';
+        searchSelection.style.display = 'none';
+        if (classicalSelection) classicalSelection.style.display = 'flex';
+        stopArtistBubbles();
+        currentSearchType = 'track';
+        selectedArtistForAlbums = null;
+        selectedAlbumName = null;
+        mappingActive = false;
+        if (checkArtistBtn) checkArtistBtn.style.display = 'none';
+        if (bubbleCategoryBtn) bubbleCategoryBtn.style.display = 'none';
+        handleClassicalAreaChange();
+        setSubtitle('Select a classical sub area');
     } else {
         genreSelection.style.display = 'none';
         searchSelection.style.display = 'flex';
-        
-        // Setze currentSearchType basierend auf Modus
-        if (mode === 'album') {
-            currentSearchType = 'album';
-            selectedArtistForAlbums = null; // Reset artist selection
-            selectedAlbumName = null; // Reset album selection
-            startArtistBubbles(); // Show artist bubbles in album mode too
-            if (searchInput) {
-                searchInput.placeholder = "Enter artist name (e.g. 'The Beatles')";
-                searchInput.disabled = false;
-                // Preserve existing text if present, only clear if empty
-                if (!searchInput.value || searchInput.value.trim() === '') {
-                    searchInput.value = '';
-                }
-            }
-            if (checkArtistBtn) checkArtistBtn.style.display = 'block';
-            if (bubbleCategoryBtn) bubbleCategoryBtn.style.display = 'block';
-        } else {
-            currentSearchType = 'track';
-            selectedArtistForAlbums = null; // Reset
-            selectedAlbumName = null; // Reset
-            startArtistBubbles(); // Show bubbles for artist/track mode
-            if (searchInput) {
-                searchInput.placeholder = "e.g. 'Taylor Swift' or 'Bohemian Rhapsody'";
-                searchInput.disabled = false;
-                // Preserve existing text if present
-            }
-            if (checkArtistBtn) checkArtistBtn.style.display = 'block'; // Show button in Free Choice mode too
-            if (bubbleCategoryBtn) bubbleCategoryBtn.style.display = 'block';
+        if (classicalSelection) classicalSelection.style.display = 'none';
+
+        currentSearchType = 'track';
+        selectedArtistForAlbums = null; // Reset
+        selectedAlbumName = null; // Reset
+        startArtistBubbles(); // Show bubbles for artist/track mode
+        if (searchInput) {
+            searchInput.placeholder = "e.g. 'Taylor Swift' or 'Bohemian Rhapsody'";
+            searchInput.disabled = false;
+            // Preserve existing text if present
         }
+        if (checkArtistBtn) checkArtistBtn.style.display = 'block'; // Show button in Free Choice mode too
+        if (bubbleCategoryBtn) bubbleCategoryBtn.style.display = 'block';
         // Setze Subtitle zurück
         setSubtitle(t('setupSubtitle'));
     }
@@ -1434,6 +1556,53 @@ async function startGame() {
                 setSubtitle(subtitleText);
                 gameState.currentGameMode = subtitleText;
             }
+        } else if (gameMode === 'classical') {
+            const areaSelect = document.getElementById('classicalAreaSelect');
+            const workSelect = document.getElementById('classicalWorkSelect');
+            const selectedArea = areaSelect ? areaSelect.value : '';
+
+            if (!selectedArea) {
+                showError('Please choose a classical sub area');
+                document.getElementById('setupScreen').style.display = 'block';
+                document.getElementById('quizScreen').style.display = 'none';
+                hideLoadingState();
+                return;
+            }
+
+            const areaData = classicalWorks[selectedArea] || {};
+            const worksForArea = areaData.works || areaData || [];
+
+            if (selectedArea === 'Oper' || selectedArea === 'Operette' || worksForArea.length > 0) {
+                const selectedWork = workSelect ? workSelect.value : '';
+                if (!selectedWork) {
+                    showError('Please choose a work');
+                    document.getElementById('setupScreen').style.display = 'block';
+                    document.getElementById('quizScreen').style.display = 'none';
+                    hideLoadingState();
+                    return;
+                }
+
+                try {
+                    const workTypeLabel = (selectedArea || '').toLowerCase();
+                    gameState.songs = await loadSongsForWork(selectedWork, workTypeLabel, songCount, selectedArea, worksForArea);
+                } catch (err) {
+                    showError(err.message || 'No recordings found for this selection');
+                    document.getElementById('setupScreen').style.display = 'block';
+                    document.getElementById('quizScreen').style.display = 'none';
+                    hideLoadingState();
+                    return;
+                }
+
+                const subtitleText = `${selectedArea}: ${selectedWork}`;
+                setSubtitle(`🎼 ${subtitleText}`);
+                gameState.currentGameMode = subtitleText;
+            } else {
+                await loadSongsFromGenre(`Classical:${selectedArea}`, songCount);
+                // Update Subtitle
+                const subtitleText = `Classical: ${selectedArea}`;
+                setSubtitle(subtitleText);
+                gameState.currentGameMode = subtitleText;
+            }
         } else {
             // iTunes Suchmodus
             // In album mode, use selectedAlbumName; otherwise use searchQuery
@@ -1495,6 +1664,156 @@ async function startGame() {
         document.getElementById('quizScreen').style.display = 'none';
         hideLoadingState();
     }
+}
+
+// Load songs for opera/operetta by searching iTunes for the work name
+// If loading from a category with multiple works (Operette, Oper, etc), mix songs from 2-3 related works for variety
+async function loadSongsForWork(workName, workType, limit, area = '', allWorksInArea = []) {
+    // Try to get composer hint from selected dropdown if available
+    let composer = '';
+    const workSelect = document.getElementById('classicalWorkSelect');
+    if (workSelect && workSelect.selectedOptions.length > 0) {
+        const selectedOption = workSelect.selectedOptions[0];
+        composer = selectedOption.dataset.composer || '';
+    }
+
+    // Determine which works to load from - mix multiple for variety
+    let worksToLoad = [workName];
+    
+    // If we have a list of available works in this area, pick 1-2 related ones for variety
+    if (allWorksInArea && allWorksInArea.length > 3) {
+        // Get all work titles
+        const workTitles = allWorksInArea.map(w => typeof w === 'string' ? w : w.title);
+        const currentIndex = workTitles.indexOf(workName);
+        
+        if (currentIndex !== -1) {
+            // Add 1-2 related works (adjacent or random from category)
+            const relatedWorks = [];
+            
+            // Try to get adjacent works for thematic similarity
+            if (currentIndex > 0) {
+                relatedWorks.push(workTitles[currentIndex - 1]);
+            }
+            if (currentIndex < workTitles.length - 1 && relatedWorks.length < 2) {
+                relatedWorks.push(workTitles[currentIndex + 1]);
+            }
+            
+            // If not enough adjacent, add random works from category
+            while (relatedWorks.length < 2 && relatedWorks.length < workTitles.length - 1) {
+                const randomIdx = Math.floor(Math.random() * workTitles.length);
+                const randomWork = workTitles[randomIdx];
+                if (!relatedWorks.includes(randomWork) && randomWork !== workName) {
+                    relatedWorks.push(randomWork);
+                }
+            }
+            
+            worksToLoad = [workName, ...relatedWorks];
+            console.log(`🎭 Multi-work mode: mixing "${workName}" with ${relatedWorks.join('", "')}`);
+        }
+    }
+
+    // Determine target songs per work (distribute limit evenly)
+    const songsPerWork = Math.ceil(limit / worksToLoad.length);
+    const remainderSongs = limit % worksToLoad.length;
+    
+    const seen = new Set();
+    const collected = [];
+
+    // Load songs from each selected work
+    for (let workIdx = 0; workIdx < worksToLoad.length; workIdx++) {
+        const currentWork = worksToLoad[workIdx];
+        const targetForThisWork = songsPerWork + (workIdx === 0 ? remainderSongs : 0);
+        
+        // Get composer hint for this work if available
+        let currentComposer = composer;
+        if (!currentComposer && allWorksInArea && allWorksInArea.length > 0) {
+            const workObj = allWorksInArea.find(w => (typeof w === 'string' ? w : w.title) === currentWork);
+            if (workObj && typeof workObj === 'object') {
+                currentComposer = workObj.composer || '';
+            }
+        }
+
+        // Build query variants with composer information
+        const queries = [];
+        if (currentComposer && currentComposer.trim()) {
+            queries.push(`${currentComposer} ${currentWork}`.trim());
+            queries.push(`${currentWork} ${currentComposer}`.trim());
+        }
+        queries.push(`${currentWork} ${workType || ''}`.trim());
+        queries.push(currentWork);
+        if (!currentComposer) {
+            queries.push(`${currentWork} classical`.trim());
+        }
+
+        // Remove duplicates
+        const uniqueQueries = [...new Set(queries)];
+        
+        console.log(`🎼 Loading from work ${workIdx + 1}/${worksToLoad.length}: "${currentWork}" (target: ${targetForThisWork} songs)`);
+
+        for (const query of uniqueQueries) {
+            console.log(`  🔍 Query: "${query}"`);
+            try {
+                const { results } = await fetchItunesWithFallback(query, ['DE', 'US', 'GB', 'AT', 'FR'], 40);
+                console.log(`    📦 Got ${results.length} total results`);
+                
+                const filtered = (results || [])
+                    .filter(r => r && r.previewUrl && r.trackName && r.artistName)
+                    .filter(r => {
+                        const genre = (r.primaryGenreName || '').toLowerCase();
+                        // Strict classical/opera/ballet genres only
+                        const match = genre.includes('classical') || genre.includes('klassik') || // German for classical
+                                     genre.includes('orchestral') || genre.includes('symphony') ||
+                                     genre.includes('opera') || genre.includes('operette') || 
+                                     genre.includes('ballet') || genre.includes('stage') ||
+                                     genre.includes('vocal');  // Vocal for opera singers
+                        return match;
+                    })
+                    .map((song, index) => {
+                        const originalCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60 || '';
+                        const highResCover = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : '';
+                        const idVal = song.trackId ? String(song.trackId) : `${currentWork}-${index}`;
+                        return {
+                            id: idVal,
+                            track: song.trackName,
+                            artist: song.artistName,
+                            album: song.collectionName || 'Unknown',
+                            previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
+                            image: highResCover,
+                            genre: `Classical:${workType}`,
+                            workSource: currentWork  // Track which work this came from
+                        };
+                    })
+                    .filter(item => {
+                        const key = `${item.artist}-${item.track}-${item.previewUrl}`;
+                        if (seen.has(key)) {
+                            return false;
+                        }
+                        seen.add(key);
+                        return true;
+                    });
+
+                console.log(`    ✅ Added ${filtered.length} songs from "${query}"`);
+                collected.push(...filtered);
+                
+                // Stop if we have enough for this work
+                if (collected.length >= targetForThisWork) {
+                    break;
+                }
+            } catch (err) {
+                console.warn(`    ⚠️  Query failed:`, err.message);
+            }
+        }
+    }
+
+    const shuffled = shuffleArray(collected);
+    const trimmed = shuffled.slice(0, Math.min(limit, shuffled.length));
+
+    console.log(`🎵 loadSongsForWork final: ${trimmed.length} songs from ${worksToLoad.length} work(s) (limit: ${limit})`);
+    if (!trimmed.length) {
+        throw new Error('No recordings found for this work');
+    }
+
+    return trimmed;
 }
 
 // Lade Songs aus songs.json basierend auf Genre

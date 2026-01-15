@@ -1784,7 +1784,7 @@
                 <div class="game-mode-buttons">
                     <button type="button" class="mode-btn" data-mode="genre" onclick="selectGameMode('genre')">🎸 Select Genre</button>
                     <button type="button" class="mode-btn active" data-mode="search" onclick="selectGameMode('search')">🎤 Free Choice</button>
-                    <button type="button" class="mode-btn" data-mode="album" onclick="selectGameMode('album')">💿 Choose Album from Artist</button>
+                    <button type="button" class="mode-btn" data-mode="classical" onclick="selectGameMode('classical')">🎼 Classical</button>
                 </div>
             </div>
 
@@ -1796,7 +1796,6 @@
                     <option value="genres">Genres</option>
                     <option value="billboard">Billboard Charts</option>
                     <option value="countries">Countries</option>
-                    <option value="classical">Classical</option>
                 </select>
                 <label for="yearSelect" style="margin-top: 10px; display: none;" id="yearSelectLabel">📅 Choose Year:</label>
                 <select id="yearSelect" style="display: none; margin-top: 10px;">
@@ -1807,6 +1806,19 @@
                     <option value="Alle">All Genres</option>
                     <!-- Subgenres werden dynamisch geladen -->
                 </select>
+            </div>
+
+            <div class="input-group" id="classicalSelection" style="display: none;">
+                <label for="classicalAreaSelect">🎼 Classical sub area:</label>
+                <select id="classicalAreaSelect" onchange="handleClassicalAreaChange()">
+                    <option value="">Select a sub area...</option>
+                </select>
+                <div id="classicalWorkGroup" style="display: none; margin-top: 10px; width: 100%;">
+                    <label for="classicalWorkSelect">🎭 Choose work:</label>
+                    <select id="classicalWorkSelect">
+                        <option value="">Select an opera/operetta...</option>
+                    </select>
+                </div>
             </div>
 
 

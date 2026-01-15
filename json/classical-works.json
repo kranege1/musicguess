@@ -1,0 +1,120 @@
+{
+  "Baroque": {
+    "works": [
+      { "title": "Brandenburg Concerto No. 3", "composer": "Bach" },
+      { "title": "Water Music Suite", "composer": "Handel" },
+      { "title": "Canon in D", "composer": "Pachelbel" },
+      { "title": "The Four Seasons", "composer": "Vivaldi" },
+      { "title": "Music for the Royal Fireworks", "composer": "Handel" },
+      { "title": "St. Matthew Passion", "composer": "Bach" }
+    ]
+  },
+  "Classical": {
+    "works": [
+      { "title": "Symphony No. 40 (Mozart)", "composer": "Mozart" },
+      { "title": "Symphony No. 5 (Beethoven)", "composer": "Beethoven" },
+      { "title": "Piano Concerto No. 21 (Mozart)", "composer": "Mozart" },
+      { "title": "Eine kleine Nachtmusik", "composer": "Mozart" },
+      { "title": "The Creation (Haydn)", "composer": "Haydn" }
+    ]
+  },
+  "Romantic": {
+    "works": [
+      { "title": "Symphony No. 9 (Dvorak)", "composer": "Dvorak" },
+      { "title": "Symphony No. 5 (Tchaikovsky)", "composer": "Tchaikovsky" },
+      { "title": "Hungarian Rhapsody No. 2", "composer": "Liszt" },
+      { "title": "Ride of the Valkyries", "composer": "Wagner" },
+      { "title": "Swan Lake Suite", "composer": "Tchaikovsky" },
+      { "title": "Carmen Suite", "composer": "Bizet" }
+    ]
+  },
+  "Modern": {
+    "works": [
+      { "title": "The Rite of Spring", "composer": "Stravinsky" },
+      { "title": "Bolero", "composer": "Ravel" },
+      { "title": "Adagio for Strings", "composer": "Barber" },
+      { "title": "Appalachian Spring", "composer": "Copland" },
+      { "title": "Peter and the Wolf", "composer": "Prokofiev" }
+    ]
+  },
+  "Oper": {
+    "works": [
+      { "title": "La Traviata", "composer": "Verdi" },
+      { "title": "Carmen", "composer": "Bizet" },
+      { "title": "Turandot", "composer": "Puccini" },
+      { "title": "Madama Butterfly", "composer": "Puccini" },
+      { "title": "Il barbiere di Siviglia", "composer": "Rossini" },
+      { "title": "Die Zauberflote", "composer": "Mozart" },
+      { "title": "Don Giovanni", "composer": "Mozart" },
+      { "title": "Rigoletto", "composer": "Verdi" },
+      { "title": "Aida", "composer": "Verdi" },
+      { "title": "Tosca", "composer": "Puccini" },
+      { "title": "Pagliacci", "composer": "Leoncavallo" },
+      { "title": "Lohengrin", "composer": "Wagner" },
+      { "title": "Der Freischutz", "composer": "Weber" },
+      { "title": "Parsifal", "composer": "Wagner" },
+      { "title": "Tristan und Isolde", "composer": "Wagner" },
+      { "title": "Der fliegende Hollander", "composer": "Wagner" }
+    ]
+  },
+  "Operette": {
+    "works": [
+      { "title": "Die Fledermaus", "composer": "Strauss" },
+      { "title": "Der Zigeunerbaron", "composer": "Strauss" },
+      { "title": "Die lustige Witwe", "composer": "Lehar" },
+      { "title": "Das Land des Lachelns", "composer": "Lehar" },
+      { "title": "Grafin Mariza", "composer": "Kalman" },
+      { "title": "Die Csardasfurstin", "composer": "Kalman" },
+      { "title": "Der Vogelhandler", "composer": "Zeller" },
+      { "title": "Im weissen Rossl", "composer": "Benatzky" },
+      { "title": "Der Bettelstudent", "composer": "Millecker" },
+      { "title": "Wiener Blut", "composer": "Lehar" },
+      { "title": "Eine Nacht in Venedig", "composer": "Offenbach" },
+      { "title": "Orphee aux enfers", "composer": "Offenbach" },
+      { "title": "La belle Helene", "composer": "Offenbach" },
+      { "title": "H.M.S. Pinafore", "composer": "Gilbert Sullivan" },
+      { "title": "The Pirates of Penzance", "composer": "Gilbert Sullivan" },
+      { "title": "The Mikado", "composer": "Gilbert Sullivan" },
+      { "title": "Iolanthe", "composer": "Gilbert Sullivan" },
+      { "title": "Patience", "composer": "Gilbert Sullivan" },
+      { "title": "Yeomen of the Guard", "composer": "Gilbert Sullivan" },
+      { "title": "Princess Ida", "composer": "Gilbert Sullivan" },
+      { "title": "Der Opernball", "composer": "Heuberger" },
+      { "title": "Boccaccio", "composer": "Suppé" },
+      { "title": "Poet and Peasant", "composer": "Suppé" },
+      { "title": "Light Cavalry", "composer": "Suppé" },
+      { "title": "Die Bajadere", "composer": "Suppé" }
+    ]
+  },
+  "Symphonie": {
+    "works": [
+      { "title": "Symphony No. 9 (Beethoven)", "composer": "Beethoven" },
+      { "title": "Symphony No. 5 (Mahler)", "composer": "Mahler" },
+      { "title": "Symphony No. 7 (Bruckner)", "composer": "Bruckner" },
+      { "title": "Symphony No. 2 (Rachmaninoff)", "composer": "Rachmaninoff" },
+      { "title": "Symphony No. 2 (Sibelius)", "composer": "Sibelius" },
+      { "title": "Symphony No. 5 (Shostakovich)", "composer": "Shostakovich" }
+    ]
+  },
+  "Kammermusik": {
+    "works": [
+      { "title": "String Quartet No. 14 (Beethoven, Op. 131)", "composer": "Beethoven" },
+      { "title": "String Quartet in F (Ravel)", "composer": "Ravel" },
+      { "title": "String Quartet in G minor (Debussy)", "composer": "Debussy" },
+      { "title": "American Quartet (Dvorak)", "composer": "Dvorak" },
+      { "title": "Trout Quintet (Schubert)", "composer": "Schubert" }
+    ]
+  },
+  "Kirchenmusik": {
+    "works": [
+      { "title": "Mass in B minor (Bach)", "composer": "Bach" },
+      { "title": "Requiem (Mozart)", "composer": "Mozart" },
+      { "title": "Messiah (Handel)", "composer": "Handel" },
+      { "title": "Requiem (Verdi)", "composer": "Verdi" },
+      { "title": "Requiem (Faure)", "composer": "Faure" }
+    ]
+  },
+  "Komponist": {
+    "works": []
+  }
+}
