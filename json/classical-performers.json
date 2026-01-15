@@ -73,11 +73,17 @@
       "Vienna Philharmonic",
       "Herbert von Karajan",
       "Leonard Bernstein",
-      "Claudio Abbado"
+      "Claudio Abbado",
+      "Daniel Barenboim",
+      "Maurizio Pollini",
+      "Vladimir Ashkenazy",
+      "Mitsuko Uchida"
     ],
     "searchHints": [
       "Beethoven Symphony No. 5",
-      "Beethoven Piano Concerto No. 5"
+      "Beethoven Moonlight Sonata",
+      "Beethoven Piano Concerto No. 5",
+      "Beethoven Symphony No. 9"
     ]
   },
   "Franz Schubert": {
@@ -86,11 +92,14 @@
       "Dietrich Fischer-Dieskau",
       "Elisabeth Schwarzkopf",
       "Alfred Brendel",
-      "Claudio Abbado"
+      "Claudio Abbado",
+      "Derek Paravicini",
+      "András Schiff"
     ],
     "searchHints": [
       "Schubert Symphony No. 8",
-      "Schubert Winterreise"
+      "Schubert Winterreise",
+      "Schubert Ave Maria"
     ]
   },
   "Johannes Brahms": {
@@ -99,11 +108,15 @@
       "Vienna Philharmonic",
       "Leonard Bernstein",
       "Claudio Abbado",
-      "Carlos Kleiber"
+      "Carlos Kleiber",
+      "Daniel Barenboim",
+      "Mstislav Rostropovich",
+      "Fazil Say"
     ],
     "searchHints": [
       "Brahms Symphony No. 1",
-      "Brahms Piano Concerto No. 2"
+      "Brahms Piano Concerto No. 2",
+      "Brahms Hungarian Dance"
     ]
   },
   "Robert Schumann": {
@@ -112,11 +125,14 @@
       "Berlin Philharmonic",
       "Riccardo Chailly",
       "Claudio Abbado",
-      "Martha Argerich"
+      "Martha Argerich",
+      "Daniil Trifonov",
+      "Yefim Bronfman"
     ],
     "searchHints": [
       "Schumann Symphony No. 3",
-      "Schumann Piano Concerto"
+      "Schumann Piano Concerto",
+      "Schumann Dichterliebe"
     ]
   },
   "Felix Mendelssohn": {
@@ -125,11 +141,14 @@
       "Royal Concertgebouw Orchestra",
       "Riccardo Chailly",
       "Kurt Masur",
-      "Claudio Abbado"
+      "Claudio Abbado",
+      "Itzhak Perlman",
+      "Joshua Bell"
     ],
     "searchHints": [
       "Mendelssohn Violin Concerto",
-      "Mendelssohn Symphony No. 4"
+      "Mendelssohn Symphony No. 4",
+      "Mendelssohn A Midsummer Night's Dream"
     ]
   },
   "Frédéric Chopin": {
@@ -138,11 +157,14 @@
       "Krystian Zimerman",
       "Maurizio Pollini",
       "Arthur Rubinstein",
-      "Vladimir Ashkenazy"
+      "Vladimir Ashkenazy",
+      "Evgeny Kissin",
+      "Yundi Li"
     ],
     "searchHints": [
       "Chopin Nocturne",
-      "Chopin Ballade No. 1"
+      "Chopin Ballade No. 1",
+      "Chopin Etude Op.10"
     ]
   },
   "Franz Liszt": {
@@ -164,11 +186,14 @@
       "Vienna Philharmonic",
       "James Levine",
       "Daniel Barenboim",
-      "Christian Thielemann"
+      "Christian Thielemann",
+      "Georg Solti",
+      "Carlos Kleiber"
     ],
     "searchHints": [
       "Wagner Die Walküre",
-      "Wagner Tristan und Isolde"
+      "Wagner Tristan und Isolde",
+      "Wagner Ring Cycle"
     ]
   },
   "Giuseppe Verdi": {
@@ -202,10 +227,14 @@
       "Orchestre de Paris",
       "Sir Thomas Beecham",
       "Placido Domingo",
-      "Maria Callas"
+      "Maria Callas",
+      "Jonas Kaufmann",
+      "Carmen Ma"
     ],
     "searchHints": [
-      "Bizet Carmen"
+      "Bizet Carmen",
+      "Carmen Habanera",
+      "Carmen Toreador"
     ]
   },
   "Gioachino Rossini": {
@@ -213,11 +242,14 @@
       "Orchestra Sinfonica di Milano",
       "Riccardo Chailly",
       "Teatro alla Scala Orchestra",
-      "Juan Diego Flórez"
+      "Juan Diego Flórez",
+      "Domenico Scarlatti",
+      "Renata Scotto"
     ],
     "searchHints": [
       "Rossini Il Barbiere di Siviglia",
-      "Rossini La Cenerentola"
+      "Rossini La Cenerentola",
+      "Rossini Overture"
     ]
   },
   "Gaetano Donizetti": {
@@ -249,11 +281,14 @@
       "Orchestre National de France",
       "Marc Minkowski",
       "Les Musiciens du Louvre",
-      "Michel Plasson"
+      "Michel Plasson",
+      "Jean-Christophe Spinosi",
+      "Patrizia Ciofi"
     ],
     "searchHints": [
       "Offenbach Orphée aux enfers",
-      "Offenbach Les Contes d'Hoffmann"
+      "Offenbach Les Contes d'Hoffmann",
+      "Orpheus in the Underworld"
     ]
   },
   "Johann Strauss II": {
@@ -265,7 +300,9 @@
     ],
     "searchHints": [
       "Strauss An der schönen blauen Donau",
-      "Strauss Kaiserwalzer"
+      "Strauss Kaiserwalzer",
+      "Strauss Die Fledermaus",
+      "Die Fledermaus Overture"
     ]
   },
   "Antonín Dvořák": {
@@ -273,11 +310,14 @@
       "Czech Philharmonic",
       "Berliner Philharmoniker",
       "Rafael Kubelik",
-      "Václav Neumann"
+      "Václav Neumann",
+      "Yo-Yo Ma",
+      "Itzhak Perlman"
     ],
     "searchHints": [
       "Dvořák Symphony No. 9",
-      "Dvořák Cello Concerto"
+      "Dvořák Cello Concerto",
+      "Dvořák Slavonic Dances"
     ]
   },
   "Pyotr Ilyich Tchaikovsky": {
@@ -285,11 +325,14 @@
       "Berlin Philharmonic",
       "Valery Gergiev",
       "Mariinsky Theatre Orchestra",
-      "Yuri Temirkanov"
+      "Yuri Temirkanov",
+      "Andre Previn",
+      "Evgeny Kissin"
     ],
     "searchHints": [
       "Tchaikovsky Swan Lake",
-      "Tchaikovsky Symphony No. 6"
+      "Tchaikovsky Symphony No. 6",
+      "Tchaikovsky 1812 Overture"
     ]
   },
   "Sergei Rachmaninoff": {
@@ -298,11 +341,13 @@
       "Martha Argerich",
       "Evgeny Kissin",
       "Philadelphia Orchestra",
-      "Yuja Wang"
+      "Yuja Wang",
+      "Vladimir Horowitz"
     ],
     "searchHints": [
       "Rachmaninoff Piano Concerto No. 2",
-      "Rachmaninoff Rhapsody on a Theme of Paganini"
+      "Rachmaninoff Rhapsody on a Theme of Paganini",
+      "Rachmaninoff Vocalise"
     ]
   },
   "Gustav Mahler": {
@@ -310,11 +355,14 @@
       "Bernard Haitink",
       "Gustavo Dudamel",
       "New York Philharmonic",
-      "Leonard Bernstein"
+      "Leonard Bernstein",
+      "Claudio Abbado",
+      "Simon Rattle"
     ],
     "searchHints": [
       "Mahler Symphony No. 5",
-      "Mahler Symphony No. 2"
+      "Mahler Symphony No. 2",
+      "Mahler Das Lied von der Erde"
     ]
   },
   "Anton Bruckner": {
@@ -322,11 +370,231 @@
       "Vienna Philharmonic",
       "Staatskapelle Dresden",
       "Herbert von Karajan",
-      "Eugen Jochum"
+      "Eugen Jochum",
+      "Bernard Haitink",
+      "Carlos Kleiber"
     ],
     "searchHints": [
       "Bruckner Symphony No. 7",
-      "Bruckner Symphony No. 8"
+      "Bruckner Symphony No. 8",
+      "Bruckner Te Deum"
+    ]
+  }
+  ,
+  "Franz Lehár": {
+    "preferredPerformers": [
+      "Vienna Philharmonic",
+      "Franz Lehár Ensemble",
+      "Richard Tauber",
+      "Karel Ančerl"
+    ],
+    "searchHints": [
+      "Lehár The Merry Widow",
+      "Lehár Die lustige Witwe",
+      "Merry Widow Waltz",
+      "Lehár Vilja Song"
+    ]
+  },
+  "Emmerich Kálmán": {
+    "preferredPerformers": [
+      "Budapest Philharmonic",
+      "Franz Lehár Ensemble",
+      "Géza Anda"
+    ],
+    "searchHints": [
+      "Kálmán Die Csárdásfürstin",
+      "Kalman Die Csárdásfürstin",
+      "Countess Maritza",
+      "Csárdás"
+    ]
+  },
+  "Arthur Sullivan": {
+    "preferredPerformers": [
+      "D'Oyly Carte Opera Company",
+      "London Symphony Orchestra",
+      "Gilbert and Sullivan Chorus"
+    ],
+    "searchHints": [
+      "Sullivan The Mikado",
+      "Sullivan HMS Pinafore",
+      "Sullivan Iolanthe",
+      "Gilbert and Sullivan"
+    ]
+  },
+  "Carl Zeller": {
+    "preferredPerformers": [
+      "Vienna Symphony Orchestra",
+      "Boston Pops Orchestra",
+      "Franz Lehár Ensemble"
+    ],
+    "searchHints": [
+      "Zeller Der Vogelhandler",
+      "Zeller The Bird Seller",
+      "Zeller Das Tänzchen"
+    ]
+  },
+  "Franz von Suppé": {
+    "preferredPerformers": [
+      "Vienna Philharmonic",
+      "London Philharmonic Orchestra",
+      "Boston Pops Orchestra"
+    ],
+    "searchHints": [
+      "Suppé Light Cavalry Overture",
+      "Suppé Poet and Peasant",
+      "Suppé Boccaccio"
+    ]
+  },
+  "Robert Planquette": {
+    "preferredPerformers": [
+      "Welsh National Opera",
+      "London Philharmonic Orchestra",
+      "D'Oyly Carte"
+    ],
+    "searchHints": [
+      "Planquette Les Cloches de Corneville",
+      "Planquette The Chimes of Normandy",
+      "Planquette Paul et Virginie"
+    ]
+  },
+  "Charles Lecocq": {
+    "preferredPerformers": [
+      "Opéra-Comique",
+      "London Philharmonic Orchestra",
+      "D'Oyly Carte"
+    ],
+    "searchHints": [
+      "Lecocq La fille de Madame Angot",
+      "Lecocq Giroflé-Girofla",
+      "Lecocq Le petit duc"
+    ]
+  },
+  "Ivan Caryll": {
+    "preferredPerformers": [
+      "Light Music Society",
+      "London Philharmonic Orchestra"
+    ],
+    "searchHints": [
+      "Caryll The Dollar Princess",
+      "Caryll Gipsy Love",
+      "Caryll Our Miss Gibbs"
+    ]
+  },
+  "Carl Millöcker": {
+    "preferredPerformers": [
+      "Vienna Symphony Orchestra",
+      "Franz Lehár Ensemble"
+    ],
+    "searchHints": [
+      "Millöcker Der Bettelstudent",
+      "Millöcker The Beggar Student",
+      "Millöcker Gräfin Mariza"
+    ]
+  },
+  "Edmond Audran": {
+    "preferredPerformers": [
+      "Opéra-Comique",
+      "London Philharmonic Orchestra"
+    ],
+    "searchHints": [
+      "Audran La mascotte",
+      "Audran La poupée",
+      "Audran L'Olympie"
+    ]
+  },
+  "Leo Fall": {
+    "preferredPerformers": [
+      "Vienna Symphony Orchestra",
+      "Franz Lehár Ensemble",
+      "Light Opera D'Oyly Carte"
+    ],
+    "searchHints": [
+      "Fall Der fidele Bauer",
+      "Fall The Merry Widow Waltz",
+      "Fall Die Dollarprinzessin"
+    ]
+  },
+  "Oscar Straus": {
+    "preferredPerformers": [
+      "Vienna Philharmonic",
+      "London Philharmonic Orchestra",
+      "Light Opera Company"
+    ],
+    "searchHints": [
+      "Straus Ein Walzertraum",
+      "Straus A Waltz Dream",
+      "Straus The Chocolate Soldier"
+    ]
+  },
+  "Sidney Jones": {
+    "preferredPerformers": [
+      "Light Music Society",
+      "London Philharmonic Orchestra",
+      "D'Oyly Carte"
+    ],
+    "searchHints": [
+      "Jones The Geisha",
+      "Jones A Greek Slave",
+      "Jones San Toy"
+    ]
+  },
+  "Jean Gilbert": {
+    "preferredPerformers": [
+      "Vienna Symphony Orchestra",
+      "Franz Lehár Ensemble",
+      "Light Opera Company"
+    ],
+    "searchHints": [
+      "Gilbert Die Keusche Susanne",
+      "Gilbert Katja die Tänzerin",
+      "Gilbert Polnische Hochzeit"
+    ]
+  },
+  "Paul Lincke": {
+    "preferredPerformers": [
+      "Berlin Philharmonic",
+      "Vienna Philharmonic",
+      "Light Music Society"
+    ],
+    "searchHints": [
+      "Lincke Lysistrata",
+      "Lincke Frau Luna",
+      "Lincke Das ist die Berliner Luft"
+    ]
+  },
+  "Léo Delibes": {
+    "preferredPerformers": [
+      "Paris Opera Orchestra",
+      "London Philharmonic Orchestra",
+      "Berlin Philharmonic"
+    ],
+    "searchHints": [
+      "Delibes Lakmé",
+      "Delibes Lakme Bell Song",
+      "Delibes Coppélia"
+    ]
+  },
+  "Edmund Eysler": {
+    "preferredPerformers": [
+      "Vienna Symphony Orchestra",
+      "Light Opera Company"
+    ],
+    "searchHints": [
+      "Eysler Der unsterbliche Lump",
+      "Eysler Ein Lied aus Wien",
+      "Eysler Der Walzertraum"
+    ]
+  },
+  "George Edwards": {
+    "preferredPerformers": [
+      "D'Oyly Carte Opera Company",
+      "Light Music Society",
+      "London Philharmonic Orchestra"
+    ],
+    "searchHints": [
+      "Edwards The Merry Widow Waltz",
+      "Edwards Florodora",
+      "Edwards A Runaway Girl"
     ]
   }
 }

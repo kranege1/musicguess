@@ -26,12 +26,13 @@ const worksOutput = {};
 for (const composer of Object.keys(classical)) {
   const entry = { composer, tracks: [] };
   const hints = classical[composer].searchHints || [];
+  const performers = classical[composer].preferredPerformers || [];
 
   // gather tracks where track/artist/album contains composer name or any hint
   for (const s of songs) {
     if (!s.previewUrl) continue;
     const hay = `${s.track || ''} ${s.artist || ''} ${s.album || ''}`;
-    if (hay.toLowerCase().includes(composer.toLowerCase()) || containsAny(hay, hints)) {
+    if (hay.toLowerCase().includes(composer.toLowerCase()) || containsAny(hay, hints) || containsAny(hay, performers)) {
       entry.tracks.push({ artist: s.artist, track: s.track, previewUrl: s.previewUrl, album: s.album || null });
       if (entry.tracks.length >= 20) break;
     }
@@ -55,12 +56,15 @@ for (const composer of Object.keys(classical)) {
     }
 
     const key = work || h;
-    if (!worksOutput[key]) worksOutput[key] = { works: key, tracks: [] };
+    if (!worksOutput[key]) worksOutput[key] = { works: key, tracks: [], composer };
 
+    // Broaden matching: consider full hint, parts of the hint, and preferred performers
+    const hintParts = key.split(/\W+/).filter(p => p.length > 3);
     for (const s of songs) {
       if (!s.previewUrl) continue;
-      const hay = `${s.track || ''} ${s.artist || ''} ${s.album || ''}`.toLowerCase();
-      if (hay.includes(key.toLowerCase()) || containsAny(hay, [key])) {
+      const hay = `${s.track || ''} ${s.artist || ''} ${s.album || ''}`;
+      // match full key, any hint part, or preferred performers
+      if (hay.toLowerCase().includes(key.toLowerCase()) || containsAny(hay, hintParts) || containsAny(hay, performers)) {
         worksOutput[key].tracks.push({ artist: s.artist, track: s.track, previewUrl: s.previewUrl, album: s.album || null });
         if (worksOutput[key].tracks.length >= 20) break;
       }
@@ -69,8 +73,11 @@ for (const composer of Object.keys(classical)) {
 }
 
 // Heuristic classify works into operas vs operettas using keyword lists
-const operaKeywords = ['opera', 'la', 'il', 'le', 'die', 'das', 'the', 'traviata', 'turb', 'tosca', 'carmen', 'barbiere', 'magic flute', 'figaro', 'donizetti', 'verdi', 'puccini', 'rossini'];
-const operettaKeywords = ['operetta', 'fledermaus', 'offenbach', 'orph','hofmann','die lustige','giuditta'];
+const operaKeywords = ['opera', 'traviata', 'tosca', 'carmen', 'barbiere', 'magic flute', 'figaro', 'donizetti', 'verdi', 'puccini', 'rossini', 'wald','walkure','walküre','il','la','le','die','das','the'];
+const operettaKeywords = ['operetta', 'fledermaus', 'the merry widow', 'merry widow', 'offenbach', 'orph','hofmann','die lustige','giuditta','lehár','lehar','kalman','kálmán','zarzuela','vogelhandler','bird seller','poet and peasant','light cavalry','cloches','corneville','fille de madame','giroflé','dollar princess','gipsy love','bettelstudent','beggar student','mascotte','poupée','walzertraum','chocolate soldier','geisha','san toy','keusche susanne','frau luna','lysistrata','zeller','suppé','planquette','lecocq','caryll','millöcker','audran','fall','straus','jones','gilbert','lincke','sullivan','mikado','pinafore','iolanthe','delibes','lakme','coppelia','eysler','edwards','florodora','runaway girl'];
+
+// Known operetta composers — if a work is associated with these composers, prefer operetta classification
+const operettaComposers = new Set(['Johann Strauss II','Jacques Offenbach','Franz Lehár','Emmerich Kálmán','Arthur Sullivan','Carl Zeller','Franz von Suppé','Robert Planquette','Charles Lecocq','Ivan Caryll','Carl Millöcker','Edmond Audran','Leo Fall','Oscar Straus','Sidney Jones','Jean Gilbert','Paul Lincke','Léo Delibes','Edmund Eysler','George Edwards']);
 
 const operas = {};
 const operettas = {};
@@ -88,6 +95,15 @@ for (const k of Object.keys(worksOutput)) {
     if (matches.some(t => containsAny(`${t.artist} ${t.track} ${t.album}`, performers))) {
       operas[k] = worksOutput[k].tracks;
     }
+  }
+}
+
+// Secondary pass: classify works tied to known operetta composers as operettas when not already classified
+for (const k of Object.keys(worksOutput)) {
+  if (operas[k] || operettas[k]) continue;
+  const meta = worksOutput[k];
+  if (meta && meta.composer && operettaComposers.has(meta.composer)) {
+    operettas[k] = meta.tracks;
   }
 }
 
