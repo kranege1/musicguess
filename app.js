@@ -1,4 +1,4 @@
-const APP_VERSION = '15.01.2026 18:15';
+const APP_VERSION = '15.01.2026 18:30';
 window.APP_VERSION = APP_VERSION;
 
 // English strings (no more translation system)
@@ -4502,7 +4502,8 @@ async function openLeaderboardModal(gameMode) {
     const scores = await loadLeaderboard(gameMode);
     if (titleEl) {
         const scoreCount = scores ? scores.length : 0;
-        titleEl.innerHTML = `Highscores – ${gameMode}<br><small style="font-size: 0.65em; font-weight: 400; color: #888;">${scoreCount} registered score${scoreCount !== 1 ? 's' : ''}</small>`;
+        const backBtn = gameMode !== 'Global' ? `<button onclick="openLeaderboardModal('Global')" style="margin-left: 10px; padding: 4px 10px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.7em;">← Show All</button>` : '';
+        titleEl.innerHTML = `Highscores – ${gameMode}${backBtn}<br><small style="font-size: 0.65em; font-weight: 400; color: #888;">${scoreCount} registered score${scoreCount !== 1 ? 's' : ''}</small>`;
     }
 
     if (!scores || scores.length === 0) {
@@ -4516,8 +4517,10 @@ async function openLeaderboardModal(gameMode) {
                 const country = score.country || '🌍';
                 const shortId = (score.userId || score.playerId || '').substring(0, 4).toUpperCase();
                 const playerDisplay = shortId ? `${score.username} ${country} #${shortId}` : score.username;
+                // Make item clickable to filter by game mode
+                const clickHandler = gameMode === 'Global' && score.gameMode ? `onclick="openLeaderboardModal('${score.gameMode.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click to filter by: ${score.gameMode}"` : '';
                 return `
-                    <li class="leaderboard-modal-item">
+                    <li class="leaderboard-modal-item" ${clickHandler}>
                         <span class="leaderboard-modal-rank">#${idx + 1}</span>
                         <div>
                             <div class="leaderboard-modal-name">${playerDisplay}</div>
