@@ -1980,29 +1980,42 @@ async function loadSongsFromItunes(searchQuery, limit) {
             // This prevents songs that just have the artist name in the title from appearing
             if (results.length > 0) {
                 const normalizedSearchQuery = searchQuery.toLowerCase().trim();
-                
+
                 // Check if this might be a classical composer search
                 // Classical composers often appear in track names but not as artistName
-                const hasClassicalResults = results.some(song => 
+                const hasClassicalResults = results.some(song =>
                     song.trackName && song.trackName.toLowerCase().includes(normalizedSearchQuery)
                 );
-                
+
+                // Check if results look like classical music (orchestras, conductors, etc.)
+                const looksLikeClassical = results.some(song => {
+                    const artist = (song.artistName || '').toLowerCase();
+                    const genre = (song.primaryGenreName || '').toLowerCase();
+                    return genre.includes('classical') ||
+                           artist.includes('philharmon') ||
+                           artist.includes('orchestra') ||
+                           artist.includes('symphony') ||
+                           artist.includes('chamber') ||
+                           artist.includes('quartet') ||
+                           artist.includes('piano') && artist.includes('solo');
+                });
+
                 // Filter to only keep songs by the same artist (more lenient approach)
                 results = results.filter(song => {
                     if (!song.artistName) return false;
                     const artistLower = song.artistName.toLowerCase();
                     const trackLower = (song.trackName || '').toLowerCase();
-                    
+
                     // Accept songs if the search query matches the artist name (in either direction)
                     const artistMatch = artistLower.includes(normalizedSearchQuery) || normalizedSearchQuery.includes(artistLower);
-                    
-                    // For classical music: also accept if composer name appears in track name
-                    const classicalMatch = hasClassicalResults && trackLower.includes(normalizedSearchQuery);
-                    
+
+                    // For classical music: accept all results if they look classical
+                    const classicalMatch = looksLikeClassical || (hasClassicalResults && trackLower.includes(normalizedSearchQuery));
+
                     return artistMatch || classicalMatch;
                 });
-                
-                console.log(`Filtered to ${results.length} songs by matching artist from ${normalizedSearchQuery}`);
+
+                console.log(`Filtered to ${results.length} songs by matching artist from ${normalizedSearchQuery} (classical: ${looksLikeClassical})`);
             }
         }
 
