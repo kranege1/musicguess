@@ -4006,21 +4006,29 @@ async function selectBubbleCategory(category) {
             const lower = (category.name || '').toLowerCase();
             const key = (category.key || category.name || '').toLowerCase();
             if ((lower.includes('operett') || lower.includes('operetta') || key === 'operette') && mappingOperettas) {
-                // Use operettas mapping keys as bubbles
-                artists = Object.keys(mappingOperettas || {});
+                // Use operettas mapping keys as bubbles — filter only those with recordings
+                artists = Object.keys(mappingOperettas || {}).filter(k => 
+                    Array.isArray(mappingOperettas[k]) && mappingOperettas[k].length > 0
+                );
                 mappingActive = true;
                 mappingType = 'operetta';
-                console.log(`🎼 Loaded ${artists.length} Operetta mappings`);
+                console.log(`🎼 Loaded ${artists.length} Operetta mappings (with recordings)`);
             } else if ((lower.includes('opera') || key === 'oper') && mappingOperas) {
-                artists = Object.keys(mappingOperas || {});
+                // Use operas mapping keys as bubbles — filter only those with recordings
+                artists = Object.keys(mappingOperas || {}).filter(k => 
+                    Array.isArray(mappingOperas[k]) && mappingOperas[k].length > 0
+                );
                 mappingActive = true;
                 mappingType = 'opera';
-                console.log(`🎼 Loaded ${artists.length} Opera mappings`);
+                console.log(`🎼 Loaded ${artists.length} Opera mappings (with recordings)`);
             } else if ((lower.includes('kompon') || lower.includes('composer') || lower.includes('componist') || key === 'komponist') && mappingComposers) {
-                artists = Object.keys(mappingComposers || {});
+                // Use composers mapping keys as bubbles — filter only those with recordings
+                artists = Object.keys(mappingComposers || {}).filter(k => 
+                    Array.isArray(mappingComposers[k]) && mappingComposers[k].length > 0
+                );
                 mappingActive = true;
                 mappingType = 'composer';
-                console.log(`🎼 Loaded ${artists.length} Composer mappings`);
+                console.log(`🎼 Loaded ${artists.length} Composer mappings (with recordings)`);
             } else {
                 // Not a mapping category
                 mappingActive = false;
