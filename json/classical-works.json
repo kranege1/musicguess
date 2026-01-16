@@ -1,117 +1,1598 @@
 {
   "Baroque": {
     "works": [
-      { "title": "Brandenburg Concerto No. 3", "composer": "Bach" },
-      { "title": "Water Music Suite", "composer": "Handel" },
-      { "title": "Canon in D", "composer": "Pachelbel" },
-      { "title": "The Four Seasons", "composer": "Vivaldi" },
-      { "title": "Music for the Royal Fireworks", "composer": "Handel" },
-      { "title": "St. Matthew Passion", "composer": "Bach" }
+      {
+        "title": "Brandenburg Concerto No. 3",
+        "composer": "Bach"
+      },
+      {
+        "title": "Water Music Suite",
+        "composer": "Handel"
+      },
+      {
+        "title": "Canon in D",
+        "composer": "Pachelbel"
+      },
+      {
+        "title": "The Four Seasons",
+        "composer": "Vivaldi"
+      },
+      {
+        "title": "Music for the Royal Fireworks",
+        "composer": "Handel"
+      },
+      {
+        "title": "St. Matthew Passion",
+        "composer": "Bach"
+      },
+      {
+        "title": "Concerto a cinque for Oboe, 2 Violins, Viola, Cello, and Continuo in D minor, op. 9, no. 2, ",
+        "composer": "Tomaso Albinoni"
+      },
+      {
+        "title": "Adagio, for violin, strings and organ in G minor, T. Mi 26 ",
+        "composer": "Tomaso Albinoni"
+      },
+      {
+        "title": "Art of the Fugue, BWV.1080",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Brandenburg Concerto no. 1 in F major, BWV.1046",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Brandenburg Concerto no. 2 in F major, BWV.1047",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Brandenburg Concerto no. 3 in G major, BWV.1048",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Brandenburg Concerto no. 4 in G major, BWV.1049",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Brandenburg Concerto no. 5 in D major, BWV.1050",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Brandenburg Concerto no. 6 in B flat major, BWV.1051",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Cantata no. 140, \"Wachet auf, ruft uns die Stimme\", BWV.140",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Cantata no. 147: Herz und Mund und Tat und Leben ",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Cello Suite no. 1 in G major, BWV.1007",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Cello Suite no. 4 in E flat major, BWV.1010",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Cello Suite no. 6 in D major, BWV.1012",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Christmas Oratorio, BWV.248",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Concerto in D minor for 3 Harpsichords, BWV.1063",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Italian Concerto, BWV.971",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Mass in B minor, BWV.232",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Orchestral Suite no. 1 in C major, BWV.1066",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Orchestral Suite no. 2 in B minor, BWV.1067",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Orchestral Suite no. 3 in D major, BWV.1068",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Partita no. 2 for Solo Violin in D minor, BWV.1004",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Passacaglia and Fugue in C minor, BWV.582",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Passion According to St. John, BWV.245",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Passion According to St. Matthew, BWV.244",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "The Musical Offering, BWV.1079",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Toccata, Adagio and Fugue in C major, BWV.564",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Toccata and fugue in D minor, BWV.565",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Violin Concerto in A minor, BWV.1041",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Violin Concerto in E major, BWV.1042",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Well-tempered Clavier, Book 1, BWV.846-869",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Well-tempered Clavier, Book 2, BWV.870-893",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Fugue in G minor, BWV.578, \"Little Fugue\"",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "16 Rosenkranz-Sonaten, C. 90-105, \"Mystery of the Rosary Sonatas\"",
+        "composer": "Heinrich Franz von Biber"
+      },
+      {
+        "title": "Battalia in D major, C.61",
+        "composer": "Heinrich Franz von Biber"
+      },
+      {
+        "title": "Fidicinium Sacro-Profanum, 12 sonatas for violin, 2 violas, and continuo, C.78-89",
+        "composer": "Heinrich Franz von Biber"
+      },
+      {
+        "title": "Sonates du Rosaire, for violin: Crucifixion",
+        "composer": "Heinrich Franz von Biber"
+      },
+      {
+        "title": "Aria: La Capricciosa, 32 variations for keyboard in G major, BuxWV250",
+        "composer": "Dietrich Buxtehude"
+      },
+      {
+        "title": "Passacaglia in D minor, BuxWV161",
+        "composer": "Dietrich Buxtehude"
+      },
+      {
+        "title": "Praeludium in C major, BuxWV137",
+        "composer": "Dietrich Buxtehude"
+      },
+      {
+        "title": "Praeludium in F major, BuxWV144",
+        "composer": "Dietrich Buxtehude"
+      },
+      {
+        "title": "Praeludium in G minor, BuxWV148",
+        "composer": "Dietrich Buxtehude"
+      },
+      {
+        "title": "Musique de théâtre pour 'Andromède', H.504",
+        "composer": "Marc-Antoine Charpentier"
+      },
+      {
+        "title": "Musique de théâtre pour 'Circé', H.496",
+        "composer": "Marc-Antoine Charpentier"
+      }
     ]
   },
   "Classical": {
     "works": [
-      { "title": "Symphony No. 40 (Mozart)", "composer": "Mozart" },
-      { "title": "Symphony No. 5 (Beethoven)", "composer": "Beethoven" },
-      { "title": "Piano Concerto No. 21 (Mozart)", "composer": "Mozart" },
-      { "title": "Eine kleine Nachtmusik", "composer": "Mozart" },
-      { "title": "The Creation (Haydn)", "composer": "Haydn" }
+      {
+        "title": "Symphony No. 40 (Mozart)",
+        "composer": "Mozart"
+      },
+      {
+        "title": "Symphony No. 5 (Beethoven)",
+        "composer": "Beethoven"
+      },
+      {
+        "title": "Piano Concerto No. 21 (Mozart)",
+        "composer": "Mozart"
+      },
+      {
+        "title": "Eine kleine Nachtmusik",
+        "composer": "Mozart"
+      },
+      {
+        "title": "The Creation (Haydn)",
+        "composer": "Haydn"
+      },
+      {
+        "title": "3 Solfeggios, Wq.117, nos. 2-4",
+        "composer": "Carl Philipp Emanuel Bach"
+      },
+      {
+        "title": "6 Concertos, Wq.43",
+        "composer": "Carl Philipp Emanuel Bach"
+      },
+      {
+        "title": "Cello Concerto in A minor, Wq.170, H.432",
+        "composer": "Carl Philipp Emanuel Bach"
+      },
+      {
+        "title": "Magnificat for 4 voices, chorus, 2 flutes, 2 oboes, 3 trumpets, 2 horns, strings and continuo in D major, H.772, Wq.215",
+        "composer": "Carl Philipp Emanuel Bach"
+      },
+      {
+        "title": "Symphony in D major, Wq.183, no. 1 ",
+        "composer": "Carl Philipp Emanuel Bach"
+      },
+      {
+        "title": "Symphony in E minor, for 2 flutes, 2 oboes, 2 horns, strings and continuo, Wq.178",
+        "composer": "Carl Philipp Emanuel Bach"
+      },
+      {
+        "title": "Symphony in F major, Wq.183, no. 3 ",
+        "composer": "Carl Philipp Emanuel Bach"
+      },
+      {
+        "title": "Harpsichord Concerto in B flat major, op. 13, no. 4, CW C65 ",
+        "composer": "Johann Christian Bach"
+      },
+      {
+        "title": "Harpsichord Concerto in C major, op. 7, no. 1, CW C55 ",
+        "composer": "Johann Christian Bach"
+      },
+      {
+        "title": "Harpsichord Concerto in D major, op. 13, no. 2, CW C63 ",
+        "composer": "Johann Christian Bach"
+      },
+      {
+        "title": "Harpsichord Concerto in G major, op. 7, no. 6",
+        "composer": "Johann Christian Bach"
+      },
+      {
+        "title": "Symphony for Double Orchestra in E major, op. 18, no. 5, CW C28 ",
+        "composer": "Johann Christian Bach"
+      },
+      {
+        "title": "Symphony in D major, op. 3, no. 1, CW C1a ",
+        "composer": "Johann Christian Bach"
+      },
+      {
+        "title": "Symphony in D major, op. 18, no. 4, CW C27 ",
+        "composer": "Johann Christian Bach"
+      },
+      {
+        "title": "Cello Concerto in B flat major, G.482",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "Cello Concerto in C major, G.481",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "Cello Concerto in D major, G.479",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "Piano Quintet in D minor, G. 416, op. 57, no. 4",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "Quintet for Guitar and Strings in C major, G.453, \"La Ritirada di Madrid\"",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "Quintet for Guitar and Strings in D major, G.448, \"Fandango\"",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "String Quintet in C major, G.324, \"La musica notturna delle strade di Madrid\"",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "String Quintet in E major, op. 11, no. 5 ",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "Symphony in A major, G. 511, op. 35, no. 3",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "Symphony in F major, G.512, op. 35, no. 4",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "Double Bass Concerto in E flat major",
+        "composer": "Karl Ditters von Dittersdorf"
+      },
+      {
+        "title": "Iphigénie en Tauride,, Wq. 46",
+        "composer": "Christoph Willibald von Gluck"
+      },
+      {
+        "title": "Orfeo ed Euridice",
+        "composer": "Christoph Willibald von Gluck"
+      },
+      {
+        "title": "Cello Concerto no. 1 in C major, Hob.VIIb:1",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Die Jahreszeiten, Hob.XXI:3, \"The Seasons\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Die Schöpfung, Hob.XXI:2, \"The Creation\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Keyboard Concerto in D major, Hob.XVIII:11",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "String Quartet in C major, Hob.III:77, op. 76, no. 3, \"Emperor\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "String Quartet in D major, Hob.III:34, op. 20, no. 4, \"The Sun\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "String Quartet in D major, Hob.III:63, op. 64, no. 5, \"Lark\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "String Quartet in D minor, Hob.III:76, op. 76, no. 2, \"Fifths\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 6 in D, Hob.I:6, \"Le Matin\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 7 in C, Hob.I:7, \"Le Midi\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 8 in G, Hob.I:8, \"Le Soir\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 45 in F sharp minor, Hob.I:45, \"Farewell\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 48 in C, Hob.I:48, \"Maria Theresia\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 49 in F minor, Hob.I:49, \"La passione\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 94 in G, Hob.I:94, \"Surprise\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 96 in D, Hob.I:96, \"Miracle\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 100 in G, Hob.I:100, \"Military\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 101 in D, Hob.I:101, \"Clock\"",
+        "composer": "Franz Joseph Haydn"
+      }
     ]
   },
   "Romantic": {
     "works": [
-      { "title": "Symphony No. 9 (Dvorak)", "composer": "Dvorak" },
-      { "title": "Symphony No. 5 (Tchaikovsky)", "composer": "Tchaikovsky" },
-      { "title": "Hungarian Rhapsody No. 2", "composer": "Liszt" },
-      { "title": "Ride of the Valkyries", "composer": "Wagner" },
-      { "title": "Swan Lake Suite", "composer": "Tchaikovsky" },
-      { "title": "Carmen Suite", "composer": "Bizet" }
+      {
+        "title": "Symphony No. 9 (Dvorak)",
+        "composer": "Dvorak"
+      },
+      {
+        "title": "Symphony No. 5 (Tchaikovsky)",
+        "composer": "Tchaikovsky"
+      },
+      {
+        "title": "Hungarian Rhapsody No. 2",
+        "composer": "Liszt"
+      },
+      {
+        "title": "Ride of the Valkyries",
+        "composer": "Wagner"
+      },
+      {
+        "title": "Swan Lake Suite",
+        "composer": "Tchaikovsky"
+      },
+      {
+        "title": "Carmen Suite",
+        "composer": "Bizet"
+      },
+      {
+        "title": "Cello Sonata no. 4 in C major, op. 102, no. 1",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Grosse Fuge, op. 133",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Leonore Overture no. 3, op. 72b",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Missa Solemnis, op. 123",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Concerto no. 3 in C minor, op. 37",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Concerto no. 4 in G major, op. 58",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Concerto no. 5 in E flat major, op. 73, \"Emperor\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Sonata no. 8 in C minor, op. 13, \"Pathétique\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Sonata no. 17 in D minor, op. 31 no. 2, \"Tempest\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Sonata no. 21 in C major, op. 53, \"Waldstein\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Sonata no. 23 in F minor, op. 57, \"Appassionata\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Sonata no. 26 in E flat major, op. 81a, \"Les Adieux\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Sonata no. 29 in B flat major, op. 106, \"Hammerklavier\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Sonata no. 32 in C minor, op. 111",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Trio no. 5 in D major, op. 70 no. 1, \"Ghost\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Trio no. 7 in B flat major, op. 97, \"Archduke\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "String Quartet no. 7 in F major, op. 59 no. 1, \"Razumovsky\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "String Quartet no. 10 in E flat major, op. 74, \"Harp\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "String Quartet no. 11 in F minor, op. 95, \"Serioso\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "String Quartet no. 14 in C sharp minor, op. 131",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "String Quartet no. 15 in A minor, op. 132",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "String Quartet no. 16 in F major, op. 135",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Symphony no. 3 in E flat major, op. 55, \"Eroica\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Symphony no. 5 in C minor, op. 67",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Symphony no. 7 in A major, op. 92",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Symphony no. 9 in D minor, op. 125, \"Choral\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Variations on a Waltz by Diabelli, op. 120",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Violin Concerto in D major, op. 61",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Violin Sonata no. 7 in C minor, op. 30 no. 2",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Violin Sonata no. 9 in A major, op. 47, \"Kreutzer\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Bagatelle in A minor, WoO 59, \"Für Elise\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Choral Fantasy in C minor, op. 80",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Sonata no. 14 in C sharp minor, op. 27 no. 2, \"Moonlight\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Symphony no. 6 in F major, op. 68, \"Pastoral\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Violin Sonata no. 5 in F major, op. 24, \"Spring\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Il Pirata",
+        "composer": "Vincenzo Bellini"
+      },
+      {
+        "title": "I Puritani",
+        "composer": "Vincenzo Bellini"
+      },
+      {
+        "title": "La sonnambula ",
+        "composer": "Vincenzo Bellini"
+      },
+      {
+        "title": "Norma",
+        "composer": "Vincenzo Bellini"
+      },
+      {
+        "title": "Konzertstück for Bassoon and Orchestra",
+        "composer": "Franz Berwald"
+      },
+      {
+        "title": "Piano Concerto in D major",
+        "composer": "Franz Berwald"
+      },
+      {
+        "title": "Piano Quintet no. 1 in C minor",
+        "composer": "Franz Berwald"
+      },
+      {
+        "title": "Symphony no. 1 in G minor, \"Sinfonie sérieuse\"",
+        "composer": "Franz Berwald"
+      },
+      {
+        "title": "Symphony no. 3 in C major, \"Sinfonie singulière\"",
+        "composer": "Franz Berwald"
+      }
     ]
   },
   "Modern": {
     "works": [
-      { "title": "The Rite of Spring", "composer": "Stravinsky" },
-      { "title": "Bolero", "composer": "Ravel" },
-      { "title": "Adagio for Strings", "composer": "Barber" },
-      { "title": "Appalachian Spring", "composer": "Copland" },
-      { "title": "Peter and the Wolf", "composer": "Prokofiev" }
+      {
+        "title": "The Rite of Spring",
+        "composer": "Stravinsky"
+      },
+      {
+        "title": "Bolero",
+        "composer": "Ravel"
+      },
+      {
+        "title": "Adagio for Strings",
+        "composer": "Barber"
+      },
+      {
+        "title": "Appalachian Spring",
+        "composer": "Copland"
+      },
+      {
+        "title": "Peter and the Wolf",
+        "composer": "Prokofiev"
+      },
+      {
+        "title": "A Jazz Symphony",
+        "composer": "George Antheil"
+      },
+      {
+        "title": "Ballet mécanique",
+        "composer": "George Antheil"
+      },
+      {
+        "title": "Cello Concerto, in A minor, op. 22",
+        "composer": "Samuel Barber"
+      },
+      {
+        "title": "Knoxville: Summer of 1915, for high voice and orchestra, op. 24",
+        "composer": "Samuel Barber"
+      },
+      {
+        "title": "Piano Concerto, op. 38",
+        "composer": "Samuel Barber"
+      },
+      {
+        "title": "Piano Sonata in E flat minor, op. 26",
+        "composer": "Samuel Barber"
+      },
+      {
+        "title": "String Quartet in B major, op. 11 ",
+        "composer": "Samuel Barber"
+      },
+      {
+        "title": "Symphony no. 1, op. 9",
+        "composer": "Samuel Barber"
+      },
+      {
+        "title": "The School for Scandal: Overture Op.5",
+        "composer": "Samuel Barber"
+      },
+      {
+        "title": "Violin Concerto, op. 14",
+        "composer": "Samuel Barber"
+      },
+      {
+        "title": "Allegro barbaro, BB63, Sz.49",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Cantata profana, BB100, Sz.94, \"The Enchanted Stags\"",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Concerto for Orchestra, BB123, Sz.116",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Dance Suite, BB86a, Sz.77",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Duke Bluebeard's Castle, op. 11, BB62",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Music for Strings, Percussion and Celesta, BB114, Sz.106",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Piano Concerto no. 1 in A major, BB91, Sz.83",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Piano Concerto no. 2 in G major, BB101, Sz.95",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Piano Concerto no. 3 in E major, BB127, Sz.119",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Piano Sonata, BB88",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Sonata for 2 Pianos and 2 Percussion, BB115, Sz.110",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Sonata for Violin Solo, BB124, Sz.117 ",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "String Quartet no. 3 in C sharp major, BB93, Sz.85",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "String Quartet no. 4 in C major, BB95",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "String Quartet no. 5 in B flat major, BB110, Sz.102",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "String Quartet no. 6 in D major, BB119, Sz.114",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "The Miraculous Mandarin, op. 19, BB82 ",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "The Wooden Prince, op. 13, BB74",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Violin Concerto no. 2 in B minor, BB117, Sz.112",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Symphony no. 3",
+        "composer": "Arnold Bax"
+      },
+      {
+        "title": "Tintagel ",
+        "composer": "Arnold Bax"
+      },
+      {
+        "title": "3 Pieces for Orchestra, op. 6",
+        "composer": "Alban Berg"
+      },
+      {
+        "title": "Lulu",
+        "composer": "Alban Berg"
+      },
+      {
+        "title": "Lyric Suite, for string quartet",
+        "composer": "Alban Berg"
+      },
+      {
+        "title": "Passacaglia",
+        "composer": "Alban Berg"
+      },
+      {
+        "title": "String Quartet, op. 3",
+        "composer": "Alban Berg"
+      },
+      {
+        "title": "Violin Concerto",
+        "composer": "Alban Berg"
+      },
+      {
+        "title": "Wozzeck, op. 7",
+        "composer": "Alban Berg"
+      },
+      {
+        "title": "Chichester Psalms",
+        "composer": "Leonard Bernstein"
+      },
+      {
+        "title": "Mass",
+        "composer": "Leonard Bernstein"
+      },
+      {
+        "title": "Meditations from \"Mass\"",
+        "composer": "Leonard Bernstein"
+      },
+      {
+        "title": "Prelude, Fugue, and Riffs",
+        "composer": "Leonard Bernstein"
+      },
+      {
+        "title": "Serenade, after Plato's \"Symposium\"",
+        "composer": "Leonard Bernstein"
+      },
+      {
+        "title": "Symphony no. 2, \"The Age of Anxiety\"",
+        "composer": "Leonard Bernstein"
+      },
+      {
+        "title": "West Side Story",
+        "composer": "Leonard Bernstein"
+      }
     ]
   },
   "Oper": {
     "works": [
-      { "title": "La Traviata", "composer": "Verdi" },
-      { "title": "Carmen", "composer": "Bizet" },
-      { "title": "Turandot", "composer": "Puccini" },
-      { "title": "Madama Butterfly", "composer": "Puccini" },
-      { "title": "Il barbiere di Siviglia", "composer": "Rossini" },
-      { "title": "Die Zauberflote", "composer": "Mozart" },
-      { "title": "Don Giovanni", "composer": "Mozart" },
-      { "title": "Rigoletto", "composer": "Verdi" },
-      { "title": "Aida", "composer": "Verdi" },
-      { "title": "Tosca", "composer": "Puccini" },
-      { "title": "Pagliacci", "composer": "Leoncavallo" },
-      { "title": "Lohengrin", "composer": "Wagner" },
-      { "title": "Der Freischutz", "composer": "Weber" },
-      { "title": "Parsifal", "composer": "Wagner" },
-      { "title": "Tristan und Isolde", "composer": "Wagner" },
-      { "title": "Der fliegende Hollander", "composer": "Wagner" }
+      {
+        "title": "La Traviata",
+        "composer": "Verdi"
+      },
+      {
+        "title": "Carmen",
+        "composer": "Bizet"
+      },
+      {
+        "title": "Turandot",
+        "composer": "Puccini"
+      },
+      {
+        "title": "Madama Butterfly",
+        "composer": "Puccini"
+      },
+      {
+        "title": "Il barbiere di Siviglia",
+        "composer": "Rossini"
+      },
+      {
+        "title": "Die Zauberflote",
+        "composer": "Mozart"
+      },
+      {
+        "title": "Don Giovanni",
+        "composer": "Mozart"
+      },
+      {
+        "title": "Rigoletto",
+        "composer": "Verdi"
+      },
+      {
+        "title": "Aida",
+        "composer": "Verdi"
+      },
+      {
+        "title": "Tosca",
+        "composer": "Puccini"
+      },
+      {
+        "title": "Pagliacci",
+        "composer": "Leoncavallo"
+      },
+      {
+        "title": "Lohengrin",
+        "composer": "Wagner"
+      },
+      {
+        "title": "Der Freischutz",
+        "composer": "Weber"
+      },
+      {
+        "title": "Parsifal",
+        "composer": "Wagner"
+      },
+      {
+        "title": "Tristan und Isolde",
+        "composer": "Wagner"
+      },
+      {
+        "title": "Der fliegende Hollander",
+        "composer": "Wagner"
+      },
+      {
+        "title": "Giulio Cesare in Egitto, HWV.17",
+        "composer": "George Frideric Handel"
+      },
+      {
+        "title": "Le bourgeois gentilhomme, LWV43",
+        "composer": "Jean-Baptiste Lully"
+      },
+      {
+        "title": "Iphigénie en Tauride,, Wq. 46",
+        "composer": "Christoph Willibald von Gluck"
+      },
+      {
+        "title": "Orfeo ed Euridice",
+        "composer": "Christoph Willibald von Gluck"
+      },
+      {
+        "title": "Così fan tutte, K.588",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Don Giovanni, K.527",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Le nozze di Figaro, K.492",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "The Magic Flute, K.620",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Il Pirata",
+        "composer": "Vincenzo Bellini"
+      },
+      {
+        "title": "I Puritani",
+        "composer": "Vincenzo Bellini"
+      },
+      {
+        "title": "La sonnambula ",
+        "composer": "Vincenzo Bellini"
+      },
+      {
+        "title": "Norma",
+        "composer": "Vincenzo Bellini"
+      },
+      {
+        "title": "Médée ",
+        "composer": "Luigi Cherubini"
+      },
+      {
+        "title": "L'elisir d'amore",
+        "composer": "Gaetano Donizetti"
+      },
+      {
+        "title": "La fille du régiment",
+        "composer": "Gaetano Donizetti"
+      },
+      {
+        "title": "Lucia di Lammermoor",
+        "composer": "Gaetano Donizetti"
+      },
+      {
+        "title": "Guillaume Tell ",
+        "composer": "Gioachino Rossini"
+      },
+      {
+        "title": "L'italiana in Algeri ",
+        "composer": "Gioachino Rossini"
+      },
+      {
+        "title": "La cenerentola ",
+        "composer": "Gioachino Rossini"
+      },
+      {
+        "title": "Doktor Faust",
+        "composer": "Ferruccio Busoni"
+      },
+      {
+        "title": "Jeux, L.126",
+        "composer": "Claude Debussy"
+      },
+      {
+        "title": "Pelléas et Mélisande, L.88",
+        "composer": "Claude Debussy"
+      },
+      {
+        "title": "A Village Romeo and Juliet",
+        "composer": "Frederick Delius"
+      },
+      {
+        "title": "La Péri",
+        "composer": "Paul Dukas"
+      },
+      {
+        "title": "Ballet mécanique",
+        "composer": "George Antheil"
+      },
+      {
+        "title": "Duke Bluebeard's Castle, op. 11, BB62",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "The Miraculous Mandarin, op. 19, BB82 ",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "The Wooden Prince, op. 13, BB74",
+        "composer": "Béla Bartók"
+      },
+      {
+        "title": "Lulu",
+        "composer": "Alban Berg"
+      },
+      {
+        "title": "Wozzeck, op. 7",
+        "composer": "Alban Berg"
+      },
+      {
+        "title": "West Side Story",
+        "composer": "Leonard Bernstein"
+      },
+      {
+        "title": "Billy Budd, op. 50",
+        "composer": "Benjamin Britten"
+      },
+      {
+        "title": "Peter Grimes, op. 33",
+        "composer": "Benjamin Britten"
+      }
     ]
   },
   "Operette": {
     "works": [
-      { "title": "Die Fledermaus", "composer": "Strauss" },
-      { "title": "Der Zigeunerbaron", "composer": "Strauss" },
-      { "title": "Die lustige Witwe", "composer": "Lehar" },
-      { "title": "Das Land des Lachelns", "composer": "Lehar" },
-      { "title": "Grafin Mariza", "composer": "Kalman" },
-      { "title": "Die Csardasfurstin", "composer": "Kalman" },
-      { "title": "Der Vogelhandler", "composer": "Zeller" },
-      { "title": "Im weissen Rossl", "composer": "Benatzky" },
-      { "title": "Der Bettelstudent", "composer": "Millecker" },
-      { "title": "Wiener Blut", "composer": "Lehar" },
-      { "title": "Eine Nacht in Venedig", "composer": "Offenbach" },
-      { "title": "Orphee aux enfers", "composer": "Offenbach" },
-      { "title": "La belle Helene", "composer": "Offenbach" },
-      { "title": "H.M.S. Pinafore", "composer": "Gilbert Sullivan" },
-      { "title": "The Pirates of Penzance", "composer": "Gilbert Sullivan" },
-      { "title": "The Mikado", "composer": "Gilbert Sullivan" },
-      { "title": "Iolanthe", "composer": "Gilbert Sullivan" },
-      { "title": "Patience", "composer": "Gilbert Sullivan" },
-      { "title": "Yeomen of the Guard", "composer": "Gilbert Sullivan" },
-      { "title": "Princess Ida", "composer": "Gilbert Sullivan" },
-      { "title": "Der Opernball", "composer": "Heuberger" },
-      { "title": "Boccaccio", "composer": "Suppé" },
-      { "title": "Poet and Peasant", "composer": "Suppé" },
-      { "title": "Light Cavalry", "composer": "Suppé" },
-      { "title": "Die Bajadere", "composer": "Suppé" }
+      {
+        "title": "Die Fledermaus",
+        "composer": "Strauss"
+      },
+      {
+        "title": "Der Zigeunerbaron",
+        "composer": "Strauss"
+      },
+      {
+        "title": "Die lustige Witwe",
+        "composer": "Lehar"
+      },
+      {
+        "title": "Das Land des Lachelns",
+        "composer": "Lehar"
+      },
+      {
+        "title": "Grafin Mariza",
+        "composer": "Kalman"
+      },
+      {
+        "title": "Die Csardasfurstin",
+        "composer": "Kalman"
+      },
+      {
+        "title": "Der Vogelhandler",
+        "composer": "Zeller"
+      },
+      {
+        "title": "Im weissen Rossl",
+        "composer": "Benatzky"
+      },
+      {
+        "title": "Der Bettelstudent",
+        "composer": "Millecker"
+      },
+      {
+        "title": "Wiener Blut",
+        "composer": "Lehar"
+      },
+      {
+        "title": "Eine Nacht in Venedig",
+        "composer": "Offenbach"
+      },
+      {
+        "title": "Orphee aux enfers",
+        "composer": "Offenbach"
+      },
+      {
+        "title": "La belle Helene",
+        "composer": "Offenbach"
+      },
+      {
+        "title": "H.M.S. Pinafore",
+        "composer": "Gilbert Sullivan"
+      },
+      {
+        "title": "The Pirates of Penzance",
+        "composer": "Gilbert Sullivan"
+      },
+      {
+        "title": "The Mikado",
+        "composer": "Gilbert Sullivan"
+      },
+      {
+        "title": "Iolanthe",
+        "composer": "Gilbert Sullivan"
+      },
+      {
+        "title": "Patience",
+        "composer": "Gilbert Sullivan"
+      },
+      {
+        "title": "Yeomen of the Guard",
+        "composer": "Gilbert Sullivan"
+      },
+      {
+        "title": "Princess Ida",
+        "composer": "Gilbert Sullivan"
+      },
+      {
+        "title": "Der Opernball",
+        "composer": "Heuberger"
+      },
+      {
+        "title": "Boccaccio",
+        "composer": "Suppé"
+      },
+      {
+        "title": "Poet and Peasant",
+        "composer": "Suppé"
+      },
+      {
+        "title": "Light Cavalry",
+        "composer": "Suppé"
+      },
+      {
+        "title": "Die Bajadere",
+        "composer": "Suppé"
+      }
     ]
   },
   "Symphonie": {
     "works": [
-      { "title": "Symphony No. 9 (Beethoven)", "composer": "Beethoven" },
-      { "title": "Symphony No. 5 (Mahler)", "composer": "Mahler" },
-      { "title": "Symphony No. 7 (Bruckner)", "composer": "Bruckner" },
-      { "title": "Symphony No. 2 (Rachmaninoff)", "composer": "Rachmaninoff" },
-      { "title": "Symphony No. 2 (Sibelius)", "composer": "Sibelius" },
-      { "title": "Symphony No. 5 (Shostakovich)", "composer": "Shostakovich" }
+      {
+        "title": "Symphony No. 9 (Beethoven)",
+        "composer": "Beethoven"
+      },
+      {
+        "title": "Symphony No. 5 (Mahler)",
+        "composer": "Mahler"
+      },
+      {
+        "title": "Symphony No. 7 (Bruckner)",
+        "composer": "Bruckner"
+      },
+      {
+        "title": "Symphony No. 2 (Rachmaninoff)",
+        "composer": "Rachmaninoff"
+      },
+      {
+        "title": "Symphony No. 2 (Sibelius)",
+        "composer": "Sibelius"
+      },
+      {
+        "title": "Symphony No. 5 (Shostakovich)",
+        "composer": "Shostakovich"
+      },
+      {
+        "title": "Symphony in D major, Wq.183, no. 1 ",
+        "composer": "Carl Philipp Emanuel Bach"
+      },
+      {
+        "title": "Symphony in E minor, for 2 flutes, 2 oboes, 2 horns, strings and continuo, Wq.178",
+        "composer": "Carl Philipp Emanuel Bach"
+      },
+      {
+        "title": "Symphony in F major, Wq.183, no. 3 ",
+        "composer": "Carl Philipp Emanuel Bach"
+      },
+      {
+        "title": "Symphony for Double Orchestra in E major, op. 18, no. 5, CW C28 ",
+        "composer": "Johann Christian Bach"
+      },
+      {
+        "title": "Symphony in D major, op. 3, no. 1, CW C1a ",
+        "composer": "Johann Christian Bach"
+      },
+      {
+        "title": "Symphony in D major, op. 18, no. 4, CW C27 ",
+        "composer": "Johann Christian Bach"
+      },
+      {
+        "title": "Symphony in A major, G. 511, op. 35, no. 3",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "Symphony in F major, G.512, op. 35, no. 4",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "Symphony no. 6 in D, Hob.I:6, \"Le Matin\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 7 in C, Hob.I:7, \"Le Midi\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 8 in G, Hob.I:8, \"Le Soir\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 45 in F sharp minor, Hob.I:45, \"Farewell\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 48 in C, Hob.I:48, \"Maria Theresia\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 49 in F minor, Hob.I:49, \"La passione\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 94 in G, Hob.I:94, \"Surprise\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 96 in D, Hob.I:96, \"Miracle\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 100 in G, Hob.I:100, \"Military\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 101 in D, Hob.I:101, \"Clock\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 103 in E flat major, Hob.I:103, \"Drum Roll\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 104 in D, Hob.I:104, \"London\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Symphony no. 25 in G minor, K.183",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Symphony no. 31 in D major, K.297, \"Paris\"",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Symphony no. 38 in D major, K.504, \"Prague\"",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Symphony no. 40 in G minor, K.550",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Symphony no. 41 in C major, K.551, \"Jupiter\"",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Symphony no. 3 in E flat major, op. 55, \"Eroica\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Symphony no. 5 in C minor, op. 67",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Symphony no. 7 in A major, op. 92",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Symphony no. 9 in D minor, op. 125, \"Choral\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Symphony no. 6 in F major, op. 68, \"Pastoral\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Symphony no. 1 in G minor, \"Sinfonie sérieuse\"",
+        "composer": "Franz Berwald"
+      },
+      {
+        "title": "Symphony no. 3 in C major, \"Sinfonie singulière\"",
+        "composer": "Franz Berwald"
+      },
+      {
+        "title": "Symphony no. 4 in C minor, D.417, \"Tragic\"",
+        "composer": "Franz Schubert"
+      },
+      {
+        "title": "Symphony no. 5 in B flat major, D.485",
+        "composer": "Franz Schubert"
+      },
+      {
+        "title": "Symphony no. 8 in B minor, D.759, \"Unfinished\"",
+        "composer": "Franz Schubert"
+      },
+      {
+        "title": "Symphony no. 9 in C major, D.944, \"Great\"",
+        "composer": "Franz Schubert"
+      },
+      {
+        "title": "Symphony in C major",
+        "composer": "Paul Dukas"
+      },
+      {
+        "title": "Symphony no. 1 in A flat major, op. 55",
+        "composer": "Edward Elgar"
+      },
+      {
+        "title": "Symphony no. 4 in E flat major, op. 48",
+        "composer": "Alexander Glazunov"
+      },
+      {
+        "title": "Symphony no. 5 in B flat major, op. 55",
+        "composer": "Alexander Glazunov"
+      },
+      {
+        "title": "Symphony no. 7 in F major, op. 77, \"Pastoral\"",
+        "composer": "Alexander Glazunov"
+      },
+      {
+        "title": "A Jazz Symphony",
+        "composer": "George Antheil"
+      },
+      {
+        "title": "Symphony no. 1, op. 9",
+        "composer": "Samuel Barber"
+      },
+      {
+        "title": "Symphony no. 3",
+        "composer": "Arnold Bax"
+      }
     ]
   },
   "Kammermusik": {
     "works": [
-      { "title": "String Quartet No. 14 (Beethoven, Op. 131)", "composer": "Beethoven" },
-      { "title": "String Quartet in F (Ravel)", "composer": "Ravel" },
-      { "title": "String Quartet in G minor (Debussy)", "composer": "Debussy" },
-      { "title": "American Quartet (Dvorak)", "composer": "Dvorak" },
-      { "title": "Trout Quintet (Schubert)", "composer": "Schubert" }
+      {
+        "title": "String Quartet No. 14 (Beethoven, Op. 131)",
+        "composer": "Beethoven"
+      },
+      {
+        "title": "String Quartet in F (Ravel)",
+        "composer": "Ravel"
+      },
+      {
+        "title": "String Quartet in G minor (Debussy)",
+        "composer": "Debussy"
+      },
+      {
+        "title": "American Quartet (Dvorak)",
+        "composer": "Dvorak"
+      },
+      {
+        "title": "Trout Quintet (Schubert)",
+        "composer": "Schubert"
+      },
+      {
+        "title": "Adagio, for violin, strings and organ in G minor, T. Mi 26 ",
+        "composer": "Tomaso Albinoni"
+      },
+      {
+        "title": "Art of the Fugue, BWV.1080",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Cello Suite no. 1 in G major, BWV.1007",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Cello Suite no. 4 in E flat major, BWV.1010",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Cello Suite no. 6 in D major, BWV.1012",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Partita no. 2 for Solo Violin in D minor, BWV.1004",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "The Musical Offering, BWV.1079",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "16 Rosenkranz-Sonaten, C. 90-105, \"Mystery of the Rosary Sonatas\"",
+        "composer": "Heinrich Franz von Biber"
+      },
+      {
+        "title": "Battalia in D major, C.61",
+        "composer": "Heinrich Franz von Biber"
+      },
+      {
+        "title": "Fidicinium Sacro-Profanum, 12 sonatas for violin, 2 violas, and continuo, C.78-89",
+        "composer": "Heinrich Franz von Biber"
+      },
+      {
+        "title": "Sonates du Rosaire, for violin: Crucifixion",
+        "composer": "Heinrich Franz von Biber"
+      },
+      {
+        "title": "Les Nations, 3rd Ordre, for chamber ensemble, \"L'Imperiale\"",
+        "composer": "François Couperin"
+      },
+      {
+        "title": "Piano Quintet in D minor, G. 416, op. 57, no. 4",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "Quintet for Guitar and Strings in C major, G.453, \"La Ritirada di Madrid\"",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "Quintet for Guitar and Strings in D major, G.448, \"Fandango\"",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "String Quintet in C major, G.324, \"La musica notturna delle strade di Madrid\"",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "String Quintet in E major, op. 11, no. 5 ",
+        "composer": "Luigi Boccherini"
+      },
+      {
+        "title": "String Quartet in C major, Hob.III:77, op. 76, no. 3, \"Emperor\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "String Quartet in D major, Hob.III:34, op. 20, no. 4, \"The Sun\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "String Quartet in D major, Hob.III:63, op. 64, no. 5, \"Lark\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "String Quartet in D minor, Hob.III:76, op. 76, no. 2, \"Fifths\"",
+        "composer": "Franz Joseph Haydn"
+      },
+      {
+        "title": "Clarinet Quintet in A major, K.581",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Piano Quartet no. 1 in G minor, K.478",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "String Quartet no. 14 in G major, K.387, \"Spring\"",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "String Quartet no. 17 in B flat major, K.458, \"The Hunt\"",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "String Quartet no. 19 in C major, K.465, \"Dissonance\"",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "String Quartet no. 23 in F major, K.590, \"Prussian\"",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "String Quintet no. 3 in C major, K.515",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "String Quintet no. 4 in G minor, K. 516",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Violin Sonata no. 21 in E minor, K.304",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Violin Sonata no. 35 in A major, K.526",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Cello Sonata no. 4 in C major, op. 102, no. 1",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Grosse Fuge, op. 133",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Trio no. 5 in D major, op. 70 no. 1, \"Ghost\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Trio no. 7 in B flat major, op. 97, \"Archduke\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "String Quartet no. 7 in F major, op. 59 no. 1, \"Razumovsky\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "String Quartet no. 10 in E flat major, op. 74, \"Harp\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "String Quartet no. 11 in F minor, op. 95, \"Serioso\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "String Quartet no. 14 in C sharp minor, op. 131",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "String Quartet no. 15 in A minor, op. 132",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "String Quartet no. 16 in F major, op. 135",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Violin Sonata no. 7 in C minor, op. 30 no. 2",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Violin Sonata no. 9 in A major, op. 47, \"Kreutzer\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Violin Sonata no. 5 in F major, op. 24, \"Spring\"",
+        "composer": "Ludwig van Beethoven"
+      },
+      {
+        "title": "Piano Quintet no. 1 in C minor",
+        "composer": "Franz Berwald"
+      }
     ]
   },
   "Kirchenmusik": {
     "works": [
-      { "title": "Mass in B minor (Bach)", "composer": "Bach" },
-      { "title": "Requiem (Mozart)", "composer": "Mozart" },
-      { "title": "Messiah (Handel)", "composer": "Handel" },
-      { "title": "Requiem (Verdi)", "composer": "Verdi" },
-      { "title": "Requiem (Faure)", "composer": "Faure" }
+      {
+        "title": "Mass in B minor (Bach)",
+        "composer": "Bach"
+      },
+      {
+        "title": "Requiem (Mozart)",
+        "composer": "Mozart"
+      },
+      {
+        "title": "Messiah (Handel)",
+        "composer": "Handel"
+      },
+      {
+        "title": "Requiem (Verdi)",
+        "composer": "Verdi"
+      },
+      {
+        "title": "Requiem (Faure)",
+        "composer": "Faure"
+      },
+      {
+        "title": "Mass in B minor, BWV.232",
+        "composer": "Johann Sebastian Bach"
+      },
+      {
+        "title": "Te Deum, for 8 voices, chorus, and orchestra, H.146",
+        "composer": "Marc-Antoine Charpentier"
+      },
+      {
+        "title": "Magnificat for 4 voices, chorus, 2 flutes, 2 oboes, 3 trumpets, 2 horns, strings and continuo in D major, H.772, Wq.215",
+        "composer": "Carl Philipp Emanuel Bach"
+      },
+      {
+        "title": "Coronation Mass in C major, K.317",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Great Mass in C minor, K.427",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Requiem in D minor, K.626",
+        "composer": "Wolfgang Amadeus Mozart"
+      },
+      {
+        "title": "Requiem Mass no. 1 in C minor",
+        "composer": "Luigi Cherubini"
+      },
+      {
+        "title": "A Mass of Life, for soloists, chorus and orchestra, RTii/4",
+        "composer": "Frederick Delius"
+      },
+      {
+        "title": "Requiem, op. 48",
+        "composer": "Gabriel Fauré"
+      },
+      {
+        "title": "Mass",
+        "composer": "Leonard Bernstein"
+      },
+      {
+        "title": "War Requiem, for STB soloists, boys' voices, chorus, chamber orchestra, orchestra, and organ, op. 66",
+        "composer": "Benjamin Britten"
+      }
     ]
   },
   "Komponist": {
