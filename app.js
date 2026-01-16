@@ -46,24 +46,24 @@ function playWinSound() {
             { freq: 659.25, duration: 0.1 }, // E5
             { freq: 783.99, duration: 0.3 }  // G5
         ];
-        
+
         let time = audioContext.currentTime;
         notes.forEach(note => {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
-            
+
             osc.connect(gain);
             gain.connect(audioContext.destination);
-            
+
             osc.frequency.value = note.freq;
             osc.type = 'sine';
-            
+
             gain.gain.setValueAtTime(0.3, time);
             gain.gain.exponentialRampToValueAtTime(0.01, time + note.duration);
-            
+
             osc.start(time);
             osc.stop(time + note.duration);
-            
+
             time += note.duration;
         });
     } catch (e) {
@@ -146,19 +146,19 @@ async function loadAvailableGenres() {
     try {
         // Load consolidated genres.json
         const cacheBuster = new Date().getTime();
-            const genresResponse = await fetch(`json/genres.json?v=${cacheBuster}`, { cache: 'no-store' });
-        
+        const genresResponse = await fetch(`json/genres.json?v=${cacheBuster}`, { cache: 'no-store' });
+
         if (!genresResponse.ok) {
             throw new Error(t('errorLoadingGenres'));
         }
 
         const genresFileData = await genresResponse.json();
-        
+
         // Populate genresData from consolidated file
         genresData.decades = genresFileData.decades || [];
         genresData.genres = genresFileData.genres || [];
         genresData.classical = genresFileData.classical || {};
-        
+
         // Convert countries object to array format
         genresData.countries = Object.keys(genresFileData.countries || {}).map(code => ({
             code: code,
@@ -166,7 +166,7 @@ async function loadAvailableGenres() {
             value: `Country:${code}`,
             artists: genresFileData.countries[code].artists
         }));
-        
+
         console.log('📅 Decades found:', genresData.decades);
         console.log('🎵 Genres found:', genresData.genres);
         console.log('🌍 Countries found:', genresData.countries.map(c => c.name));
@@ -181,10 +181,10 @@ async function loadAvailableGenres() {
         // Initialize dedicated classical dropdowns
         populateClassicalAreaDropdown();
         handleClassicalAreaChange();
-        
+
         // Initialize subcategory dropdown with "All Genres"
         updateSubcategoryDropdown();
-        
+
         console.log('✅ Genre-Daten erfolgreich geladen');
         debugLog(`✅ Genres kategorisiert: ${genresData.decades.length} Dekaden, ${genresData.genres.length} Genres, ${genresData.countries.length} Länder`);
     } catch (error) {
@@ -434,21 +434,21 @@ async function loadBillboardYears() {
     try {
         const cacheBuster = new Date().getTime();
         const response = await fetch(`json/hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
-        
+
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Billboard Daten');
         }
 
         const songs = await response.json();
-        
+
         console.log(`${songs.length} Billboard Songs geladen`);
-        
+
         // Extract unique years from chart_week
         const years = [...new Set(songs.map(song => {
             const year = song.chart_week.substring(0, 4);
             return year;
         }))].sort((a, b) => b - a); // Newest first
-        
+
         console.log('🔥 Gefundene Jahre:', years);
         return years;
     } catch (error) {
@@ -463,34 +463,34 @@ async function loadAvailableYears() {
     try {
         const cacheBuster = new Date().getTime();
         const response = await fetch(`json/hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
-        
+
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Billboard Daten');
         }
 
         const songs = await response.json();
-        
+
         console.log(`${songs.length} Billboard Songs geladen`);
-        
+
         // Extrahiere einzigartige Jahre aus chart_week
         const years = [...new Set(songs.map(song => {
             const year = song.chart_week.substring(0, 4);
             return year;
         }))].sort((a, b) => b - a); // Neueste zuerst
-        
+
         console.log('Gefundene Jahre:', years);
-        
+
         // Fülle die Jahr-Dropdown
         const yearSelect = document.getElementById('yearSelect');
-        
+
         if (!yearSelect) {
             console.error('yearSelect Element nicht gefunden!');
             return;
         }
-        
+
         // Lösche alle Optionen außer der ersten
         yearSelect.innerHTML = '<option value="">Jahr auswählen...</option>';
-        
+
         // Füge alle gefundenen Jahre hinzu
         years.forEach(year => {
             const option = document.createElement('option');
@@ -498,7 +498,7 @@ async function loadAvailableYears() {
             option.textContent = year;
             yearSelect.appendChild(option);
         });
-        
+
         console.log(`✅ ${years.length} Jahre erfolgreich geladen!`);
     } catch (error) {
         console.error(t('errorLoadingYears') + ':', error);
@@ -510,38 +510,38 @@ async function loadBillboardSongsForYear() {
     const yearSelect = document.getElementById('yearSelect');
     const songInfoSelect = document.getElementById('billboardSongInfo');
     const selectedYear = yearSelect.value;
-    
+
     if (!selectedYear) {
         songInfoSelect.innerHTML = '<option value="">Wähle zuerst ein Jahr...</option>';
         songInfoSelect.disabled = true;
         return;
     }
-    
+
     try {
         const cacheBuster = new Date().getTime();
         const response = await fetch(`json/hot-10-unique.json?v=${cacheBuster}`, { cache: 'no-store' });
-        
+
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Billboard Daten');
         }
 
         const allSongs = await response.json();
-        
+
         // Filtere Songs nach Jahr
         const yearSongs = allSongs.filter(song => song.chart_week.startsWith(selectedYear));
-        
+
         console.log(`${yearSongs.length} Songs für Jahr ${selectedYear} gefunden`);
-        
+
         // Fülle Info-Dropdown
         songInfoSelect.innerHTML = `<option value="">${yearSongs.length} Songs aus ${selectedYear}</option>`;
-        
+
         yearSongs.forEach(song => {
             const option = document.createElement('option');
             option.value = `${song.performer} - ${song.title}`;
             option.textContent = `${song.performer} - ${song.title}`;
             songInfoSelect.appendChild(option);
         });
-        
+
         songInfoSelect.disabled = false;
     } catch (error) {
         console.error('❌ Fehler beim Laden der Songs:', error);
@@ -658,13 +658,13 @@ async function loadAlbumList() {
     try {
         const cacheBuster = new Date().getTime();
         const response = await fetch(`json/AlbumList.json?v=${cacheBuster}`, { cache: 'no-store' });
-        
+
         if (!response.ok) {
             throw new Error('Fehler beim Laden der Alben');
         }
 
         albumListData = await response.json();
-        
+
         console.log(`${albumListData.length} Alben geladen`);
     } catch (error) {
         console.warn('AlbumList.json konnte nicht geladen werden:', error);
@@ -687,27 +687,27 @@ async function startArtistBubbles() {
         console.warn('Cannot start bubbles: artistNames still empty after load');
         return;
     }
-    
+
     console.log(`🫧 Starting bubbles with ${artistNames.length} artists`);
     container.classList.add('active');
     activeBubbles = 0;
-    
+
     // Update subtitle with bubble category
     setSubtitle(`🫧 Bubbles: ${currentBubbleCategory}`);
-    
+
     // Stoppe vorherige Animation
     if (bubbleInterval) {
         clearInterval(bubbleInterval);
     }
     container.innerHTML = '';
-    
+
     // Erstelle kontinuierlich neue Bubbles
     // Intervall für größeren Abstand zwischen Bubbles
     bubbleInterval = setInterval(() => {
         // Call async function without awaiting (fire and forget)
         createArtistBubble().catch(err => console.error('Bubble creation error:', err));
     }, 2000);
-    
+
     // Erstelle erste Bubble sofort
     createArtistBubble().catch(err => console.error('Bubble creation error:', err));
 }
@@ -753,12 +753,12 @@ function stopArtistBubbles() {
         container.classList.remove('active');
         container.innerHTML = '';
     }
-    
+
     if (bubbleInterval) {
         clearInterval(bubbleInterval);
         bubbleInterval = null;
     }
-    
+
     activeBubbles = 0;
 }
 
@@ -795,9 +795,9 @@ async function createArtistBubble() {
         console.warn('Container not active');
         return;
     }
-    
+
     let bubbleText = '';
-    
+
     // Show artist bubbles
     if (artistNames.length > 0) {
         bubbleText = artistNames[Math.floor(Math.random() * artistNames.length)];
@@ -805,7 +805,7 @@ async function createArtistBubble() {
         console.warn('No artist names available');
         return;
     }
-    
+
     // If mappingActive, show mapping-style bubble; otherwise fetch Deezer data
     let artistData = { image: null, fans: 0 };
     const bubble = document.createElement('div');
@@ -825,13 +825,13 @@ async function createArtistBubble() {
         if (count > 0) {
             const fanBadge = document.createElement('div');
             fanBadge.className = 'fan-badge';
-            fanBadge.textContent = count >= 1000 ? (count/1000).toFixed(0)+'K' : String(count);
+            fanBadge.textContent = count >= 1000 ? (count / 1000).toFixed(0) + 'K' : String(count);
             fanBadge.title = `${count} recordings available`;
             bubble.appendChild(fanBadge);
         }
     } else {
         try {
-            const timeoutPromise = new Promise((_, reject) => 
+            const timeoutPromise = new Promise((_, reject) =>
                 setTimeout(() => reject(new Error('Timeout')), 2000)
             );
             artistData = await Promise.race([
@@ -861,38 +861,38 @@ async function createArtistBubble() {
         if (artistData.fans > 0) {
             const fanBadge = document.createElement('div');
             fanBadge.className = 'fan-badge';
-            const fanCount = artistData.fans >= 1000000 ? (artistData.fans / 1000000).toFixed(1) + 'M' : 
-                             artistData.fans >= 1000 ? (artistData.fans / 1000).toFixed(0) + 'K' : 
-                             artistData.fans;
+            const fanCount = artistData.fans >= 1000000 ? (artistData.fans / 1000000).toFixed(1) + 'M' :
+                artistData.fans >= 1000 ? (artistData.fans / 1000).toFixed(0) + 'K' :
+                    artistData.fans;
             fanBadge.textContent = fanCount;
             fanBadge.title = `${artistData.fans.toLocaleString()} fans`;
             bubble.appendChild(fanBadge);
         }
     }
-    
+
     const textSpan = document.createElement('span');
     textSpan.className = 'bubble-text';
     textSpan.textContent = bubbleText;
     bubble.appendChild(textSpan);
-    
+
     // Add fan count badge if available
     if (artistData.fans > 0) {
         const fanBadge = document.createElement('div');
         fanBadge.className = 'fan-badge';
-        const fanCount = artistData.fans >= 1000000 ? (artistData.fans / 1000000).toFixed(1) + 'M' : 
-                         artistData.fans >= 1000 ? (artistData.fans / 1000).toFixed(0) + 'K' : 
-                         artistData.fans;
+        const fanCount = artistData.fans >= 1000000 ? (artistData.fans / 1000000).toFixed(1) + 'M' :
+            artistData.fans >= 1000 ? (artistData.fans / 1000).toFixed(0) + 'K' :
+                artistData.fans;
         fanBadge.textContent = fanCount;
         fanBadge.title = `${artistData.fans.toLocaleString()} fans`;
         bubble.appendChild(fanBadge);
     }
-    
+
     // Starte immer rechts außerhalb (100%)
     bubble.style.left = '100%';
-    
+
     container.appendChild(bubble);
     activeBubbles++;
-    
+
     // Click Handler
     bubble.onclick = (e) => {
         e.preventDefault();
@@ -946,7 +946,7 @@ async function createArtistBubble() {
             }
         }
     };
-    
+
     // Entferne Bubble nach Animation (11 Sekunden = 10s Animation + 1s Buffer)
     setTimeout(() => {
         if (bubble.parentElement) {
@@ -963,13 +963,13 @@ function selectGameMode(mode) {
     document.querySelectorAll('.mode-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    
+
     // Füge active Klasse zum gewählten Button hinzu
     document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
-    
+
     // Ändere Body-Klasse für Hintergrundfarbe
     document.body.className = `mode-${mode}`;
-    
+
     const genreSelection = document.getElementById('genreSelection');
     const searchSelection = document.getElementById('searchSelection');
     const classicalSelection = document.getElementById('classicalSelection');
@@ -1019,7 +1019,7 @@ function selectGameMode(mode) {
         // Setze Subtitle zurück
         setSubtitle(t('setupSubtitle'));
     }
-    
+
     // Update Leaderboard bei Modus-Wechsel
     showSetupLeaderboard();
 }
@@ -1028,30 +1028,30 @@ function selectGameMode(mode) {
 async function checkArtist() {
     const searchInput = document.getElementById('searchQuery');
     const artistName = searchInput?.value?.trim();
-    
+
     if (!artistName) {
         showError('Please enter an artist name');
         return;
     }
-    
+
     try {
         // Search for artist via iTunes API
         const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artistName)}&entity=musicArtist&limit=10`);
         const data = await response.json();
-        
+
         if (!data.results || data.results.length === 0) {
             showError(`No artist found for "${artistName}". Please try a different name.`);
             return;
         }
-        
+
         // Filter for exact or close matches
         const artists = data.results.filter(artist => artist.artistName);
-        
+
         if (artists.length === 0) {
             showError(`No artist found for "${artistName}". Please try a different name.`);
             return;
         }
-        
+
         if (artists.length === 1) {
             // Single artist found - proceed directly
             selectArtistAndLoadAlbums(artists[0]);
@@ -1074,7 +1074,7 @@ async function showArtistSelectionModal(artists) {
 
     // Clear previous options
     list.innerHTML = '';
-    
+
     let displayedCount = 0;
 
     // Create radio button options for each artist with images
@@ -1091,22 +1091,22 @@ async function showArtistSelectionModal(artists) {
             console.log(`⏭️ Skipping "${artist.artistName}" - only ${artistData.fans} fans (threshold: ${minFans})`);
             continue;
         }
-        
+
         const option = document.createElement('div');
         option.style.cssText = 'padding: 10px; margin: 5px 0; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: all 0.2s;';
 
-        const fanCountText = artistData.fans > 0 ? 
-            (artistData.fans >= 1000000 ? (artistData.fans / 1000000).toFixed(1) + 'M fans' : 
-             artistData.fans >= 1000 ? (artistData.fans / 1000).toFixed(0) + 'K fans' : 
-             artistData.fans + ' fans') : '';
+        const fanCountText = artistData.fans > 0 ?
+            (artistData.fans >= 1000000 ? (artistData.fans / 1000000).toFixed(1) + 'M fans' :
+                artistData.fans >= 1000 ? (artistData.fans / 1000).toFixed(0) + 'K fans' :
+                    artistData.fans + ' fans') : '';
 
         option.innerHTML = `
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="width: 50px; height: 50px; border-radius: 8px; overflow: hidden; background: #f0f0f0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                     ${artistData.image ?
-                        `<img src="${artistData.image}" alt="${artist.artistName}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'font-size: 20px; color: #999;\\'>🎤</div>';">` :
-                        '<div style="font-size: 20px; color: #999;">🎤</div>'
-                    }
+                `<img src="${artistData.image}" alt="${artist.artistName}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'font-size: 20px; color: #999;\\'>🎤</div>';">` :
+                '<div style="font-size: 20px; color: #999;">🎤</div>'
+            }
                 </div>
                 <div style="flex: 1;">
                     <input type="radio" name="artistChoice" value="${displayedCount}" id="artist_${displayedCount}" style="cursor: pointer; margin-right: 8px;">
@@ -1130,7 +1130,7 @@ async function showArtistSelectionModal(artists) {
         list.appendChild(option);
         displayedCount++;
     }
-    
+
     // Show error if no artists with 1000+ fans found
     if (displayedCount === 0) {
         showError('No artists found with 1000+ fans. Please search for a more popular artist.');
@@ -1152,7 +1152,7 @@ function closeArtistSelectionModal() {
 async function selectArtistAndLoadAlbums(artist) {
     const searchInput = document.getElementById('searchQuery');
     selectedArtistForAlbums = artist.artistName;
-    
+
     // If in Free Choice mode (track search), just populate the input and return
     if (currentSearchType === 'track') {
         if (searchInput) {
@@ -1161,18 +1161,18 @@ async function selectArtistAndLoadAlbums(artist) {
         }
         return;
     }
-    
+
     // Album mode: fetch and show albums
     if (searchInput) {
         searchInput.value = `✅ ${artist.artistName} - Loading albums...`;
         searchInput.disabled = true;
     }
-    
+
     try {
         // Fetch albums from iTunes API
         const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artist.artistName)}&entity=album&limit=200`);
         const data = await response.json();
-        
+
         if (!data.results || data.results.length === 0) {
             showError(`No albums found for ${artist.artistName}`);
             if (searchInput) {
@@ -1181,17 +1181,17 @@ async function selectArtistAndLoadAlbums(artist) {
             }
             return;
         }
-        
+
         // Filter unique albums by collection ID (prevents duplicates from different regions)
         const uniqueAlbums = [];
         const seenIds = new Set();
         const seenBaseNames = new Map(); // Track by base name (without edition info) to deduplicate versions
-        
+
         data.results.forEach(item => {
             if (item.collectionId && !seenIds.has(item.collectionId)) {
                 // Get the base album name without edition info for comparison
                 const baseAlbumName = getAlbumBaseName(item.collectionName);
-                
+
                 if (seenBaseNames.has(baseAlbumName)) {
                     const existingAlbum = seenBaseNames.get(baseAlbumName);
                     // Keep the one with more tracks (full version likely has more)
@@ -1211,7 +1211,7 @@ async function selectArtistAndLoadAlbums(artist) {
                 }
             }
         });
-        
+
         if (uniqueAlbums.length === 0) {
             showError(`No albums found for ${artist.artistName}`);
             if (searchInput) {
@@ -1220,16 +1220,16 @@ async function selectArtistAndLoadAlbums(artist) {
             }
             return;
         }
-        
+
         // Update search input
         if (searchInput) {
             searchInput.value = `✅ ${artist.artistName}`;
             searchInput.disabled = false;
         }
-        
+
         // Show album selection modal with cover art
         showAlbumSelectionModal(artist.artistName, uniqueAlbums);
-        
+
     } catch (error) {
         console.error('Error loading albums:', error);
         showError('Error loading albums. Please try again.');
@@ -1249,16 +1249,16 @@ function showAlbumSelectionModal(artistName, albums) {
     const modal = document.getElementById('albumSelectionModal');
     const header = document.getElementById('albumSelectionHeader');
     const grid = document.getElementById('albumSelectionGrid');
-    
+
     if (!modal || !header || !grid) return;
-    
+
     // Store albums and artist name for filtering
     allAlbumsForModal = albums;
     currentArtistName = artistName;
-    
+
     // Set header with artist name
     header.textContent = `💿 Select Album by ${artistName}`;
-    
+
     // Reset filter buttons - set "Primary Only" as default
     const filterBoth = document.getElementById('filterBoth');
     const filterPrimary = document.getElementById('filterPrimary');
@@ -1266,11 +1266,11 @@ function showAlbumSelectionModal(artistName, albums) {
     if (filterBoth) filterBoth.classList.remove('active');
     if (filterPrimary) filterPrimary.classList.add('active');
     if (filterCompilations) filterCompilations.classList.remove('active');
-    
+
     // Display primary albums only initially (exclude singles and compilations)
     const primaryAlbums = albums.filter(album => isAlbumPrimary(album, artistName) && !isAlbumSingle(album));
     displayFilteredAlbums(primaryAlbums);
-    
+
     // Show modal
     modal.classList.add('show');
 }
@@ -1288,37 +1288,37 @@ function truncateToMaxWords(text, maxWords = 12) {
 function displayFilteredAlbums(albums) {
     const grid = document.getElementById('albumSelectionGrid');
     const countDisplay = document.getElementById('albumCount');
-    
+
     if (!grid) return;
-    
+
     // Clear previous albums
     grid.innerHTML = '';
-    
+
     // Update count display
     if (countDisplay) {
         countDisplay.textContent = `${albums.length} album${albums.length !== 1 ? 's' : ''}`;
     }
-    
+
     if (albums.length === 0) {
         grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: #666;">No albums found for this filter</div>';
         return;
     }
-    
+
     // Create album cards with cover art
     albums.forEach(album => {
         const card = document.createElement('div');
         const isPrimary = isAlbumPrimary(album, currentArtistName);
         const borderColor = isPrimary ? '#667eea' : '#ff9f1c';
-        
+
         card.style.cssText = `cursor: pointer; border: 2px solid ${borderColor}; border-radius: 8px; overflow: hidden; transition: all 0.2s; background: white; position: relative;`;
-        
+
         const coverUrl = album.artworkUrl100 || album.artworkUrl60 || '';
         const coverUrlHiRes = coverUrl.replace('100x100', '300x300').replace('60x60', '300x300');
         const albumNameTruncated = truncateToMaxWords(album.collectionName);
         const trackCount = album.trackCount || 0;
-        
+
         const badge = isPrimary ? '' : '<div style="position: absolute; top: 4px; right: 4px; background: rgba(255, 159, 28, 0.9); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.65em; font-weight: 700;">COMP</div>';
-        
+
         card.innerHTML = `
             ${badge}
             <img src="${coverUrlHiRes}" alt="${album.collectionName}" style="width: 100%; height: auto; display: block;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'%3E%3Crect fill=\'%23667eea\' width=\'100\' height=\'100\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'40\' fill=\'white\'%3E💿%3C/text%3E%3C/svg%3E'">
@@ -1327,23 +1327,23 @@ function displayFilteredAlbums(albums) {
                 <div style="font-size: 0.85em; color: #667eea; font-weight: 700;">🎵 ${trackCount}</div>
             </div>
         `;
-        
+
         card.onmouseover = () => {
             card.style.borderColor = isPrimary ? '#764ba2' : '#f857a6';
             card.style.transform = 'scale(1.05)';
             card.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.3)';
         };
-        
+
         card.onmouseout = () => {
             card.style.borderColor = borderColor;
             card.style.transform = 'scale(1)';
             card.style.boxShadow = 'none';
         };
-        
+
         card.onclick = () => {
             selectAlbumAndStartGame(album.collectionName);
         };
-        
+
         grid.appendChild(card);
     });
 }
@@ -1354,20 +1354,20 @@ function isAlbumPrimary(album, artistName) {
     const searchArtist = artistName.toLowerCase().trim();
     const collectionType = (album.collectionType || '').toLowerCase();
     const wrapperType = (album.wrapperType || '').toLowerCase();
-    
+
     // Check if it's marked as compilation
     if (collectionType === 'compilation' || wrapperType === 'compilation') return false;
-    
+
     // Check if collection artist is "Various Artists" or compilation-related
-    if (collectionArtist.includes('various') || 
+    if (collectionArtist.includes('various') ||
         collectionArtist.includes('compilation') ||
         collectionArtist.includes('sampler')) return false;
-    
+
     // Check for exact match or very close match (artist name is the collection artist)
     // Use exact match or "starts with" to avoid false positives
-    return collectionArtist === searchArtist || 
-           collectionArtist.startsWith(searchArtist) ||
-           searchArtist.startsWith(collectionArtist);
+    return collectionArtist === searchArtist ||
+        collectionArtist.startsWith(searchArtist) ||
+        searchArtist.startsWith(collectionArtist);
 }
 
 // Helper function to strip edition info from album names for deduplication
@@ -1386,13 +1386,13 @@ function getAlbumBaseName(albumName) {
 function isAlbumSingle(album) {
     const collectionType = (album.collectionType || '').toLowerCase();
     const trackCount = album.trackCount || 0;
-    
+
     // Check collectionType for 'single'
     if (collectionType.includes('single')) return true;
-    
+
     // Check track count (only 1 track is a single, 2-3 could be EPs)
     if (trackCount === 1) return true;
-    
+
     return false;
 }
 
@@ -1403,20 +1403,20 @@ function filterAlbums(filterType) {
     const filterPrimary = document.getElementById('filterPrimary');
     const filterCompilations = document.getElementById('filterCompilations');
     const filterSingles = document.getElementById('filterSingles');
-    
+
     if (filterBoth) filterBoth.classList.remove('active');
     if (filterPrimary) filterPrimary.classList.remove('active');
     if (filterCompilations) filterCompilations.classList.remove('active');
     if (filterSingles) filterSingles.classList.remove('active');
-    
+
     if (filterType === 'both' && filterBoth) filterBoth.classList.add('active');
     if (filterType === 'primary' && filterPrimary) filterPrimary.classList.add('active');
     if (filterType === 'compilations' && filterCompilations) filterCompilations.classList.add('active');
     if (filterType === 'singles' && filterSingles) filterSingles.classList.add('active');
-    
+
     // Filter albums
     let filteredAlbums = allAlbumsForModal;
-    
+
     if (filterType === 'primary') {
         filteredAlbums = allAlbumsForModal.filter(album => {
             return isAlbumPrimary(album, currentArtistName) && !isAlbumSingle(album);
@@ -1428,7 +1428,7 @@ function filterAlbums(filterType) {
     } else if (filterType === 'singles') {
         filteredAlbums = allAlbumsForModal.filter(album => isAlbumSingle(album));
     }
-    
+
     // Display filtered albums
     displayFilteredAlbums(filteredAlbums);
 }
@@ -1444,19 +1444,19 @@ function closeAlbumSelectionModal() {
 // Select album and prepare to start game
 function selectAlbumAndStartGame(albumName) {
     const searchInput = document.getElementById('searchQuery');
-    
+
     // Store the selected album name
     selectedAlbumName = albumName;
-    
+
     // Update search input to show artist + album selected
     if (searchInput && selectedArtistForAlbums) {
         searchInput.value = `✅ ${selectedArtistForAlbums} - ${albumName}`;
         searchInput.disabled = false;
     }
-    
+
     // Close modal
     closeAlbumSelectionModal();
-    
+
     // Scroll to start button or highlight it
     const startBtn = document.querySelector('.start-game-btn');
     if (startBtn) {
@@ -1535,11 +1535,11 @@ async function startGame() {
             nextQuestion();
             return;
         }
-        
+
         if (gameMode === 'genre') {
             // Genre-Modus: Lade Songs aus songs.json
             const selectedGenre = document.getElementById('subcategorySelect').value;
-            
+
             // Check if it's a Billboard selection
             if (selectedGenre.startsWith('Billboard:')) {
                 const year = selectedGenre.replace('Billboard:', '');
@@ -1614,7 +1614,7 @@ async function startGame() {
                 // Remove checkmark emoji if present
                 searchQuery = searchQuery.replace(/^✅\s*/, '');
             }
-            
+
             if (!searchQuery) {
                 showError('Please enter an Artist!');
                 document.getElementById('setupScreen').style.display = 'block';
@@ -1652,7 +1652,7 @@ async function startGame() {
 
         // Starte erste Frage
         nextQuestion();
-        
+
         // Lade Motivations-Leaderboard
         setTimeout(() => {
             showGameLeaderboard();
@@ -1679,17 +1679,17 @@ async function loadSongsForWork(workName, workType, limit, area = '', allWorksIn
 
     // Determine which works to load from - mix multiple for variety
     let worksToLoad = [workName];
-    
+
     // If we have a list of available works in this area, pick 1-2 related ones for variety
     if (allWorksInArea && allWorksInArea.length > 3) {
         // Get all work titles
         const workTitles = allWorksInArea.map(w => typeof w === 'string' ? w : w.title);
         const currentIndex = workTitles.indexOf(workName);
-        
+
         if (currentIndex !== -1) {
             // Add 1-2 related works (adjacent or random from category)
             const relatedWorks = [];
-            
+
             // Try to get adjacent works for thematic similarity
             if (currentIndex > 0) {
                 relatedWorks.push(workTitles[currentIndex - 1]);
@@ -1697,7 +1697,7 @@ async function loadSongsForWork(workName, workType, limit, area = '', allWorksIn
             if (currentIndex < workTitles.length - 1 && relatedWorks.length < 2) {
                 relatedWorks.push(workTitles[currentIndex + 1]);
             }
-            
+
             // If not enough adjacent, add random works from category
             while (relatedWorks.length < 2 && relatedWorks.length < workTitles.length - 1) {
                 const randomIdx = Math.floor(Math.random() * workTitles.length);
@@ -1706,7 +1706,7 @@ async function loadSongsForWork(workName, workType, limit, area = '', allWorksIn
                     relatedWorks.push(randomWork);
                 }
             }
-            
+
             worksToLoad = [workName, ...relatedWorks];
             console.log(`🎭 Multi-work mode: mixing "${workName}" with ${relatedWorks.join('", "')}`);
         }
@@ -1715,7 +1715,7 @@ async function loadSongsForWork(workName, workType, limit, area = '', allWorksIn
     // Determine target songs per work (distribute limit evenly)
     const songsPerWork = Math.ceil(limit / worksToLoad.length);
     const remainderSongs = limit % worksToLoad.length;
-    
+
     const seen = new Set();
     const collected = [];
 
@@ -1723,7 +1723,7 @@ async function loadSongsForWork(workName, workType, limit, area = '', allWorksIn
     for (let workIdx = 0; workIdx < worksToLoad.length; workIdx++) {
         const currentWork = worksToLoad[workIdx];
         const targetForThisWork = songsPerWork + (workIdx === 0 ? remainderSongs : 0);
-        
+
         // Get composer hint for this work if available
         let currentComposer = composer;
         if (!currentComposer && allWorksInArea && allWorksInArea.length > 0) {
@@ -1747,7 +1747,7 @@ async function loadSongsForWork(workName, workType, limit, area = '', allWorksIn
 
         // Remove duplicates
         const uniqueQueries = [...new Set(queries)];
-        
+
         console.log(`🎼 Loading from work ${workIdx + 1}/${worksToLoad.length}: "${currentWork}" (target: ${targetForThisWork} songs)`);
 
         for (const query of uniqueQueries) {
@@ -1755,17 +1755,17 @@ async function loadSongsForWork(workName, workType, limit, area = '', allWorksIn
             try {
                 const { results } = await fetchItunesWithFallback(query, ['DE', 'US', 'GB', 'AT', 'FR'], 40);
                 console.log(`    📦 Got ${results.length} total results`);
-                
+
                 const filtered = (results || [])
                     .filter(r => r && r.previewUrl && r.trackName && r.artistName)
                     .filter(r => {
                         const genre = (r.primaryGenreName || '').toLowerCase();
                         // Strict classical/opera/ballet genres only
                         const match = genre.includes('classical') || genre.includes('klassik') || // German for classical
-                                     genre.includes('orchestral') || genre.includes('symphony') ||
-                                     genre.includes('opera') || genre.includes('operette') || 
-                                     genre.includes('ballet') || genre.includes('stage') ||
-                                     genre.includes('vocal');  // Vocal for opera singers
+                            genre.includes('orchestral') || genre.includes('symphony') ||
+                            genre.includes('opera') || genre.includes('operette') ||
+                            genre.includes('ballet') || genre.includes('stage') ||
+                            genre.includes('vocal');  // Vocal for opera singers
                         return match;
                     })
                     .map((song, index) => {
@@ -1794,7 +1794,7 @@ async function loadSongsForWork(workName, workType, limit, area = '', allWorksIn
 
                 console.log(`    ✅ Added ${filtered.length} songs from "${query}"`);
                 collected.push(...filtered);
-                
+
                 // Stop if we have enough for this work
                 if (collected.length >= targetForThisWork) {
                     break;
@@ -1828,17 +1828,17 @@ async function loadSongsFromGenre(genre, limit) {
             }
             const genresFile = await response.json();
             const classicalData = genresFile.classical || {};
-            
+
             // Determine which subcategory was selected
             const selectedSubcategory = genre.startsWith('Classical:') ? genre.replace('Classical:', '') : null;
-            
+
             if (!selectedSubcategory) {
                 throw new Error(t('errorLoadingClassicalList'));
             }
 
             // Get artists from the selected subcategory
             const artists = classicalData[selectedSubcategory] || [];
-            
+
             if (!artists.length) {
                 throw new Error(t('errorLoadingClassicalList'));
             }
@@ -1880,7 +1880,7 @@ async function loadSongsFromGenre(genre, limit) {
             gameState.songs = mapped;
             return;
         }
-        
+
         // Handle Country-based genres
         if (genre.startsWith('Country:')) {
             const countryCode = genre.replace('Country:', '');
@@ -1892,11 +1892,11 @@ async function loadSongsFromGenre(genre, limit) {
             const genresFile = await response.json();
             const countryInfo = genresFile.countries?.[countryCode];
             const artists = countryInfo?.artists || [];
-            
+
             if (artists.length === 0) {
                 throw new Error(t('errorNoArtistsForCountry'));
             }
-            
+
             // Randomly select artists from country and search their songs
             const selectedArtists = artists.sort(() => 0.5 - Math.random()).slice(0, limit);
             const searchPromises = selectedArtists.map(async (artist) => {
@@ -1926,13 +1926,13 @@ async function loadSongsFromGenre(genre, limit) {
                     };
                 });
             gameState.songs = mapped;
-            
+
             if (gameState.songs.length === 0) {
                 throw new Error(t('errorNoSongsForCountry'));
             }
             return;
         }
-        
+
         // Lade songs.json for regular genres
         const cacheBuster = Date.now();
         const response = await fetch(`json/songs.json?v=${cacheBuster}`, { cache: 'no-store' });
@@ -1957,10 +1957,10 @@ async function loadSongsFromGenre(genre, limit) {
 
         // Shuffle and limit the number
         const selectedSongs = shuffleArray(filteredSongs).slice(0, Math.min(limit, filteredSongs.length));
-        
+
         // Speichere Songs - artwork wird später von iTunes API geladen
         gameState.songs = selectedSongs;
-        
+
         console.log(`${gameState.songs.length} songs loaded from genre "${genre}"`);
     } catch (error) {
         console.error('Error loading songs:', error);
@@ -1979,7 +1979,7 @@ async function loadSongsFromBillboard(year, limit) {
         }
 
         const allSongs = await response.json();
-        
+
         // Filtere nach Jahr
         const filteredSongs = allSongs.filter(song => song.chart_week.startsWith(year));
 
@@ -1989,14 +1989,14 @@ async function loadSongsFromBillboard(year, limit) {
 
         // Shuffle and limit the number
         const selectedSongs = shuffleArray(filteredSongs).slice(0, Math.min(limit, filteredSongs.length));
-        
+
         // Konvertiere Billboard Format zu app Format
         gameState.songs = selectedSongs.map(song => ({
             artist: song.performer,
             track: song.title,
             genre: year // Jahr als Genre verwenden
         }));
-        
+
         console.log(`${gameState.songs.length} Billboard Songs from year "${year}" loaded`);
     } catch (error) {
         console.error('Error loading Billboard songs:', error);
@@ -2007,7 +2007,7 @@ async function loadSongsFromBillboard(year, limit) {
 function fetchItunesJsonp(searchTerm, { limit = 10, country = 'DE' } = {}) {
     return new Promise((resolve, reject) => {
         const encodedQuery = encodeURIComponent(searchTerm);
-        const callbackName = `itunesJsonp_${country}_${Date.now()}_${Math.floor(Math.random()*10000)}`;
+        const callbackName = `itunesJsonp_${country}_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
         const url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=${limit}&media=music&country=${country}&lang=de_DE&callback=${callbackName}`;
 
         const timeout = setTimeout(() => {
@@ -2018,7 +2018,7 @@ function fetchItunesJsonp(searchTerm, { limit = 10, country = 'DE' } = {}) {
         function cleanup() {
             clearTimeout(timeout);
             if (window[callbackName]) {
-                try { delete window[callbackName]; } catch (_) {}
+                try { delete window[callbackName]; } catch (_) { }
             }
             if (script && script.parentNode) {
                 script.parentNode.removeChild(script);
@@ -2051,7 +2051,7 @@ async function fetchPreviewFromServer(artist, track) {
         const response = await fetch(`${API_BASE}/api/preview?artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(track)}`, {
             cache: 'no-store'
         });
-        
+
         if (response.ok) {
             const data = await response.json();
             debugLog(`🎵 Server: "${track}" (${data.country || 'cached'})`);
@@ -2067,7 +2067,7 @@ async function fetchPreviewFromServer(artist, track) {
 
 async function fetchItunes(searchTerm, { limit = 10, country = 'DE', entity = 'song', attribute = '', useLookup = false } = {}) {
     let url;
-    
+
     if (useLookup) {
         // Lookup API für Album-Songs (collectionId)
         url = `https://itunes.apple.com/lookup?id=${searchTerm}&entity=${entity}&limit=${limit}&country=${country}`;
@@ -2079,7 +2079,7 @@ async function fetchItunes(searchTerm, { limit = 10, country = 'DE', entity = 's
         url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=${entity}&limit=${limit}&media=music&country=${country}&lang=de_DE${attributeParam}`;
         debugLog(`🔍 iTunes ${country}: "${searchTerm}"`);
     }
-    
+
     let response;
     try {
         response = await fetch(url, { cache: 'no-store', mode: 'cors' });
@@ -2158,11 +2158,11 @@ async function fetchAlbumFanCount(albumName, artistName) {
             .replace(/\s*\[.*?(Remaster|Deluxe|Edition|Version|Anniversary|Expanded|Special|Archive|Collection|Bonus).*?\]/gi, '')
             .replace(/\s*-\s*(Remaster|Deluxe|Edition|Version|Anniversary|Expanded|Special).*/gi, '')
             .trim();
-        
+
         const searchQuery = `${cleanAlbum} ${artistName}`;
         console.log(`🔍 Fetching album fans for: "${cleanAlbum}" (original: "${albumName}") by ${artistName}`);
         const response = await fetch(`/api/deezer/album?q=${encodeURIComponent(searchQuery)}`);
-        
+
         if (!response.ok) {
             console.log(`❌ Album fetch failed with status: ${response.status}`);
             return 0;
@@ -2173,7 +2173,7 @@ async function fetchAlbumFanCount(albumName, artistName) {
         if (data.data && data.data.length > 0) {
             const albumId = data.data[0].id;
             console.log(`🔍 Fetching full album details for ID: ${albumId}`);
-            
+
             // Fetch full album details to get fan count via server proxy
             const detailResponse = await fetch(`/api/deezer/album/${albumId}`);
             if (detailResponse.ok) {
@@ -2201,23 +2201,23 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
         const { results, country: usedCountry } = await fetchItunesWithFallback(searchTerm, ['DE', 'US', 'GB', 'CA'], 10);
 
         // Finde Songs mit Preview
-        const songsWithPreview = results.filter(result => 
-            result.previewUrl && 
-            result.trackName && 
+        const songsWithPreview = results.filter(result =>
+            result.previewUrl &&
+            result.trackName &&
             result.artistName
         );
-        
+
         if (songsWithPreview.length === 0) {
             debugLog(`❌ No preview available for "${artist} - ${track}"`, 'F5');
             throw new Error(`No preview URL available for "${artist} - ${track}" (DE/US)`);
         }
-        
+
         // Try to find the best match
-        let song = songsWithPreview.find(result => 
+        let song = songsWithPreview.find(result =>
             result.trackName.toLowerCase().includes(track.toLowerCase()) &&
             result.artistName.toLowerCase().includes(artist.toLowerCase())
         );
-        
+
         // Fallback: Take the first song with preview
         if (!song) {
             song = songsWithPreview[0];
@@ -2225,14 +2225,14 @@ async function loadSongDataLive(artist, track, cachedPreview = null) {
         }
 
         const safePreview = (song.previewUrl || '').replace(/^http:/, 'https:');
-        
+
         // Use high-resolution cover (600x600)
         const originalCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60 || '';
         const highResCover = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : '';
-        
+
         // Fetch artist image from Deezer
         const artistData = await fetchArtistImageFromDeezer(song.artistName);
-        
+
         debugLog(`✅ Song loaded: "${song.trackName}" (${usedCountry})`);
         return {
             id: song.trackId,
@@ -2267,22 +2267,22 @@ function isClassicalLikeSong(song) {
     const genre = (song.primaryGenreName || '').toLowerCase();
     const track = (song.trackName || '').toLowerCase();
     return genre.includes('classical') ||
-           genre.includes('klassik') ||
-           artist.includes('philharmon') ||
-           artist.includes('orchestra') ||
-           artist.includes('symphony') ||
-           artist.includes('sinfon') ||
-           artist.includes('chamber') ||
-           artist.includes('quartet') ||
-           artist.includes('ensemble') ||
-           artist.includes('opera') ||
-           artist.includes('chor') ||
-           artist.includes('choir') ||
-           artist.includes('kapell') ||
-           track.includes('aria') ||
-           track.includes('requiem') ||
-           track.includes('concerto') ||
-           track.includes('suite');
+        genre.includes('klassik') ||
+        artist.includes('philharmon') ||
+        artist.includes('orchestra') ||
+        artist.includes('symphony') ||
+        artist.includes('sinfon') ||
+        artist.includes('chamber') ||
+        artist.includes('quartet') ||
+        artist.includes('ensemble') ||
+        artist.includes('opera') ||
+        artist.includes('chor') ||
+        artist.includes('choir') ||
+        artist.includes('kapell') ||
+        track.includes('aria') ||
+        track.includes('requiem') ||
+        track.includes('concerto') ||
+        track.includes('suite');
 }
 
 // For composer queries: try targeted performer/hint searches before generic search
@@ -2329,7 +2329,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
         let results = [];
         let albumArtwork = null;  // Store the album cover
         let composerForResults = null; // Store composer if we searched via performer map
-        
+
         if (currentSearchType === 'album') {
             // Album-Suche: Suche zuerst das Album selbst, dann alle Songs von diesem Album
             try {
@@ -2337,91 +2337,91 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 console.log('🔍 Album search for:', searchQuery);
                 const albumResults = await fetchItunes(searchQuery, { limit: 50, country: 'DE', entity: 'album' });
                 console.log(`📀 Album search found: ${albumResults.length} albums`);
-                
+
                 // Find the best match for the search query
                 let bestMatch = null;
                 if (albumResults.length > 0) {
                     const normalizedQuery = searchQuery.toLowerCase().trim();
                     const normalizedArtist = selectedArtistForAlbums ? selectedArtistForAlbums.toLowerCase().trim() : null;
-                    
+
                     // Filter: Only albums from the selected artist
                     let filteredAlbums = albumResults;
                     if (normalizedArtist) {
-                        filteredAlbums = albumResults.filter(album => 
+                        filteredAlbums = albumResults.filter(album =>
                             album.artistName && album.artistName.toLowerCase().includes(normalizedArtist)
                         );
                     }
-                    
+
                     // 1. Priority: Exact match (with artist filter)
-                    bestMatch = filteredAlbums.find(album => 
+                    bestMatch = filteredAlbums.find(album =>
                         album.collectionName && album.collectionName.toLowerCase() === normalizedQuery
                     );
-                    
+
                     // 2. Priority: Album starts with search query (with artist filter)
                     if (!bestMatch) {
-                        bestMatch = filteredAlbums.find(album => 
+                        bestMatch = filteredAlbums.find(album =>
                             album.collectionName && album.collectionName.toLowerCase().startsWith(normalizedQuery)
                         );
                     }
-                    
+
                     // 3. Priority: Shortest album that contains the search query (with artist filter)
                     if (!bestMatch) {
-                        const matches = filteredAlbums.filter(album => 
+                        const matches = filteredAlbums.filter(album =>
                             album.collectionName && album.collectionName.toLowerCase().includes(normalizedQuery)
                         );
                         if (matches.length > 0) {
-                            bestMatch = matches.reduce((shortest, current) => 
+                            bestMatch = matches.reduce((shortest, current) =>
                                 current.collectionName.length < shortest.collectionName.length ? current : shortest
                             );
                         }
                     }
-                    
+
                     // 4. Fallback: erstes Ergebnis (mit Artist-Filter)
                     if (!bestMatch && filteredAlbums.length > 0) {
                         bestMatch = filteredAlbums[0];
                     }
                 }
-                
+
                 if (!bestMatch) {
                     console.warn('DE album not found, trying US:');
                     const usAlbumResults = await fetchItunes(searchQuery, { limit: 50, country: 'US', entity: 'album' });
                     if (usAlbumResults.length > 0) {
                         const normalizedQuery = searchQuery.toLowerCase().trim();
                         const normalizedArtist = selectedArtistForAlbums ? selectedArtistForAlbums.toLowerCase().trim() : null;
-                        
+
                         // Filter: Only albums from the selected artist
                         let filteredAlbums = usAlbumResults;
                         if (normalizedArtist) {
-                            filteredAlbums = usAlbumResults.filter(album => 
+                            filteredAlbums = usAlbumResults.filter(album =>
                                 album.artistName && album.artistName.toLowerCase().includes(normalizedArtist)
                             );
                         }
-                        
-                        bestMatch = filteredAlbums.find(album => 
+
+                        bestMatch = filteredAlbums.find(album =>
                             album.collectionName && album.collectionName.toLowerCase() === normalizedQuery
                         );
-                        
+
                         if (!bestMatch) {
-                            bestMatch = filteredAlbums.find(album => 
+                            bestMatch = filteredAlbums.find(album =>
                                 album.collectionName && album.collectionName.toLowerCase().startsWith(normalizedQuery)
                             );
                         }
-                        
+
                         if (!bestMatch) {
-                            const matches = filteredAlbums.filter(album => 
+                            const matches = filteredAlbums.filter(album =>
                                 album.collectionName && album.collectionName.toLowerCase().includes(normalizedQuery)
                             );
                             if (matches.length > 0) {
-                                bestMatch = matches.reduce((shortest, current) => 
+                                bestMatch = matches.reduce((shortest, current) =>
                                     current.collectionName.length < shortest.collectionName.length ? current : shortest
                                 );
                             }
                         }
-                        
+
                         if (!bestMatch && filteredAlbums.length > 0) {
                             bestMatch = filteredAlbums[0];
                         }
-                        
+
                         const albumId = bestMatch.collectionId;
                         const coverUrl = bestMatch.artworkUrl100 || '';
                         albumArtwork = coverUrl.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2');
@@ -2434,40 +2434,40 @@ async function loadSongsFromItunes(searchQuery, limit) {
                         if (albumArtistResults.length > 0) {
                             const normalizedQuery = searchQuery.toLowerCase().trim();
                             const normalizedArtist = selectedArtistForAlbums ? selectedArtistForAlbums.toLowerCase().trim() : null;
-                            
+
                             // Filter: Only albums from the selected artist
                             let filteredAlbums = albumArtistResults;
                             if (normalizedArtist) {
-                                filteredAlbums = albumArtistResults.filter(album => 
+                                filteredAlbums = albumArtistResults.filter(album =>
                                     album.artistName && album.artistName.toLowerCase().includes(normalizedArtist)
                                 );
                             }
-                            
-                            bestMatch = filteredAlbums.find(album => 
+
+                            bestMatch = filteredAlbums.find(album =>
                                 album.collectionName && album.collectionName.toLowerCase() === normalizedQuery
                             );
-                            
+
                             if (!bestMatch) {
-                                bestMatch = filteredAlbums.find(album => 
+                                bestMatch = filteredAlbums.find(album =>
                                     album.collectionName && album.collectionName.toLowerCase().startsWith(normalizedQuery)
                                 );
                             }
-                            
+
                             if (!bestMatch) {
-                                const matches = filteredAlbums.filter(album => 
+                                const matches = filteredAlbums.filter(album =>
                                     album.collectionName && album.collectionName.toLowerCase().includes(normalizedQuery)
                                 );
                                 if (matches.length > 0) {
-                                    bestMatch = matches.reduce((shortest, current) => 
+                                    bestMatch = matches.reduce((shortest, current) =>
                                         current.collectionName.length < shortest.collectionName.length ? current : shortest
                                     );
                                 }
                             }
-                            
+
                             if (!bestMatch) {
                                 bestMatch = albumArtistResults[0];
                             }
-                            
+
                             const albumId = bestMatch.collectionId;
                             const coverUrl = bestMatch.artworkUrl100 || '';
                             albumArtwork = coverUrl.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2');
@@ -2509,7 +2509,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
                     results = await fetchItunes(searchQuery, { limit: 100, country: 'US' });
                 }
             }
-            
+
             // Filter results to only include songs by the searched artist
             // This prevents songs that just have the artist name in the title from appearing
             if (results.length > 0) {
@@ -2561,24 +2561,24 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 }
             }
         }
-        
+
         // Debug: Zeige albumArtwork Status
         if (currentSearchType === 'album') {
             console.log(`📀 Album-Mode: albumArtwork = ${albumArtwork || 'NULL'}`);
         }
 
         const songs = results
-            .filter(song => 
-                song.previewUrl && 
-                song.trackName && 
-                song.artistName && 
+            .filter(song =>
+                song.previewUrl &&
+                song.trackName &&
+                song.artistName &&
                 song.collectionName
             )
             .slice(0, limit)
             .map((song, index) => {
                 // Bestimme Cover-URL
                 let coverUrl = null;
-                
+
                 if (currentSearchType === 'album') {
                     // In album mode: use the already set albumArtwork for ALL songs
                     coverUrl = albumArtwork;
@@ -2588,7 +2588,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
                     const originalCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60;
                     coverUrl = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : originalCover;
                 }
-                
+
                 return {
                     id: song.trackId,
                     track: song.trackName,
@@ -2604,7 +2604,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
 
         gameState.songs = shuffleArray(songs);
         console.log(`${gameState.songs.length} songs loaded from: ${currentSearchType === 'album' ? 'Album' : 'Artist/Title'}`);
-        
+
         // Fetch album fan counts for all songs
         if (gameState.songs.length > 0) {
             if (currentSearchType === 'album') {
@@ -2629,7 +2629,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
                 }
             }
         }
-        
+
         // Aktualisiere Subtitle im Album-Modus
         if (currentSearchType === 'album' && songs.length > 0) {
             const albumName = songs[0].album;
@@ -2677,13 +2677,13 @@ async function nextQuestion() {
                 showLoadingState();
                 // Lade alles live von iTunes API (kein Cache)
                 const fullSongData = await loadSongDataLive(candidate.artist, candidate.track);
-                
+
                 // WICHTIG: Bewahre das ursprüngliche Cover (besonders wichtig im Album-Modus!)
                 if (candidate.image) {
                     fullSongData.image = candidate.image;
                     console.log('🖼️ Album cover preserved from original:', candidate.image);
                 }
-                
+
                 // Check if album changed - if so, fetch new album's fan count
                 if (fullSongData.album !== candidate.album) {
                     console.log(`⚠️ Album changed from "${candidate.album}" to "${fullSongData.album}" - fetching new fan count`);
@@ -2695,7 +2695,7 @@ async function nextQuestion() {
                     fullSongData.albumFans = candidate.albumFans;
                     console.log('📀 Album fans preserved from original:', candidate.albumFans);
                 }
-                
+
                 gameState.currentSong = fullSongData;
             } else {
                 gameState.currentSong = candidate;
@@ -2729,6 +2729,10 @@ async function nextQuestion() {
     displayAlbumCover();
     displayAnswers();
 
+    // Enable play and reverse buttons for new question
+    document.getElementById('playBtn').disabled = false;
+    document.getElementById('reverseBtn').disabled = false;
+
     // Verstecke die nächste Frage Button
     document.getElementById('nextBtn').classList.remove('show');
     document.getElementById('resultMessage').textContent = '';
@@ -2745,15 +2749,15 @@ function displayAlbumCover() {
 
     if (song.image) {
         albumCover.innerHTML = `<img src="${song.image}" alt="Album Cover" onerror="this.parentElement.innerHTML='<div class=&quot;cover-placeholder&quot;></div>'">`;
-        
+
         // Add fan count badge if available
         if (song.albumFans && song.albumFans > 0) {
             console.log('✅ Creating badge with', song.albumFans, 'fans');
             const badge = document.createElement('div');
             badge.className = 'album-fan-badge';
-            const fanCount = song.albumFans >= 1000000 ? (song.albumFans / 1000000).toFixed(1) + 'M' : 
-                            song.albumFans >= 1000 ? (song.albumFans / 1000).toFixed(0) + 'K' : 
-                            song.albumFans;
+            const fanCount = song.albumFans >= 1000000 ? (song.albumFans / 1000000).toFixed(1) + 'M' :
+                song.albumFans >= 1000 ? (song.albumFans / 1000).toFixed(0) + 'K' :
+                    song.albumFans;
             badge.textContent = fanCount;
             badge.title = `${song.albumFans.toLocaleString()} album fans`;
             albumCover.appendChild(badge);
@@ -2767,7 +2771,7 @@ function displayAlbumCover() {
         container.classList.add('cover-filled');
     }
     applyContainerCoverBackground(song.image);
-    
+
     // Click-to-Zoom Funktionalität
     albumCover.removeEventListener('click', toggleAlbumZoom);
     albumCover.addEventListener('click', toggleAlbumZoom);
@@ -2806,7 +2810,7 @@ function applyContainerCoverBackground(imageUrl) {
 function displayAnswers() {
     try {
         const song = gameState.currentSong;
-        
+
         if (!song || !song.track) {
             console.error('Song oder song.track ist undefined:', song);
             document.getElementById('answersContainer').innerHTML = `<p style="color: red;">${t('errorSongDataMissing')}</p>`;
@@ -2887,10 +2891,10 @@ function displayAnswers() {
 // Normalisiere Song-Titel (entfernt Versionsangaben, Klammern, etc.)
 function normalizeSongTitle(title) {
     if (!title) return '';
-    
+
     // Konvertiere zu Kleinbuchstaben
     let normalized = title.toLowerCase();
-    
+
     // Entferne gängige Versionsangaben und Klammern
     normalized = normalized
         .replace(/\s*\(.*?(remix|mix|version|edit|remaster|live|acoustic|radio|extended|instrumental|feat\.|featuring|ft\.).*?\)/gi, '')
@@ -2901,7 +2905,7 @@ function normalizeSongTitle(title) {
         .replace(/\s*\[[^\]]*\]/g, '')
         .replace(/\s+/g, ' ')  // Mehrfache Leerzeichen auf eines reduzieren
         .trim();
-    
+
     return normalized;
 }
 
@@ -2923,19 +2927,19 @@ function formatSongTitleForDisplay(title) {
 function areSongsTooSimilar(title1, title2) {
     const normalized1 = normalizeSongTitle(title1);
     const normalized2 = normalizeSongTitle(title2);
-    
+
     // Exakte Übereinstimmung nach Normalisierung
     if (normalized1 === normalized2) {
         return true;
     }
-    
+
     // Prüfe ob ein Titel im anderen enthalten ist (für sehr kurze Titel)
     if (normalized1.length < 15 || normalized2.length < 15) {
         if (normalized1.includes(normalized2) || normalized2.includes(normalized1)) {
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -2951,19 +2955,19 @@ function getRandomWrongAnswers(count) {
     while (wrongAnswers.length < count && attempts < maxAttempts) {
         const randomSong = gameState.songs[Math.floor(Math.random() * gameState.songs.length)];
         const normalizedTitle = normalizeSongTitle(randomSong.track);
-        
+
         // Prüfe ob exakter Titel bereits verwendet
         if (usedTracks.has(randomSong.track)) {
             attempts++;
             continue;
         }
-        
+
         // Prüfe ob normalisierter Titel bereits verwendet (filtert Remixe etc.)
         if (usedNormalizedTitles.has(normalizedTitle)) {
             attempts++;
             continue;
         }
-        
+
         // Prüfe ob zu ähnlich zu bereits verwendeten Songs
         let tooSimilar = false;
         for (const usedAnswer of wrongAnswers) {
@@ -2972,13 +2976,13 @@ function getRandomWrongAnswers(count) {
                 break;
             }
         }
-        
+
         if (!tooSimilar) {
             usedTracks.add(randomSong.track);
             usedNormalizedTitles.add(normalizedTitle);
             wrongAnswers.push(randomSong.track);
         }
-        
+
         attempts++;
     }
 
@@ -2990,7 +2994,11 @@ function selectAnswer(answer, index) {
     if (gameState.isAnswered) return;
 
     gameState.isAnswered = true;
-    
+
+    // Disable play and reverse buttons
+    document.getElementById('playBtn').disabled = true;
+    document.getElementById('reverseBtn').disabled = true;
+
     // Fade out audio over 3 seconds instead of stopping abruptly
     fadeOutAndStop(3000);
 
@@ -3011,21 +3019,21 @@ function selectAnswer(answer, index) {
     // Update Score + Stempel
     if (isCorrect) {
         gameState.correctAnswers++;
-        
+
         // Spiele Erfolgs-Sound
         playCorrectSound();
-        
+
         // Check if song was never played - give bonus 1700 points
         if (!gameState.firstPlayDone) {
             const bonusPoints = 1700;
             gameState.totalPoints += bonusPoints;
-            
+
             // Stempel auf gewählter Antwort
             if (selectedBtn) {
                 selectedBtn.dataset.stamp = `+${bonusPoints} 🎯`;
                 selectedBtn.classList.add('stamp', 'stamp-correct');
             }
-            
+
             const resultMsg = document.getElementById('resultMessage');
             resultMsg.textContent = `${t('answerCorrect')} +${bonusPoints} ${t('points')} 🎯 Never played bonus!`;
             resultMsg.classList.remove('incorrect');
@@ -3040,7 +3048,7 @@ function selectAnswer(answer, index) {
             const awardedPoints = countdownPoints !== null ? countdownPoints : basePoints;
 
             gameState.totalPoints += awardedPoints;
-            
+
             // Stempel auf gewählter Antwort
             if (selectedBtn) {
                 selectedBtn.dataset.stamp = `+${awardedPoints}`;
@@ -3056,15 +3064,15 @@ function selectAnswer(answer, index) {
         }
     } else {
         gameState.wrongAnswers++;
-        
+
         // Spiele Fehler-Sound
         playWrongSound();
-        
+
         if (selectedBtn) {
             selectedBtn.dataset.stamp = '✕';
             selectedBtn.classList.add('stamp', 'stamp-wrong');
         }
-        
+
         const resultMsg = document.getElementById('resultMessage');
         resultMsg.textContent = t('answerWrong');
         resultMsg.classList.remove('correct');
@@ -3200,7 +3208,7 @@ function showSongInfo() {
     }
 
     // Click outside buttons closes
-    songInfoEl.onclick = function(e) {
+    songInfoEl.onclick = function (e) {
         if (e.target.tagName === 'BUTTON') return;
         this.classList.remove('show');
     };
@@ -3383,22 +3391,22 @@ function stopPointsCountdown(hide = true) {
 function playKatchingSound() {
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
+
         // Erzeuge einen einfachen "Cash Register" / "Katching" Sound
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
-        
+
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
-        
+
         // Frequenz-Sweep für "Katching" Effekt
         oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
         oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
-        
+
         // Lautstärke-Envelope
         gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
-        
+
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.15);
     } catch (err) {
@@ -3410,24 +3418,24 @@ function playKatchingSound() {
 function playCorrectSound() {
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
+
         // Aufsteigender fröhlicher Akkord - LAUTER und LÄNGER
         const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5
         frequencies.forEach((freq, i) => {
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
-            
+
             oscillator.connect(gainNode);
             gainNode.connect(audioContext.destination);
-            
+
             oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
             oscillator.type = 'sine';
-            
+
             const startTime = audioContext.currentTime + (i * 0.08);
             gainNode.gain.setValueAtTime(0, startTime);
             gainNode.gain.linearRampToValueAtTime(0.35, startTime + 0.02); // 0.35 statt 0.15
             gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + 0.5); // 0.5 statt 0.3
-            
+
             oscillator.start(startTime);
             oscillator.stop(startTime + 0.5);
         });
@@ -3440,39 +3448,39 @@ function playCorrectSound() {
 function playWrongSound() {
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
+
         // Zwei absteigendi Buzzer für mehr Deutlichkeit
         // Erster Buzzer
         const oscillator1 = audioContext.createOscillator();
         const gainNode1 = audioContext.createGain();
-        
+
         oscillator1.connect(gainNode1);
         gainNode1.connect(audioContext.destination);
-        
+
         oscillator1.type = 'sawtooth';
         oscillator1.frequency.setValueAtTime(400, audioContext.currentTime);
         oscillator1.frequency.exponentialRampToValueAtTime(150, audioContext.currentTime + 0.4);
-        
+
         gainNode1.gain.setValueAtTime(0.35, audioContext.currentTime); // 0.35 statt 0.2
         gainNode1.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
-        
+
         oscillator1.start(audioContext.currentTime);
         oscillator1.stop(audioContext.currentTime + 0.4);
-        
+
         // Zweiter Buzzer (nach kurzer Pause)
         const oscillator2 = audioContext.createOscillator();
         const gainNode2 = audioContext.createGain();
-        
+
         oscillator2.connect(gainNode2);
         gainNode2.connect(audioContext.destination);
-        
+
         oscillator2.type = 'sawtooth';
         oscillator2.frequency.setValueAtTime(300, audioContext.currentTime + 0.25);
         oscillator2.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.65);
-        
+
         gainNode2.gain.setValueAtTime(0.3, audioContext.currentTime + 0.25);
         gainNode2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.65);
-        
+
         oscillator2.start(audioContext.currentTime + 0.25);
         oscillator2.stop(audioContext.currentTime + 0.65);
     } catch (err) {
@@ -3486,13 +3494,15 @@ function playWrongSound() {
 
 // Spiele Preview ab (iOS-kompatibel)
 function playPreview() {
+    if (gameState.isAnswered) return;
+
     if (!gameState.currentSong) {
         debugLog('❌ Kein Song geladen', 'F8');
         alert(`[F8] ${t('errorNoSongLoaded')} ${gameState.lastError ? t('errorLastError') + ' ' + gameState.lastError : ''} ${t('errorLoadingNextQuestion')}`);
         nextQuestion();
         return;
     }
-    
+
     if (!gameState.currentSong.previewUrl) {
         alert(t('errorNoPreview'));
         // Automatisch nächsten Song laden
@@ -3536,25 +3546,25 @@ function playPreview() {
 
     // Setze Flags zurück
     gameState.previewFinished = false;
-    
+
     // Preview-Dauer aus Auswahl (Default bereits gesetzt beim Start)
     const previewDuration = gameState.previewDuration || 15;
-    
+
     console.log('Versuche Preview abzuspielen:', gameState.currentSong.previewUrl);
     debugLog(`▶️ Starte Preview...`);
-    
+
     // Starte Playback — mit Sicherheitsmaßnahmen gegen Abbruchfehler
     const playAttempt = () => {
         audio.play()
             .then(() => {
                 console.log('Playback gestartet');
                 debugLog(`🔊 Playback läuft`);
-                
+
                 // Tracking: Erhöhe Play-Count und addiere Abspielzeit
                 gameState.currentPlayCount++;
                 gameState.totalPlayTime += previewDuration;
                 updatePlayTimeDisplay();
-                
+
                 // Deaktiviere Play-Button während Playback
                 if (playBtn) playBtn.disabled = true;
                 stopBtn.classList.add('active');
@@ -3597,7 +3607,7 @@ function playPreview() {
                 }
             });
     };
-    
+
     // Starte Playback sofort
     playAttempt();
 }
@@ -3614,19 +3624,19 @@ function stopPreview() {
     audio.pause();
     audio.currentTime = 0;
     audio.volume = 1.0; // Reset volume
-    
+
     // Stoppe Progress Animation
     if (gameState.progressInterval) {
         cancelAnimationFrame(gameState.progressInterval);
         gameState.progressInterval = null;
     }
-    
+
     // Stoppe Timeout
     if (gameState.stopTimeout) {
         clearTimeout(gameState.stopTimeout);
         gameState.stopTimeout = null;
     }
-    
+
     // Stoppe fade-out interval if any
     if (gameState.fadeOutInterval) {
         clearInterval(gameState.fadeOutInterval);
@@ -3643,25 +3653,25 @@ function stopPreview() {
 // Fade out audio over duration (in milliseconds) and then stop
 function fadeOutAndStop(duration = 3000) {
     const audio = document.getElementById('audioPlayer');
-    
+
     // If audio is not playing, just stop immediately
     if (audio.paused || !audio.src) {
         stopPreview();
         return;
     }
-    
+
     const startVolume = audio.volume;
     const fadeSteps = 60; // 60 steps for smooth fade
     const stepDuration = duration / fadeSteps;
     const volumeDecrement = startVolume / fadeSteps;
-    
+
     let currentStep = 0;
-    
+
     gameState.fadeOutInterval = setInterval(() => {
         currentStep++;
         const newVolume = Math.max(0, startVolume - (volumeDecrement * currentStep));
         audio.volume = newVolume;
-        
+
         if (currentStep >= fadeSteps || newVolume <= 0) {
             clearInterval(gameState.fadeOutInterval);
             gameState.fadeOutInterval = null;
@@ -3674,6 +3684,8 @@ function fadeOutAndStop(duration = 3000) {
 
 // Reverse Preview abspielen
 async function playPreviewReverse() {
+    if (gameState.isAnswered) return;
+
     if (!gameState.currentSong) return;
 
     const stopBtn = document.getElementById('stopBtn');
@@ -3716,7 +3728,7 @@ async function playPreviewReverse() {
         source.connect(reverseCtx.destination);
         reverseSource = source;
         reversePlaying = true;
-        
+
         // Tracking: Markiere, dass rückwärts abgespielt wurde (erhöht NICHT den playCount und NICHT die totalPlayTime)
         gameState.currentPlayedReverse = true;
 
@@ -3751,7 +3763,7 @@ async function playPreviewReverse() {
             stopBtn.classList.remove('active');
             document.getElementById('progressFill').style.width = '0%';
             updateTimeDisplay(0, 15);
-            
+
             const playBtn = document.getElementById('playBtn');
             if (playBtn) playBtn.disabled = false;
         };
@@ -3768,7 +3780,7 @@ async function playPreviewReverse() {
                 stopBtn.classList.remove('active');
                 document.getElementById('progressFill').style.width = '0%';
                 updateTimeDisplay(0, 15);
-                
+
                 const playBtn = document.getElementById('playBtn');
                 if (playBtn) playBtn.disabled = false;
             }
@@ -3779,10 +3791,10 @@ async function playPreviewReverse() {
     } catch (err) {
         console.error('Reverse playback error:', err);
         stopBtn.classList.remove('active');
-        
+
         const playBtn = document.getElementById('playBtn');
         if (playBtn) playBtn.disabled = false;
-        
+
         alert(t('errorReversePlayback'));
     }
 }
@@ -3791,7 +3803,7 @@ async function playPreviewReverse() {
 function updateTimeDisplay(seconds, duration = 15) {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    document.getElementById('timeDisplay').textContent = 
+    document.getElementById('timeDisplay').textContent =
         `${mins}:${String(secs).padStart(2, '0')} / 0:${String(duration).padStart(2, '0')}`;
 }
 
@@ -3822,7 +3834,7 @@ function updateStats() {
     if (wrongEl) {
         wrongEl.textContent = gameState.wrongAnswers;
     }
-    
+
     const pointsEl = document.getElementById('pointsCount');
     if (pointsEl) {
         const avgPoints = answeredQuestions > 0 ? Math.round(gameState.totalPoints / answeredQuestions) : 0;
@@ -3870,7 +3882,7 @@ function endGame() {
     }
 
     stopPreview();
-    
+
     // Speichere Score nach kurzer Verzögerung (UI-Update zuerst)
     setTimeout(() => {
         saveGameScore();
@@ -3909,7 +3921,7 @@ function showError(message) {
 }
 
 // Verhindere mehrfaches Abspielen
-document.addEventListener('visibilitychange', function() {
+document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
         stopPreview();
     }
@@ -3921,7 +3933,7 @@ document.addEventListener('visibilitychange', function() {
 
 // Generiere UUID v4
 function generateUUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         const r = Math.random() * 16 | 0;
         const v = c === 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
@@ -3943,9 +3955,9 @@ function getOrCreatePlayerID() {
 async function initializePlayerName() {
     // Stelle sicher, dass Spieler-ID existiert
     getOrCreatePlayerID();
-    
+
     let playerName = localStorage.getItem('playerName');
-    
+
     if (!playerName) {
         // Versuche vom Server zu laden
         try {
@@ -3961,7 +3973,7 @@ async function initializePlayerName() {
             playerName = 'Anon';
         }
     }
-    
+
     updatePlayerNameDisplay(playerName);
 }
 
@@ -3972,7 +3984,7 @@ function initializePlayer() {
         playerId = generateUUID();
         localStorage.setItem('playerId', playerId);
     }
-    
+
     const playerName = localStorage.getItem('playerName') || 'Anon';
     updatePlayerNameDisplay(playerName);
 }
@@ -3983,7 +3995,7 @@ function updatePlayerNameDisplay(name) {
     const shortId = playerId.substring(0, 4).toUpperCase();
     const country = localStorage.getItem('playerCountry') || '🌍';
     const displayName = `👤 ${name} ${country} #${shortId}`;
-    
+
     const btn = document.getElementById('playerNameBtn');
     if (btn) {
         btn.textContent = displayName;
@@ -4001,11 +4013,11 @@ function openPlayerNameModal() {
     const currentName = localStorage.getItem('playerName') || 'Anon';
     const playerId = getOrCreatePlayerID();
     const shortId = playerId.substring(0, 4).toUpperCase();
-    
+
     if (currentName !== 'Anon') {
         input.value = currentName;
     }
-    
+
     // Show player ID info
     const idInfo = document.getElementById('playerIdInfo');
     const idDisplay = document.getElementById('playerIdDisplay');
@@ -4013,7 +4025,7 @@ function openPlayerNameModal() {
         idDisplay.textContent = `${currentName} #${shortId}`;
         idInfo.style.display = 'block';
     }
-    
+
     input.focus();
     modal.classList.add('show');
 }
@@ -4054,12 +4066,12 @@ function closeRestoreIdModal() {
 function restorePlayerIdAndName() {
     const input = document.getElementById('restoreIdInput');
     const restoreString = input.value.trim();
-    
+
     if (!restoreString) {
         alert('Please paste your player ID');
         return;
     }
-    
+
     // Parse restore string: "Gerald 🇦🇹 #a3f2"
     // Extract name and short ID
     const parts = restoreString.split('#');
@@ -4067,34 +4079,34 @@ function restorePlayerIdAndName() {
         alert('Invalid format. Use: Name Country #ID');
         return;
     }
-    
+
     const namePart = parts[0].trim();
     const idPart = parts[1].trim();
-    
+
     if (!namePart || !idPart) {
         alert('Invalid format. Use: Name Country #ID');
         return;
     }
-    
+
     // Extract name (remove country emoji and extra spaces)
     // Split by whitespace, remove any emoji, and rejoin
     const words = namePart.split(/\s+/);
     // Filter out words that are only emoji or special characters
     const name = words.filter(word => /[a-zA-Z0-9]/.test(word)).join(' ').trim();
-    
+
     if (!name || name.length < 2) {
         alert('Invalid player name');
         return;
     }
-    
+
     // Store the name and short ID (for reference)
     localStorage.setItem('playerName', name);
     localStorage.setItem('playerIdShort', idPart);
-    
+
     updatePlayerNameDisplay(name);
     closeRestoreIdModal();
     closePlayerNameModal();
-    
+
     alert('Player ID restored successfully!');
 }
 
@@ -4124,12 +4136,12 @@ function closeLegalModal() {
 function savePlayerName() {
     const input = document.getElementById('playerNameInput');
     const name = input.value.trim();
-    
+
     if (!name || name.length < 2) {
         alert(t('playerNameTooShort'));
         return;
     }
-    
+
     localStorage.setItem('playerName', name);
     updatePlayerNameDisplay(name);
     closePlayerNameModal();
@@ -4155,39 +4167,39 @@ async function openPlayerSearchModal() {
     const modal = document.getElementById('playerSearchModal');
     const resultsDiv = document.getElementById('playerSearchResults');
     const playerName = localStorage.getItem('playerName') || 'Anon';
-    
+
     if (!modal || !resultsDiv) return;
-    
+
     resultsDiv.innerHTML = `<p style="text-align: center; color: #999;">${t('searchingScores')}</p>`;
     modal.classList.add('show');
-    
+
     try {
         // Lade ALL scores für globales Ranking
         const response = await fetch('/api/all-scores');
         const data = await response.json();
         const allScores = data.scores || [];
-        
+
         console.log('Total scores loaded:', allScores.length);
         console.log('Searching for playerName:', playerName);
         console.log('Sample score usernames:', allScores.slice(0, 5).map(s => s.username));
-        
+
         // Filtere Player-Scores
         const playerScores = allScores.filter(score => score.username === playerName);
-        
+
         console.log('Player scores found:', playerScores.length);
-        
+
         if (!playerScores || playerScores.length === 0) {
             resultsDiv.innerHTML = `<p style="text-align: center; color: #666;">${t('noScoresFound')}</p>`;
             return;
         }
-        
+
         // Sortiere Player-Scores nach Punkte (absteigend)
         const sorted = playerScores.sort((a, b) => {
             const ap = (a.points ?? a.totalPoints ?? 0);
             const bp = (b.points ?? b.totalPoints ?? 0);
             return bp - ap;
         });
-        
+
         // Rendera HTML mit globalem Ranking
         const html = sorted.map((score) => {
             const points = score.points ?? score.totalPoints ?? 0;
@@ -4196,10 +4208,10 @@ async function openPlayerSearchModal() {
             const country = score.country || '🌍';
             const shortId = (score.userId || score.playerId || '').substring(0, 4).toUpperCase();
             const playerDisplay = shortId ? `${score.username} ${country} #${shortId}` : score.username;
-            
+
             // Finde globale Position (alle Scores mit höheren Punkten + 1)
             const globalRank = allScores.filter(s => (s.points ?? s.totalPoints ?? 0) > points).length + 1;
-            
+
             return `
                 <div class="leaderboard-modal-item" style="background: rgba(102, 126, 234, 0.1); border-radius: 8px; padding: 12px; margin-bottom: 8px; border-bottom: 1px solid #e0e0e0;">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
@@ -4211,7 +4223,7 @@ async function openPlayerSearchModal() {
                 </div>
             `;
         }).join('');
-        
+
         resultsDiv.innerHTML = `<div style="text-align: center; color: #667eea; margin-bottom: 12px; font-weight: bold;">${sorted.length} ${t('entriesFound')}</div>` + html;
     } catch (error) {
         console.error('Error searching player scores:', error);
@@ -4231,53 +4243,53 @@ function closePlayerSearchModal() {
 async function openBubbleCategoryModal() {
     const modal = document.getElementById('bubbleCategoryModal');
     const grid = document.getElementById('bubbleCategoryGrid');
-    
+
     if (!modal || !grid) return;
-    
+
     // Build category options from genres.json
     const categories = [];
-    
+
     // Add genre categories
     if (genresData.genres && genresData.genres.length > 0) {
         genresData.genres.forEach(genre => {
             categories.push({ name: genre, type: 'genre' });
         });
     }
-    
+
     // Add special genres (Jazz, Blues, Country, etc.)
     if (genresData.specialGenres) {
         Object.keys(genresData.specialGenres).forEach(key => {
             const genreData = genresData.specialGenres[key];
-            categories.push({ 
-                name: genreData.name || key, 
+            categories.push({
+                name: genreData.name || key,
                 type: 'specialGenre',
-                key: key 
+                key: key
             });
         });
     }
-    
+
     // Add country categories
     if (genresData.countries) {
         Object.keys(genresData.countries).forEach(countryKey => {
             const countryData = genresData.countries[countryKey];
-            categories.push({ 
-                name: countryData.name, 
-                value: countryKey, 
-                type: 'country' 
+            categories.push({
+                name: countryData.name,
+                value: countryKey,
+                type: 'country'
             });
         });
     }
-    
+
     // Classical categories removed from bubble selector
     // (keeping classical-performers.json and mapping functionality for potential future use)
-    
+
     // Add decades
     if (genresData.decades && genresData.decades.length > 0) {
         genresData.decades.forEach(decade => {
             categories.push({ name: decade, type: 'decade' });
         });
     }
-    
+
     // Create buttons
     grid.innerHTML = '';
     categories.forEach(cat => {
@@ -4290,7 +4302,7 @@ async function openBubbleCategoryModal() {
         btn.onclick = () => selectBubbleCategory(cat);
         grid.appendChild(btn);
     });
-    
+
     modal.classList.add('show');
 }
 
@@ -4305,10 +4317,10 @@ function closeBubbleCategoryModal() {
 // Select a bubble category and load artists
 async function selectBubbleCategory(category) {
     closeBubbleCategoryModal();
-    
+
     try {
         let artists = [];
-        
+
         if (category.type === 'genre') {
             // For music genres (Pop, Rock, etc.), use ArtistsList.json as base
             // We'll filter by popularity since we don't have genre-specific artist lists
@@ -4352,7 +4364,7 @@ async function selectBubbleCategory(category) {
             const key = (category.key || category.name || '').toLowerCase();
             if ((lower.includes('operett') || lower.includes('operetta') || key === 'operette') && mappingOperettas) {
                 // Use operettas mapping keys as bubbles — filter only those with recordings
-                artists = Object.keys(mappingOperettas || {}).filter(k => 
+                artists = Object.keys(mappingOperettas || {}).filter(k =>
                     Array.isArray(mappingOperettas[k]) && mappingOperettas[k].length > 0
                 );
                 mappingActive = true;
@@ -4360,7 +4372,7 @@ async function selectBubbleCategory(category) {
                 console.log(`🎼 Loaded ${artists.length} Operetta mappings (with recordings)`);
             } else if ((lower.includes('opera') || key === 'oper') && mappingOperas) {
                 // Use operas mapping keys as bubbles — filter only those with recordings
-                artists = Object.keys(mappingOperas || {}).filter(k => 
+                artists = Object.keys(mappingOperas || {}).filter(k =>
                     Array.isArray(mappingOperas[k]) && mappingOperas[k].length > 0
                 );
                 mappingActive = true;
@@ -4368,7 +4380,7 @@ async function selectBubbleCategory(category) {
                 console.log(`🎼 Loaded ${artists.length} Opera mappings (with recordings)`);
             } else if ((lower.includes('kompon') || lower.includes('composer') || lower.includes('componist') || key === 'komponist') && mappingComposers) {
                 // Use composers mapping keys as bubbles — filter only those with recordings
-                artists = Object.keys(mappingComposers || {}).filter(k => 
+                artists = Object.keys(mappingComposers || {}).filter(k =>
                     Array.isArray(mappingComposers[k]) && mappingComposers[k].length > 0
                 );
                 mappingActive = true;
@@ -4388,12 +4400,12 @@ async function selectBubbleCategory(category) {
             artists = uniqueArtists;
             console.log(`🫧 Loaded ${artists.length} artists from ${category.name}`);
         }
-        
+
         if (artists.length === 0) {
             showError(`No artists found for ${category.name}`);
             return;
         }
-        
+
         // Fetch Deezer data for all artists to get fan counts and sort by popularity
         console.log(`🫧 Fetching popularity data for ${artists.length} artists...`);
         const artistsWithFans = await Promise.all(
@@ -4406,29 +4418,29 @@ async function selectBubbleCategory(category) {
                 };
             })
         );
-        
+
         // Sort by fan count (most popular first)
         artistsWithFans.sort((a, b) => b.fans - a.fans);
-        
+
         // Take top 80 most popular
         const topArtists = artistsWithFans.slice(0, 80).map(a => a.name);
-        
+
         // Update global artistNames and restart bubbles
         artistNames = topArtists;
         currentBubbleCategory = category.name;
         console.log(`🫧 Showing top ${artistNames.length} popular artists from "${category.name}"`);
-        
+
         // Update category label
         const categoryLabel = document.getElementById('bubbleCategoryLabel');
         if (categoryLabel) {
             categoryLabel.textContent = `🫧 Bubbles: ${category.name} (${artistNames.length} artists)`;
             categoryLabel.style.display = 'block';
         }
-        
+
         // Restart bubbles with new artist list
         stopArtistBubbles();
         startArtistBubbles();
-        
+
     } catch (error) {
         console.error('Error loading bubble category:', error);
         showError('Error loading artists for this category');
@@ -4552,9 +4564,9 @@ function closeLeaderboardModal(event) {
 async function showSetupLeaderboard() {
     const leaderboardDiv = document.getElementById('setupLeaderboard');
     const titleEl = document.querySelector('#setupLeaderboard .leaderboard-title');
-    
+
     if (!leaderboardDiv) return;
-    
+
     // Lade Global Leaderboard (alle Scores)
     const gameMode = 'Global';
     if (titleEl) {
@@ -4568,7 +4580,7 @@ async function showSetupLeaderboard() {
         });
         leaderboardDiv.dataset.clickBound = 'true';
     }
-    
+
     leaderboardDiv.classList.add('show');
 }
 
@@ -4577,20 +4589,20 @@ async function showGameLeaderboard() {
     const leaderboardDiv = document.getElementById('quizLeaderboard');
     const listDiv = document.getElementById('quizLeaderboardList');
     const titleEl = document.querySelector('#quizLeaderboard .leaderboard-title');
-    
+
     if (!leaderboardDiv) return;
-    
+
     const gameMode = gameState.currentGameMode || 'Genre';
     if (titleEl) {
         titleEl.textContent = `🏆 Top 3 – ${gameMode}`;
     }
     const scores = await loadLeaderboard(gameMode);
-    
+
     if (!scores || scores.length === 0) {
         leaderboardDiv.classList.remove('show');
         return;
     }
-    
+
     // Render Top 3
     const html = scores.slice(0, 3).map((score, index) => {
         const country = score.country || '🌍';
@@ -4603,7 +4615,7 @@ async function showGameLeaderboard() {
             <span class="leaderboard-points">🏆 ${score.totalPoints}</span>
         </div>
     `}).join('');
-    
+
     listDiv.innerHTML = html;
     leaderboardDiv.classList.add('show');
 }
@@ -4616,13 +4628,13 @@ async function saveGameScore() {
     const answeredQuestions = (gameState.correctAnswers || 0) + (gameState.wrongAnswers || 0);
     const correctAnswers = gameState.correctAnswers || 0;
     const finalScore = calculateFinalScore();
-    
+
     // Only save if more than 9 questions were answered
     if (answeredQuestions <= 9) {
         console.log('⚠️ Score not saved: Less than 10 questions answered');
         return false;
     }
-    
+
     console.log('💾 Saving score:', {
         playerName,
         playerId,
@@ -4631,7 +4643,7 @@ async function saveGameScore() {
         totalQuestions: answeredQuestions,
         correctAnswers
     });
-    
+
     try {
         const res = await fetch('/api/score', {
             method: 'POST',
@@ -4647,9 +4659,9 @@ async function saveGameScore() {
                 correctAnswers: correctAnswers
             })
         });
-        
+
         const data = await res.json();
-        
+
         if (data.success) {
             console.log('✅ Score saved:', data.score);
             return true;
@@ -4666,11 +4678,11 @@ async function saveGameScore() {
 // Hole aktuell ausgewählten Spielmodus
 function getSelectedGameMode() {
     const selected = document.querySelector('input[name="gameMode"]:checked');
-    
+
     if (!selected) return 'Genre';
-    
+
     const value = selected.value;
-    
+
     if (value === 'genre') {
         const genreSelect = document.getElementById('genreSelect');
         const genre = genreSelect ? genreSelect.value : 'Alle';
@@ -4682,12 +4694,12 @@ function getSelectedGameMode() {
         const searchQuery = document.getElementById('searchQuery')?.value?.trim();
         return searchQuery ? `Songs by ${searchQuery}` : 'Free Choice (iTunes Search)';
     }
-    
+
     return 'Genre';
 }
 
 // Rufe initializePlayerName beim Laden auf
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     initializePlayerName();
     // Initial Leaderboard laden
     setTimeout(() => {

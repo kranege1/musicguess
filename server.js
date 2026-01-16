@@ -3,7 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const http = require('http');
 const path = require('path');
-const { saveScore, getLeaderboard, getPlayerByIP, getClientIP } = require('./highscoreManager');
+const { saveScore, getLeaderboard } = require('./highscoreManager');
 const { db } = require('./firebaseConfig');
 
 const app = express();
@@ -16,6 +16,16 @@ app.use(express.json());
 // In-memory cache for iTunes previews
 const previewCache = {};
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+/**
+ * Extrahiere IP-Adresse aus Request
+ */
+function getClientIP(req) {
+    return req.headers['x-forwarded-for']?.split(',')[0] ||
+        req.headers['x-real-ip'] ||
+        req.connection.remoteAddress ||
+        'unknown';
+}
 
 // Get country code from IP (simple mapping - can be enhanced with geoip library)
 function getCountryFromIP(ip) {
@@ -36,19 +46,19 @@ async function fetchFromItunes(searchTerm, countries = ['DE', 'US', 'GB', 'FR', 
         try {
             const encodedQuery = encodeURIComponent(searchTerm);
             const url = `https://itunes.apple.com/search?term=${encodedQuery}&entity=song&limit=10&media=music&country=${country}`;
-            
-            const response = await fetch(url, { 
+
+            const response = await fetch(url, {
                 cache: 'no-store',
                 timeout: 10000
             });
-            
+
             if (!response.ok) {
                 console.log(`[${country}] HTTP ${response.status}`);
                 continue;
             }
-            
+
             const data = await response.json();
-            
+
             if (data.results && data.results.length > 0) {
                 // Find song with preview
                 for (const result of data.results) {
@@ -69,7 +79,7 @@ async function fetchFromItunes(searchTerm, countries = ['DE', 'US', 'GB', 'FR', 
             continue;
         }
     }
-    
+
     throw new Error('No preview found in any country');
 }
 
@@ -93,14 +103,14 @@ app.get('/api/songs', (req, res) => {
  */
 app.get('/api/preview', async (req, res) => {
     const { artist, track } = req.query;
-    
+
     if (!artist || !track) {
         return res.status(400).json({ error: 'Missing artist or track parameter' });
     }
-    
+
     const cacheKey = `${artist}||${track}`;
     const now = Date.now();
-    
+
     // Check cache
     if (previewCache[cacheKey]) {
         const cached = previewCache[cacheKey];
@@ -109,23 +119,23 @@ app.get('/api/preview', async (req, res) => {
             return res.json(cached.data);
         }
     }
-    
+
     // Fetch from iTunes
     try {
         console.log(`[API] Fetching: ${artist} - ${track}`);
         const result = await fetchFromItunes(`${artist} ${track}`);
-        
+
         // Cache result
         previewCache[cacheKey] = {
             data: result,
             timestamp: now
         };
-        
+
         console.log(`[CACHE] Stored: ${artist} - ${track} (${Object.keys(previewCache).length} items)`);
         res.json(result);
     } catch (err) {
         console.error(`[ERROR] ${artist} - ${track}: ${err.message}`);
-        res.status(404).json({ 
+        res.status(404).json({
             error: 'Preview not found',
             message: err.message
         });
@@ -136,7 +146,7 @@ app.get('/api/preview', async (req, res) => {
  * Health check endpoint
  */
 app.get('/api/health', (req, res) => {
-    res.json({ 
+    res.json({
         status: 'ok',
         version: 'v39',
         cached: Object.keys(previewCache).length
@@ -148,20 +158,49 @@ app.get('/api/health', (req, res) => {
  */
 
 // GET /api/player - Spieler-Info basierend auf IP
-app.get('/api/player', (req, res) => {
-    const ip = getClientIP(req);
-    const player = getPlayerByIP(ip);
-    
-    if (player) {
-        res.json({
-            username: player.username,
-            ip: ip,
-            totalScores: player.scores.length
+app.get('/api/player', async (req, res) => {
+    try {
+        const ip = getClientIP(req);
+
+        // Query Firestore for scores with this IP
+        const snapshot = await db.collection('scores')
+            .where('ip', '==', ip)
+            .get();
+
+        if (snapshot.empty) {
+            return res.json({
+                username: null,
+                ip: ip,
+                totalScores: 0
+            });
+        }
+
+        // Get the most recent username used by this IP
+        // Sort in memory to avoid Firestore Composite Index requirement
+        const scores = [];
+        snapshot.forEach(doc => scores.push(doc.data()));
+
+        // Sort descending by timestamp
+        scores.sort((a, b) => {
+            const tA = a.timestamp && a.timestamp.toMillis ? a.timestamp.toMillis() : new Date(a.timestamp).getTime();
+            const tB = b.timestamp && b.timestamp.toMillis ? b.timestamp.toMillis() : new Date(b.timestamp).getTime();
+            return tB - tA;
         });
-    } else {
+
+        const username = scores[0].username;
+        const totalScores = snapshot.size;
+
+        res.json({
+            username: username,
+            ip: ip,
+            totalScores: totalScores
+        });
+    } catch (err) {
+        console.error('Error fetching player info:', err);
+        // Fail gracefully
         res.json({
             username: null,
-            ip: ip,
+            ip: getClientIP(req),
             totalScores: 0
         });
     }
@@ -177,9 +216,9 @@ app.get('/api/check-name/:name', async (req, res) => {
 app.post('/api/score', async (req, res) => {
     try {
         const { username, playerId, gameMode, points, totalQuestions, correctAnswers } = req.body;
-        
+
         console.log('📨 Score-Request erhalten:', { username, playerId, gameMode, points, totalQuestions, correctAnswers });
-        
+
         if (!username || !gameMode || points === undefined || !totalQuestions || correctAnswers === undefined) {
             console.error('❌ Unvollständige Daten:', { username, playerId, gameMode, points, totalQuestions, correctAnswers });
             return res.status(400).json({ error: 'Unvollständige Daten', success: false });
@@ -206,13 +245,14 @@ app.post('/api/score', async (req, res) => {
             correctAnswers: correctAnswers,
             timestamp: new Date(),
             country: getCountryFromIP(getClientIP(req)),
+            ip: getClientIP(req),
             documentId: scoreRef.id
         };
 
         await scoreRef.set(scoreData);
-        
+
         console.log('✅ Score erfolgreich in Firestore gespeichert:', scoreData);
-        
+
         res.json({
             success: true,
             message: 'Score gespeichert',
@@ -221,7 +261,7 @@ app.post('/api/score', async (req, res) => {
         });
     } catch (err) {
         console.error('❌ Fehler beim Speichern des Scores:', err);
-        res.status(500).json({ 
+        res.status(500).json({
             error: err.message,
             success: false,
             saved: false
@@ -233,13 +273,13 @@ app.post('/api/score', async (req, res) => {
 app.get('/api/leaderboard/:mode', async (req, res) => {
     try {
         const mode = decodeURIComponent(req.params.mode);
-        
+
         // Handle Global leaderboard (all scores regardless of mode)
         if (mode === 'Global') {
             const snapshot = await db.collection('scores')
                 .orderBy('points', 'desc')
                 .get();
-            
+
             const leaderboard = [];
             snapshot.forEach((doc) => {
                 const data = doc.data();
@@ -249,20 +289,20 @@ app.get('/api/leaderboard/:mode', async (req, res) => {
                     timestamp: data.timestamp ? data.timestamp.toDate().toISOString() : null
                 });
             });
-            
+
             return res.json({
                 mode: 'Global',
                 count: leaderboard.length,
                 scores: leaderboard
             });
         }
-        
+
         // Handle mode-specific leaderboard without requiring a composite index
-        // Fetch all scores for the mode, then sort in-memory by points desc and take top 10
+        // Fetch all scores for the mode, then sort in-memory by points desc
         const snapshot = await db.collection('scores')
             .where('gameMode', '==', mode)
             .get();
-        
+
         const allScores = [];
         snapshot.forEach((doc) => {
             const data = doc.data();
@@ -272,10 +312,12 @@ app.get('/api/leaderboard/:mode', async (req, res) => {
                 timestamp: data.timestamp ? data.timestamp.toDate().toISOString() : null
             });
         });
-        
+
         const leaderboard = allScores
             .sort((a, b) => (b.points || 0) - (a.points || 0));
-        
+
+        console.log(`📊 Leaderboard for "${mode}": ${leaderboard.length} scores found`);
+
         res.json({
             mode: mode,
             count: leaderboard.length,
@@ -294,7 +336,7 @@ app.get('/api/leaderboard-global', async (req, res) => {
             .orderBy('points', 'desc')
             .limit(10)
             .get();
-        
+
         const leaderboard = [];
         snapshot.forEach((doc) => {
             const data = doc.data();
@@ -304,7 +346,7 @@ app.get('/api/leaderboard-global', async (req, res) => {
                 timestamp: data.timestamp ? data.timestamp.toDate().toISOString() : null
             });
         });
-        
+
         res.json({
             mode: 'Global',
             count: leaderboard.length,
@@ -322,7 +364,7 @@ app.get('/api/all-scores', async (req, res) => {
         const snapshot = await db.collection('scores')
             .orderBy('points', 'desc')
             .get();
-        
+
         const allScores = [];
         snapshot.forEach((doc) => {
             const data = doc.data();
@@ -332,7 +374,7 @@ app.get('/api/all-scores', async (req, res) => {
                 timestamp: data.timestamp ? data.timestamp.toDate().toISOString() : null
             });
         });
-        
+
         res.json({
             count: allScores.length,
             scores: allScores
@@ -365,18 +407,18 @@ app.get('/api/deezer/artist', async (req, res) => {
         }
 
         const data = await response.json();
-        
+
         // If we found an artist, fetch their full details to get fan count
         if (data.data && data.data.length > 0) {
             const artistId = data.data[0].id;
             const detailUrl = `https://api.deezer.com/artist/${artistId}`;
-            
+
             const detailResponse = await fetch(detailUrl, {
                 headers: {
                     'User-Agent': 'MusicGuess/1.0'
                 }
             });
-            
+
             if (detailResponse.ok) {
                 const detailData = await detailResponse.json();
                 // Enrich the search result with fan count
@@ -384,7 +426,7 @@ app.get('/api/deezer/artist', async (req, res) => {
                 data.data[0].fans = detailData.nb_fan;
             }
         }
-        
+
         res.json(data);
     } catch (error) {
         console.error('Deezer API proxy error:', error);
