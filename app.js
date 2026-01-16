@@ -1500,9 +1500,8 @@ async function startGame() {
     const songCount = 10; // Always play 10 questions
 
     // State speichern (previewDuration jetzt vom Dropdown)
-    const durationSelect = document.getElementById('playDurationSelect');
-    const selectedDuration = durationSelect ? parseInt(durationSelect.value, 10) : 15;
-    gameState.previewDuration = isNaN(selectedDuration) ? 15 : selectedDuration;
+    // State speichern (previewDuration fixed 30s)
+    gameState.previewDuration = 30;
     gameState.currentQuestion = 0;
     gameState.correctAnswers = 0;
     gameState.wrongAnswers = 0;
