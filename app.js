@@ -2984,9 +2984,12 @@ async function nextQuestion() {
         try {
             if (candidate.artist && candidate.track) {
                 loadingShown = true;
-                showLoadingState();
+                showLoadingState(`Preparing question ${idx + 1}...`);
+                updateLoadingProgress(20, `Loading "${candidate.track}" by ${candidate.artist}...`);
+                
                 // Lade alles live von iTunes API (kein Cache)
                 const fullSongData = await loadSongDataLive(candidate.artist, candidate.track);
+                updateLoadingProgress(60);
 
                 // WICHTIG: Bewahre das ursprüngliche Cover (besonders wichtig im Album-Modus!)
                 if (candidate.image) {
@@ -2994,6 +2997,8 @@ async function nextQuestion() {
                     console.log('🖼️ Album cover preserved from original:', candidate.image);
                 }
 
+                updateLoadingProgress(80, 'Fetching album details...');
+                
                 // Check if album changed - if so, fetch new album's fan count
                 if (fullSongData.album !== candidate.album) {
                     console.log(`⚠️ Album changed from "${candidate.album}" to "${fullSongData.album}" - fetching new fan count`);
@@ -3006,6 +3011,7 @@ async function nextQuestion() {
                     console.log('📀 Album fans preserved from original:', candidate.albumFans);
                 }
 
+                updateLoadingProgress(100, 'Ready!');
                 gameState.currentSong = fullSongData;
             } else {
                 gameState.currentSong = candidate;
@@ -4181,6 +4187,27 @@ function updateStats() {
     }
 }
 
+// Skip to menu without showing game-over screen
+function skipToMenu() {
+    stopPointsCountdown();
+    stopPreview();
+
+    // Remove cover background
+    const container = document.querySelector('.container');
+    if (container) {
+        container.classList.remove('cover-filled');
+        container.style.backgroundImage = '';
+        container.style.backgroundSize = '';
+        container.style.backgroundPosition = '';
+    }
+
+    // Return to menu
+    document.getElementById('quizScreen').style.display = 'none';
+    document.getElementById('setupScreen').style.display = 'block';
+    document.body.classList.remove('game-over-active');
+    document.getElementById('gameOverScreen').classList.remove('show');
+}
+
 // Spiel beenden
 function endGame() {
     stopPointsCountdown();
@@ -4238,11 +4265,16 @@ function shuffleArray(array) {
     return shuffled;
 }
 
-function showLoadingState() {
+function showLoadingState(text = 'Loading songs...') {
     const loadingIndicator = document.getElementById('loadingIndicator');
     if (loadingIndicator) {
         loadingIndicator.style.display = 'block';
     }
+    const loadingText = document.getElementById('loadingText');
+    if (loadingText) {
+        loadingText.textContent = text;
+    }
+    updateLoadingProgress(0);
     document.getElementById('answersContainer').innerHTML = '';
 }
 
@@ -4250,6 +4282,20 @@ function hideLoadingState() {
     const loadingIndicator = document.getElementById('loadingIndicator');
     if (loadingIndicator) {
         loadingIndicator.style.display = 'none';
+    }
+    updateLoadingProgress(0);
+}
+
+function updateLoadingProgress(percent, text = null) {
+    const progressFill = document.getElementById('loadingProgressFill');
+    if (progressFill) {
+        progressFill.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+    }
+    if (text) {
+        const loadingText = document.getElementById('loadingText');
+        if (loadingText) {
+            loadingText.textContent = text;
+        }
     }
 }
 
@@ -4842,9 +4888,7 @@ async function openLeaderboardModal(gameMode, playerFilter = null) {
                 const poolSize = score.candidatePoolSize || score.poolSize || score.songPoolSize || 0;
                 const difficultyMeta = (poolSize && totalQuestions)
                     ? `${totalQuestions}/${poolSize} pool (${Math.round((totalQuestions / poolSize) * 100)}%)`
-                    : totalQuestions
-                        ? `${totalQuestions} questions`
-                        : '';
+                    : '';
                 const metaParts = [modeLabel];
                 if (difficultyMeta) metaParts.push(difficultyMeta);
                 if (date) metaParts.push(date);

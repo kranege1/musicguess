@@ -457,7 +457,7 @@
         }
 
         .leaderboard-modal-meta {
-            font-size: 0.9em;
+            font-size: 0.75em;
             color: #666;
         }
 
@@ -1702,6 +1702,24 @@
             padding: 16px;
         }
 
+        .loading-progress-bar {
+            width: 100%;
+            max-width: 300px;
+            height: 6px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 3px;
+            margin: 12px auto 0;
+            overflow: hidden;
+        }
+
+        .loading-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
         .spinner {
             border: 3px solid #f3f3f3;
             border-top: 3px solid #667eea;
@@ -2020,7 +2038,7 @@
 
             <div class="mid-section">
                 <div class="mid-column mid-left">
-                    <button onclick="endGame()" class="control-btn btn-ghost-gray">🏁 End Game</button>
+                    <button onclick="skipToMenu()" class="control-btn btn-ghost-gray">🏁 End Game</button>
                     <button class="next-btn control-btn btn-ghost-purple" id="nextBtn" onclick="nextQuestion()">⬜ Next
                         Question</button>
                 </div>
@@ -2049,7 +2067,10 @@
                 <div class="question-title">🎯 Which song is this?</div>
                 <div id="loadingIndicator" class="loading" style="display: none;">
                     <div class="spinner"></div>
-                    <p>Loading songs...</p>
+                    <p id="loadingText">Loading songs...</p>
+                    <div class="loading-progress-bar">
+                        <div id="loadingProgressFill" class="loading-progress-fill"></div>
+                    </div>
                 </div>
                 <div class="answers" id="answersContainer"></div>
                 <div class="result-message" id="resultMessage"></div>

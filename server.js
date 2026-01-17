@@ -215,9 +215,9 @@ app.get('/api/check-name/:name', async (req, res) => {
 // POST /api/score - Neuen Score speichern (Firebase)
 app.post('/api/score', async (req, res) => {
     try {
-        const { username, playerId, gameMode, points, totalQuestions, correctAnswers } = req.body;
+        const { username, playerId, gameMode, points, totalQuestions, correctAnswers, candidatePoolSize, questionCount, difficultyRatio, difficultyLabel } = req.body;
 
-        console.log('📨 Score-Request erhalten:', { username, playerId, gameMode, points, totalQuestions, correctAnswers });
+        console.log('📨 Score-Request erhalten:', { username, playerId, gameMode, points, totalQuestions, correctAnswers, candidatePoolSize, questionCount, difficultyRatio, difficultyLabel });
 
         if (!username || !gameMode || points === undefined || !totalQuestions || correctAnswers === undefined) {
             console.error('❌ Unvollständige Daten:', { username, playerId, gameMode, points, totalQuestions, correctAnswers });
@@ -243,6 +243,10 @@ app.post('/api/score', async (req, res) => {
             points: points,
             totalQuestions: totalQuestions,
             correctAnswers: correctAnswers,
+            candidatePoolSize: candidatePoolSize || 0,
+            questionCount: questionCount || totalQuestions,
+            difficultyRatio: difficultyRatio || 0,
+            difficultyLabel: difficultyLabel || '',
             timestamp: new Date(),
             country: getCountryFromIP(getClientIP(req)),
             ip: getClientIP(req),
