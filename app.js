@@ -1,4 +1,4 @@
-const APP_VERSION = '15.01.2026 18:35';
+﻿const APP_VERSION = '15.01.2026 18:35';
 window.APP_VERSION = APP_VERSION;
 
 // English strings (no more translation system)
@@ -48,6 +48,7 @@ function playWinSound() {
         ];
 
         let time = audioContext.currentTime;
+        setDifficultyMeta(gameState.songs.length, results.length, currentSearchType === 'album' ? 'Album search' : 'Artist search');
         notes.forEach(note => {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
@@ -95,6 +96,10 @@ let gameState = {
     correctAnswers: 0,
     wrongAnswers: 0,
     totalPoints: 0,
+    questionCount: 0,
+    candidatePoolSize: 0,
+    difficultyRatio: 0,
+    difficultyLabel: '',
     currentSong: null,
     currentAudio: null,
     isAnswered: false,
@@ -136,6 +141,43 @@ let genresData = {
 
 // Composer -> performer/hint mapping for classical/opera searches
 let classicalPerformersMap = {};
+
+// Composer name mapping for abbreviations to full names
+const composerNameMapping = {
+    'Bach': 'Johann Sebastian Bach',
+    'Handel': 'George Frideric Handel',
+    'Vivaldi': 'Antonio Vivaldi',
+    'Mozart': 'Wolfgang Amadeus Mozart',
+    'Haydn': 'Joseph Haydn',
+    'Beethoven': 'Ludwig van Beethoven',
+    'Schubert': 'Franz Schubert',
+    'Brahms': 'Johannes Brahms',
+    'Schumann': 'Robert Schumann',
+    'Mendelssohn': 'Felix Mendelssohn',
+    'Chopin': 'Frédéric Chopin',
+    'Liszt': 'Franz Liszt',
+    'Wagner': 'Richard Wagner',
+    'Verdi': 'Giuseppe Verdi',
+    'Puccini': 'Giacomo Puccini',
+    'Bizet': 'Georges Bizet',
+    'Rossini': 'Gioachino Rossini',
+    'Donizetti': 'Gaetano Donizetti',
+    'Bellini': 'Vincenzo Bellini',
+    'Offenbach': 'Jacques Offenbach',
+    'Strauss': 'Johann Strauss II',
+    'Lehar': 'Franz Lehár',
+    'Kalman': 'Emmerich Kálmán',
+    'Suppe': 'Franz von Suppé',
+    'Millecker': 'Carl Millöcker',
+    // Composers without performer data - just map to themselves
+    'Pachelbel': 'Pachelbel',
+    'Tomaso Albinoni': 'Tomaso Albinoni',
+    'Albinoni': 'Tomaso Albinoni',
+    'Gilbert Sullivan': 'Gilbert Sullivan',
+    'Sullivan': 'Gilbert Sullivan',
+    'Benatzky': 'Benatzky',
+    'Audran': 'Edmond Audran'
+};
 
 // Curated classical works loaded from JSON (per sub area)
 let classicalWorks = {};
@@ -348,13 +390,157 @@ function populateClassicalAreaDropdown() {
 }
 
 // React to classical area changes (show/hide work selector)
+// Handle classical work selection to show interpreters
+function handleClassicalWorkChange() {
+    const areaSelect = document.getElementById('classicalAreaSelect');
+    const workSelect = document.getElementById('classicalWorkSelect');
+    const performerGroup = document.getElementById('classicalPerformerGroup');
+    const performerSelect = document.getElementById('classicalPerformerSelect');
+    
+    console.log('🎭 handleClassicalWorkChange called');
+    console.log('performerGroup:', performerGroup, 'performerSelect:', performerSelect);
+    
+    if (!performerGroup || !performerSelect) {
+        console.warn('❌ Missing DOM elements for performer dropdown');
+        return;
+    }
+    
+    const selectedWork = workSelect ? workSelect.value : '';
+    const selectedArea = areaSelect ? areaSelect.value : '';
+    
+    console.log('Selected work:', selectedWork, 'Selected area:', selectedArea);
+    
+    // Clear previous selections
+    performerSelect.innerHTML = '<option value="">Select an interpreter...</option>';
+    
+    if (!selectedWork) {
+        performerGroup.style.display = 'none';
+        console.log('No work selected, hiding performer group');
+        return;
+    }
+    
+    // Get composers for the selected work from classical works data
+    const areaData = classicalWorks[selectedArea] || {};
+    const worksForArea = areaData.works || areaData || [];
+    
+    console.log('Works for area:', worksForArea.length, 'entries');
+    
+    let composerName = '';
+    let composerAbbrev = '';
+    for (const work of worksForArea) {
+        const title = typeof work === 'string' ? work : (work.title || '');
+        if (title === selectedWork) {
+            composerName = typeof work === 'string' ? '' : (work.composer || '');
+            composerAbbrev = composerName;
+            console.log('Found work:', title, 'with composer:', composerName);
+            break;
+        }
+    }
+    
+    // For operas, try to get performers directly from mapping
+    if (selectedArea === 'Oper' && mappingOperas && mappingOperas[selectedWork]) {
+        console.log('Checking opera mapping for:', selectedWork);
+        const opRecordings = mappingOperas[selectedWork] || [];
+        if (opRecordings.length > 0) {
+            // Show performers directly from opera mapping
+            const performerSet = new Set();
+            opRecordings.forEach(rec => {
+                if (rec && rec.artist) {
+                    performerSet.add(rec.artist);
+                }
+            });
+            const performers = Array.from(performerSet).sort();
+            if (performers.length > 0) {
+                console.log('Found performers for opera:', performers);
+                performers.forEach(perf => {
+                    const option = document.createElement('option');
+                    option.value = perf;
+                    option.textContent = perf;
+                    performerSelect.appendChild(option);
+                });
+                performerGroup.style.display = 'block';
+                return;
+            }
+        }
+    }
+    
+    // For classical works, search for composer in classicalPerformersMap
+    // Try both full name and abbreviated name
+    let performersData = null;
+    let composerFullName = composerName;
+    
+    console.log('classicalPerformersMap has', Object.keys(classicalPerformersMap).length, 'entries');
+    console.log('Sample keys:', Object.keys(classicalPerformersMap).slice(0, 3));
+    
+    if (composerName && classicalPerformersMap) {
+        // Try exact match first (check both original case and lowercase)
+        if (classicalPerformersMap[composerName]) {
+            performersData = classicalPerformersMap[composerName];
+            console.log('✅ Found exact match for composer:', composerName);
+        } else if (classicalPerformersMap[composerName.toLowerCase()]) {
+            performersData = classicalPerformersMap[composerName.toLowerCase()];
+            console.log('✅ Found lowercase match for composer:', composerName);
+        } else if (composerNameMapping[composerName]) {
+            // Try mapping from abbreviation to full name
+            composerFullName = composerNameMapping[composerName];
+            const composerKey = composerFullName.toLowerCase();
+            console.log('Trying mapping:', composerName, '→', composerFullName, '(key:', composerKey + ')');
+            if (classicalPerformersMap[composerKey]) {
+                performersData = classicalPerformersMap[composerKey];
+                console.log('✅ Found composer by name mapping:', composerName, '→', composerFullName);
+            } else {
+                console.log('❌ Composer not found even after mapping:', composerFullName);
+            }
+        } else {
+            console.log('❌ No mapping found for:', composerName);
+        }
+    }
+    
+    if (performersData) {
+        const preferredPerformers = performersData.preferredPerformers || [];
+        console.log('Performer data found, performers count:', preferredPerformers.length);
+        
+        if (preferredPerformers.length > 0) {
+            console.log('Adding performers:', preferredPerformers);
+            preferredPerformers.forEach(perf => {
+                const option = document.createElement('option');
+                option.value = perf;
+                option.textContent = perf;
+                performerSelect.appendChild(option);
+            });
+            performerGroup.style.display = 'block';
+            console.log('✅ Performer group displayed');
+            console.log('DOM check - performerSelect innerHTML:', performerSelect.innerHTML.substring(0, 200));
+            console.log('performerGroup element:', performerGroup);
+            console.log('classicalWorkGroup display:', document.getElementById('classicalWorkGroup').style.display);
+        } else {
+            console.log('No performers in performer data');
+            performerGroup.style.display = 'none';
+        }
+    } else {
+        console.log('❌ No performer data found');
+        performerGroup.style.display = 'none';
+    }
+}
+
+// Handle classical area selection
 function handleClassicalAreaChange() {
     const areaSelect = document.getElementById('classicalAreaSelect');
     const workGroup = document.getElementById('classicalWorkGroup');
     const workSelect = document.getElementById('classicalWorkSelect');
+    const performerGroup = document.getElementById('classicalPerformerGroup');
+    const performerSelect = document.getElementById('classicalPerformerSelect');
     const area = areaSelect ? areaSelect.value : '';
 
     if (!workGroup) return;
+
+    // Reset performers when area changes
+    if (performerGroup) {
+        performerGroup.style.display = 'none';
+    }
+    if (performerSelect) {
+        performerSelect.innerHTML = '<option value="">Select an interpreter...</option>';
+    }
 
     const areaData = classicalWorks[area] || {};
     const worksForArea = areaData.works || areaData || [];
@@ -374,9 +560,17 @@ function handleClassicalAreaChange() {
 async function populateClassicalWorkDropdown(area) {
     const workGroup = document.getElementById('classicalWorkGroup');
     const workSelect = document.getElementById('classicalWorkSelect');
+    const performerGroup = document.getElementById('classicalPerformerGroup');
     if (!workGroup || !workSelect) return;
 
     workSelect.innerHTML = '<option value="">Select a work...</option>';
+    if (performerGroup) {
+        performerGroup.style.display = 'none';
+        const performerSelect = document.getElementById('classicalPerformerSelect');
+        if (performerSelect) {
+            performerSelect.innerHTML = '<option value="">Select an interpreter...</option>';
+        }
+    }
 
     const areaData = classicalWorks[area] || {};
     const worksForArea = areaData.works || areaData || [];
@@ -610,6 +804,7 @@ if (document.readyState === 'loading') {
 
 // Artist Bubbles Animation
 let artistNames = [];
+let artistNamesRemaining = []; // Track which artists haven't been shown yet
 let artistNamesPromise = null;
 let bubbleInterval = null;
 let activeBubbles = 0;
@@ -692,6 +887,9 @@ async function startArtistBubbles() {
     container.classList.add('active');
     activeBubbles = 0;
 
+    // Initialize the remaining artists pool (shuffled)
+    artistNamesRemaining = shuffleArray([...artistNames]);
+
     // Update subtitle with bubble category
     setSubtitle(`🫧 Bubbles: ${currentBubbleCategory}`);
 
@@ -732,8 +930,38 @@ async function updateDecadeArtists(decade) {
         }
         const artists = Array.from(artistsSet);
         if (artists.length === 0) {
-            console.log(`No artists found for decade ${decade}`);
-            return;
+            // Fallback: use a curated list for older decades with sparse data
+            const fallbackMap = {
+                '1940s': [
+                    'Frank Sinatra',
+                    'Bing Crosby',
+                    'Ella Fitzgerald',
+                    'Duke Ellington',
+                    'Glenn Miller',
+                    'Billie Holiday',
+                    'Nat King Cole'
+                ],
+                '1950s': [
+                    'Elvis Presley',
+                    'Chuck Berry',
+                    'Little Richard',
+                    'Buddy Holly',
+                    'Ray Charles',
+                    'Fats Domino',
+                    'The Platters'
+                ]
+            };
+            const fallback = fallbackMap[decade] || [];
+            if (fallback.length) {
+                console.warn(`No artists in songs.json for ${decade}; using curated fallback list`);
+                artistNames = fallback;
+                stopArtistBubbles();
+                startArtistBubbles();
+                return;
+            } else {
+                console.log(`No artists found for decade ${decade}`);
+                return;
+            }
         }
         // Shuffle and limit list for performance
         const shuffled = shuffleArray(artists);
@@ -798,9 +1026,15 @@ async function createArtistBubble() {
 
     let bubbleText = '';
 
-    // Show artist bubbles
+    // Show artist bubbles - ensure no repeats until all shown
     if (artistNames.length > 0) {
-        bubbleText = artistNames[Math.floor(Math.random() * artistNames.length)];
+        // Refill remaining pool if empty
+        if (artistNamesRemaining.length === 0) {
+            console.log('🔄 All artists shown, reshuffling pool');
+            artistNamesRemaining = shuffleArray([...artistNames]);
+        }
+        // Pop from remaining array
+        bubbleText = artistNamesRemaining.pop();
     } else {
         console.warn('No artist names available');
         return;
@@ -843,9 +1077,9 @@ async function createArtistBubble() {
             // Continue with empty artistData
         }
 
-        // Skip artists with less than 1000 fans
-        if (artistData.fans < 1000) {
-            console.log(`⏭️ Skipping "${bubbleText}" - only ${artistData.fans} fans (less than 1000)`);
+        // Skip artists with less than 100 fans
+        if (artistData.fans < 100) {
+            console.log(`⏭️ Skipping "${bubbleText}" - only ${artistData.fans} fans (less than 100)`);
             return;
         }
 
@@ -1506,6 +1740,10 @@ async function startGame() {
     gameState.correctAnswers = 0;
     gameState.wrongAnswers = 0;
     gameState.totalPoints = 0;
+    gameState.questionCount = 0;
+    gameState.candidatePoolSize = 0;
+    gameState.difficultyRatio = 0;
+    gameState.difficultyLabel = '';
     // currentGameMode wird nach Subtitle-Set pro Modus gesetzt
 
     // Blende Game-Over-Zustand aus (Footer wieder sichtbar)
@@ -1530,6 +1768,7 @@ async function startGame() {
             gameState.currentGameMode = subtitleText;
             // Initialize game with the prepared mapped song
             gameState.songs = [gameState.currentSong];
+            setDifficultyMeta(1, 1, 'Mapped pick');
             hideLoadingState();
             nextQuestion();
             return;
@@ -1812,6 +2051,8 @@ async function loadSongsForWork(workName, workType, limit, area = '', allWorksIn
         throw new Error('No recordings found for this work');
     }
 
+    setDifficultyMeta(trimmed.length, collected.length || trimmed.length, `${workType || 'Work'} pool`);
+
     return trimmed;
 }
 
@@ -1877,6 +2118,7 @@ async function loadSongsFromGenre(genre, limit) {
             }
 
             gameState.songs = mapped;
+            setDifficultyMeta(Math.min(limit, mapped.length), mapped.length, `Classical:${selectedSubcategory}`);
             return;
         }
 
@@ -1925,6 +2167,8 @@ async function loadSongsFromGenre(genre, limit) {
                     };
                 });
             gameState.songs = mapped;
+            const candidatePoolCountry = Math.max(mapped.length, artists.length || mapped.length);
+            setDifficultyMeta(Math.min(limit, mapped.length), candidatePoolCountry, `Country:${countryCode}`);
 
             if (gameState.songs.length === 0) {
                 throw new Error(t('errorNoSongsForCountry'));
@@ -1951,7 +2195,70 @@ async function loadSongsFromGenre(genre, limit) {
         }
 
         if (filteredSongs.length === 0) {
-            throw new Error('No songs found for this genre');
+            // Fallback for decades without songs in songs.json
+            const decadeFallbacks = {
+                '1940s': [
+                    'Frank Sinatra',
+                    'Bing Crosby',
+                    'Ella Fitzgerald',
+                    'Duke Ellington',
+                    'Glenn Miller',
+                    'Billie Holiday',
+                    'Nat King Cole'
+                ],
+                '1950s': [
+                    'Elvis Presley',
+                    'Chuck Berry',
+                    'Little Richard',
+                    'Buddy Holly',
+                    'Ray Charles',
+                    'Fats Domino',
+                    'The Platters'
+                ]
+            };
+
+            const fallbackArtists = decadeFallbacks[genre];
+            if (fallbackArtists) {
+                console.warn(`No songs in songs.json for ${genre}; using curated artist fallback`);
+                // Search iTunes for songs by these artists
+                const searchPromises = fallbackArtists.map(async (artist) => {
+                    try {
+                        const { results } = await fetchItunesWithFallback(artist, ['US', 'GB', 'DE'], 3);
+                        return results && results.length ? results[0] : null;
+                    } catch (err) {
+                        console.warn(`Failed to load artist ${artist}:`, err);
+                        return null;
+                    }
+                });
+                const results = await Promise.all(searchPromises);
+                const mapped = results
+                    .filter(song => song && song.previewUrl && song.trackName && song.artistName)
+                    .map(song => {
+                        const originalCover = song.artworkUrl600 || song.artworkUrl100 || song.artworkUrl60 || '';
+                        const highResCover = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : '';
+                        return {
+                            id: song.trackId,
+                            track: song.trackName,
+                            artist: song.artistName,
+                            album: song.collectionName || 'Unknown',
+                            previewUrl: (song.previewUrl || '').replace(/^http:/, 'https:'),
+                            image: highResCover,
+                            genre: genre
+                        };
+                    })
+                    .slice(0, limit);
+
+                if (mapped.length === 0) {
+                    throw new Error(`No songs found for ${genre} (fallback failed)`);
+                }
+
+                gameState.songs = mapped;
+                setDifficultyMeta(Math.min(limit, mapped.length), mapped.length, `${genre} curated`);
+                console.log(`${gameState.songs.length} songs loaded from ${genre} fallback`);
+                return;
+            } else {
+                throw new Error('No songs found for this genre');
+            }
         }
 
         // Shuffle and limit the number
@@ -1959,6 +2266,7 @@ async function loadSongsFromGenre(genre, limit) {
 
         // Speichere Songs - artwork wird später von iTunes API geladen
         gameState.songs = selectedSongs;
+        setDifficultyMeta(selectedSongs.length, filteredSongs.length, genre === 'Alle' ? 'All genres' : genre);
 
         console.log(`${gameState.songs.length} songs loaded from genre "${genre}"`);
     } catch (error) {
@@ -1995,6 +2303,8 @@ async function loadSongsFromBillboard(year, limit) {
             track: song.title,
             genre: year // Jahr als Genre verwenden
         }));
+
+        setDifficultyMeta(gameState.songs.length, filteredSongs.length, `Billboard ${year}`);
 
         console.log(`${gameState.songs.length} Billboard Songs from year "${year}" loaded`);
     } catch (error) {
@@ -2602,6 +2912,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
             });
 
         gameState.songs = shuffleArray(songs);
+        setDifficultyMeta(gameState.songs.length, results.length, currentSearchType === 'album' ? 'Album search' : 'Artist search');
         console.log(`${gameState.songs.length} songs loaded from: ${currentSearchType === 'album' ? 'Album' : 'Artist/Title'}`);
 
         // Fetch album fan counts for all songs
@@ -3098,7 +3409,7 @@ function selectAnswer(answer, index) {
     nextBtn.disabled = true;
     updateStats();
 
-    // Automatisch zur nächsten Frage nach 3 Sekunden
+    // Automatisch zur nächsten Frage nach 1 Sekunde (was 3 Sekunden)
     setTimeout(() => {
         // Verstecke Punkte-Countdown Box bevor nächste Frage geladen wird
         const container = document.getElementById('pointsCountdown');
@@ -3107,7 +3418,7 @@ function selectAnswer(answer, index) {
         }
         nextBtn.disabled = false;
         nextQuestion();
-    }, 3000);
+    }, 1000);
 }
 
 // Zeige Song-Informationen
@@ -3814,9 +4125,24 @@ function updatePlayTimeDisplay() {
     }
 }
 
+// Update difficulty/pool tracking in state
+function setDifficultyMeta(questionCount, poolSize, label = '') {
+    const safeQuestions = Math.max(1, questionCount || 0);
+    const safePool = Math.max(safeQuestions, poolSize || safeQuestions);
+    gameState.questionCount = safeQuestions;
+    gameState.candidatePoolSize = safePool;
+    gameState.difficultyRatio = safePool ? Math.min(1, safeQuestions / safePool) : 0;
+    gameState.difficultyLabel = label || `${safeQuestions}/${safePool}`;
+}
+
 // Update Statistiken
 function updateStats() {
     const totalQuestions = gameState.songs ? gameState.songs.length : 0;
+    const plannedQuestions = gameState.questionCount || totalQuestions;
+    const poolSize = gameState.candidatePoolSize || plannedQuestions;
+    const difficultyRatio = poolSize ? Math.min(1, plannedQuestions / poolSize) : 0;
+    const difficultyPercent = poolSize ? Math.round(difficultyRatio * 100) : 0;
+    const difficultyLabel = gameState.difficultyLabel || `${plannedQuestions}/${poolSize}`;
     const displayedQuestion = Math.min(gameState.currentQuestion + 1, totalQuestions);
     const answeredQuestions = (gameState.correctAnswers || 0) + (gameState.wrongAnswers || 0);
     const totalEl = document.getElementById('totalProgress');
@@ -3838,6 +4164,20 @@ function updateStats() {
     if (pointsEl) {
         const avgPoints = answeredQuestions > 0 ? Math.round(gameState.totalPoints / answeredQuestions) : 0;
         pointsEl.textContent = avgPoints;
+    }
+
+    const poolEl = document.getElementById('candidatePoolDisplay');
+    if (poolEl) {
+        poolEl.textContent = poolSize ? `${plannedQuestions}/${poolSize}` : `${plannedQuestions}`;
+    }
+
+    const difficultyEl = document.getElementById('difficultyDisplay');
+    if (difficultyEl) {
+        if (poolSize) {
+            difficultyEl.textContent = `${difficultyLabel} • ${difficultyPercent}%`;
+        } else {
+            difficultyEl.textContent = '-';
+        }
     }
 }
 
@@ -4161,81 +4501,10 @@ function startNewPlayer() {
     }
 }
 
-// Öffne Player-Suche Modal
-async function openPlayerSearchModal() {
-    const modal = document.getElementById('playerSearchModal');
-    const resultsDiv = document.getElementById('playerSearchResults');
+// Öffne my Scores - wiederverwendet Leaderboard Modal mit Player-Filter
+function openPlayerSearchModal() {
     const playerName = localStorage.getItem('playerName') || 'Anon';
-
-    if (!modal || !resultsDiv) return;
-
-    resultsDiv.innerHTML = `<p style="text-align: center; color: #999;">${t('searchingScores')}</p>`;
-    modal.classList.add('show');
-
-    try {
-        // Lade ALL scores für globales Ranking
-        const response = await fetch('/api/all-scores');
-        const data = await response.json();
-        const allScores = data.scores || [];
-
-        console.log('Total scores loaded:', allScores.length);
-        console.log('Searching for playerName:', playerName);
-        console.log('Sample score usernames:', allScores.slice(0, 5).map(s => s.username));
-
-        // Filtere Player-Scores
-        const playerScores = allScores.filter(score => score.username === playerName);
-
-        console.log('Player scores found:', playerScores.length);
-
-        if (!playerScores || playerScores.length === 0) {
-            resultsDiv.innerHTML = `<p style="text-align: center; color: #666;">${t('noScoresFound')}</p>`;
-            return;
-        }
-
-        // Sortiere Player-Scores nach Punkte (absteigend)
-        const sorted = playerScores.sort((a, b) => {
-            const ap = (a.points ?? a.totalPoints ?? 0);
-            const bp = (b.points ?? b.totalPoints ?? 0);
-            return bp - ap;
-        });
-
-        // Rendera HTML mit globalem Ranking
-        const html = sorted.map((score) => {
-            const points = score.points ?? score.totalPoints ?? 0;
-            const modeLabel = score.gameMode || 'Modus';
-            const date = score.timestamp ? new Date(score.timestamp).toLocaleDateString() : 'Unbekannt';
-            const country = score.country || '🌍';
-            const shortId = (score.userId || score.playerId || '').substring(0, 4).toUpperCase();
-            const playerDisplay = shortId ? `${score.username} ${country} #${shortId}` : score.username;
-
-            // Finde globale Position (alle Scores mit höheren Punkten + 1)
-            const globalRank = allScores.filter(s => (s.points ?? s.totalPoints ?? 0) > points).length + 1;
-
-            return `
-                <div class="leaderboard-modal-item" style="background: rgba(102, 126, 234, 0.1); border-radius: 8px; padding: 12px; margin-bottom: 8px; border-bottom: 1px solid #e0e0e0;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-                        <strong style="color: #667eea;">#${globalRank}</strong>
-                        <span style="font-weight: bold; color: #764ba2;">🏆 ${points} Pkt</span>
-                    </div>
-                    <div style="font-size: 0.9em; color: #555; margin-bottom: 4px;">${playerDisplay}</div>
-                    <div style="font-size: 0.85em; color: #999;">${modeLabel} • ${date}</div>
-                </div>
-            `;
-        }).join('');
-
-        resultsDiv.innerHTML = `<div style="text-align: center; color: #667eea; margin-bottom: 12px; font-weight: bold;">${sorted.length} ${t('entriesFound')}</div>` + html;
-    } catch (error) {
-        console.error('Error searching player scores:', error);
-        resultsDiv.innerHTML = '<p style="text-align: center; color: #d32f2f;">Fehler beim Laden der Scores.</p>';
-    }
-}
-
-// Schließe Player-Suche Modal
-function closePlayerSearchModal() {
-    const modal = document.getElementById('playerSearchModal');
-    if (modal) {
-        modal.classList.remove('show');
-    }
+    openLeaderboardModal('Global', playerName);
 }
 
 // Open Bubble Category Modal
@@ -4397,6 +4666,36 @@ async function selectBubbleCategory(category) {
             const decadeSongs = songsData.filter(song => song.genre === category.name);
             const uniqueArtists = [...new Set(decadeSongs.map(song => song.artist))];
             artists = uniqueArtists;
+
+            // Fallback for decades without artists in songs.json
+            if (artists.length === 0) {
+                const fallbackMap = {
+                    '1940s': [
+                        'Frank Sinatra',
+                        'Bing Crosby',
+                        'Ella Fitzgerald',
+                        'Duke Ellington',
+                        'Glenn Miller',
+                        'Billie Holiday',
+                        'Nat King Cole'
+                    ],
+                    '1950s': [
+                        'Elvis Presley',
+                        'Chuck Berry',
+                        'Little Richard',
+                        'Buddy Holly',
+                        'Ray Charles',
+                        'Fats Domino',
+                        'The Platters'
+                    ]
+                };
+                const fallback = fallbackMap[category.name] || [];
+                if (fallback.length) {
+                    console.warn(`No artists in songs.json for ${category.name}; using curated fallback list`);
+                    artists = fallback;
+                }
+            }
+
             console.log(`🫧 Loaded ${artists.length} artists from ${category.name}`);
         }
 
@@ -4504,17 +4803,28 @@ function renderLeaderboardTicker(scores, gameMode) {
     track.style.setProperty('--ticker-duration', `${durationSec}s`);
 }
 
-async function openLeaderboardModal(gameMode) {
+async function openLeaderboardModal(gameMode, playerFilter = null) {
     const modal = document.getElementById('leaderboardModal');
     const titleEl = document.getElementById('leaderboardModalTitle');
     const listEl = document.getElementById('leaderboardModalList');
     if (!modal || !listEl) return;
 
-    const scores = await loadLeaderboard(gameMode);
+    let scores = await loadLeaderboard(gameMode);
+    let allGlobalScores = null;
+    
+    // If filtering by player or gameMode, load all global scores for ranking calculation
+    if (playerFilter || gameMode !== 'Global') {
+        allGlobalScores = await loadLeaderboard('Global');
+        if (playerFilter) {
+            scores = scores.filter(score => score.username === playerFilter);
+        }
+    }
+    
     if (titleEl) {
         const scoreCount = scores ? scores.length : 0;
-        const backBtn = gameMode !== 'Global' ? `<button onclick="openLeaderboardModal('Global')" style="margin-left: 10px; padding: 4px 10px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.7em;">← Show All</button>` : '';
-        titleEl.innerHTML = `Highscores – ${gameMode}${backBtn}<br><small style="font-size: 0.65em; font-weight: 400; color: #888;">${scoreCount} registered score${scoreCount !== 1 ? 's' : ''}</small>`;
+        const backBtn = (gameMode !== 'Global' || playerFilter) ? `<button onclick="openLeaderboardModal('Global')" style="margin-left: 10px; padding: 4px 10px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.7em;">← Show All</button>` : '';
+        const titlePrefix = playerFilter ? `my Scores – ${gameMode}` : `Highscores – ${gameMode}`;
+        titleEl.innerHTML = `${titlePrefix}${backBtn}<br><small style="font-size: 0.65em; font-weight: 400; color: #888;">${scoreCount} registered score${scoreCount !== 1 ? 's' : ''}</small>`;
     }
 
     if (!scores || scores.length === 0) {
@@ -4528,14 +4838,32 @@ async function openLeaderboardModal(gameMode) {
                 const country = score.country || '🌍';
                 const shortId = (score.userId || score.playerId || '').substring(0, 4).toUpperCase();
                 const playerDisplay = shortId ? `${score.username} ${country} #${shortId}` : score.username;
-                // Make item clickable to filter by game mode
-                const clickHandler = gameMode === 'Global' && score.gameMode ? `onclick="openLeaderboardModal('${score.gameMode.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click to filter by: ${score.gameMode}"` : '';
+                const totalQuestions = score.totalQuestions || score.questionCount || score.questions || 0;
+                const poolSize = score.candidatePoolSize || score.poolSize || score.songPoolSize || 0;
+                const difficultyMeta = (poolSize && totalQuestions)
+                    ? `${totalQuestions}/${poolSize} pool (${Math.round((totalQuestions / poolSize) * 100)}%)`
+                    : totalQuestions
+                        ? `${totalQuestions} questions`
+                        : '';
+                const metaParts = [modeLabel];
+                if (difficultyMeta) metaParts.push(difficultyMeta);
+                if (date) metaParts.push(date);
+                const metaText = metaParts.join(' • ');
+                
+                // Calculate global rank if filtering (by player or gameMode)
+                let rank = idx + 1;
+                if (allGlobalScores) {
+                    rank = allGlobalScores.filter(s => (s.points ?? s.totalPoints ?? 0) > points).length + 1;
+                }
+                
+                // Make item clickable to filter by game mode (only in Global view without player filter)
+                const clickHandler = gameMode === 'Global' && !playerFilter && score.gameMode ? `onclick="openLeaderboardModal('${score.gameMode.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click to filter by: ${score.gameMode}"` : '';
                 return `
                     <li class="leaderboard-modal-item" ${clickHandler}>
-                        <span class="leaderboard-modal-rank">#${idx + 1}</span>
+                        <span class="leaderboard-modal-rank">#${rank}</span>
                         <div>
                             <div class="leaderboard-modal-name">${playerDisplay}</div>
-                            <div class="leaderboard-modal-meta">${modeLabel}${date ? ' • ' + date : ''}</div>
+                            <div class="leaderboard-modal-meta">${metaText}</div>
                         </div>
                         <span class="leaderboard-modal-points">🏆 ${points}</span>
                     </li>
@@ -4627,6 +4955,10 @@ async function saveGameScore() {
     const answeredQuestions = (gameState.correctAnswers || 0) + (gameState.wrongAnswers || 0);
     const correctAnswers = gameState.correctAnswers || 0;
     const finalScore = calculateFinalScore();
+    const questionCount = gameState.questionCount || answeredQuestions;
+    const candidatePoolSize = gameState.candidatePoolSize || questionCount;
+    const difficultyRatio = candidatePoolSize ? Math.min(1, questionCount / candidatePoolSize) : 0;
+    const difficultyLabel = gameState.difficultyLabel || `${questionCount}/${candidatePoolSize}`;
 
     // Only save if more than 9 questions were answered
     if (answeredQuestions <= 9) {
@@ -4640,7 +4972,11 @@ async function saveGameScore() {
         gameMode,
         points: finalScore,
         totalQuestions: answeredQuestions,
-        correctAnswers
+        correctAnswers,
+        candidatePoolSize,
+        questionCount,
+        difficultyRatio,
+        difficultyLabel
     });
 
     try {
@@ -4655,7 +4991,11 @@ async function saveGameScore() {
                 gameMode: gameMode,
                 points: finalScore,
                 totalQuestions: answeredQuestions,
-                correctAnswers: correctAnswers
+                correctAnswers: correctAnswers,
+                candidatePoolSize,
+                questionCount,
+                difficultyRatio,
+                difficultyLabel
             })
         });
 
