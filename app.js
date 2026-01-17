@@ -1,4 +1,4 @@
-﻿const APP_VERSION = '15.01.2026 18:35';
+﻿const APP_VERSION = '17.01.2026 07:15';
 window.APP_VERSION = APP_VERSION;
 
 // English strings (no more translation system)
