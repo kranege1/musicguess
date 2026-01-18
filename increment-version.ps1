@@ -1,5 +1,5 @@
 # Script zum automatischen Speichern von Commit-Datum und -Zeit
-$versionFile = "version.json"
+$versionFile = "json/version.json"
 
 if (Test-Path $versionFile) {
     # Hole aktuelles Datum und Uhrzeit
