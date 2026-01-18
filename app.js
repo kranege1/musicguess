@@ -903,7 +903,10 @@ async function startArtistBubbles() {
     // Intervall für größeren Abstand zwischen Bubbles
     bubbleInterval = setInterval(() => {
         // Call async function without awaiting (fire and forget)
-        createArtistBubble().catch(err => console.error('Bubble creation error:', err));
+        createArtistBubble().catch(err => {
+            console.error('Bubble creation error:', err);
+            // Continue trying even if one fails
+        });
     }, 2000);
 
     // Erstelle erste Bubble sofort
@@ -1024,6 +1027,8 @@ async function createArtistBubble() {
         return;
     }
 
+    console.log('Creating bubble...'); // Debug log
+
     let bubbleText = '';
 
     // Show artist bubbles - ensure no repeats until all shown
@@ -1044,6 +1049,20 @@ async function createArtistBubble() {
     let artistData = { image: null, fans: 0 };
     const bubble = document.createElement('div');
     bubble.className = 'artist-bubble';
+
+    // Assign random color gradient to each bubble
+    const bubbleColors = [
+        'linear-gradient(135deg, #FF1744 0%, #D50000 100%)', // bright red
+        'linear-gradient(135deg, #FFEA00 0%, #FFD600 100%)', // bright yellow
+        'linear-gradient(135deg, #2979FF 0%, #1565C0 100%)', // bright blue
+        'linear-gradient(135deg, #00E676 0%, #00C853 100%)', // bright green
+        'linear-gradient(135deg, #D500F9 0%, #AA00FF 100%)', // bright purple
+        'linear-gradient(135deg, #FF6D00 0%, #FF3D00 100%)', // bright orange
+        'linear-gradient(135deg, #1DE9B6 0%, #00BFA5 100%)', // bright teal
+        'linear-gradient(135deg, #FF4081 0%, #F50057 100%)'  // bright pink
+    ];
+    const randomColor = bubbleColors[Math.floor(Math.random() * bubbleColors.length)];
+    bubble.style.background = randomColor;
 
     if (mappingActive) {
         // Mapping bubbles: show simple icon and track-count badge
@@ -1072,15 +1091,17 @@ async function createArtistBubble() {
                 fetchArtistImageFromDeezer(bubbleText),
                 timeoutPromise
             ]);
+            
+            // Skip artists with less than 100 fans (only if we got valid data)
+            if (artistData.fans > 0 && artistData.fans < 100) {
+                console.log(`⏭️ Skipping "${bubbleText}" - only ${artistData.fans} fans (less than 100)`);
+                // Retry immediately with another artist instead of stopping
+                setTimeout(() => createArtistBubble().catch(err => console.error('Retry bubble error:', err)), 100);
+                return;
+            }
         } catch (err) {
             console.warn(`Deezer fetch skipped for "${bubbleText}": ${err.message}`);
-            // Continue with empty artistData
-        }
-
-        // Skip artists with less than 100 fans
-        if (artistData.fans < 100) {
-            console.log(`⏭️ Skipping "${bubbleText}" - only ${artistData.fans} fans (less than 100)`);
-            return;
+            // Continue with empty artistData - show bubble without image
         }
 
         // Create bubble content with image and text
@@ -1090,6 +1111,11 @@ async function createArtistBubble() {
             img.alt = bubbleText;
             img.className = 'bubble-image';
             bubble.appendChild(img);
+            
+            // Also use image as sphere texture background
+            const beforeElement = bubble.querySelector('::before') || 
+                                  window.getComputedStyle(bubble, '::before');
+            bubble.style.setProperty('--image-url', `url('${artistData.image}')`);
         }
         // Add fan badge if available
         if (artistData.fans > 0) {
@@ -1109,21 +1135,9 @@ async function createArtistBubble() {
     textSpan.textContent = bubbleText;
     bubble.appendChild(textSpan);
 
-    // Add fan count badge if available
-    if (artistData.fans > 0) {
-        const fanBadge = document.createElement('div');
-        fanBadge.className = 'fan-badge';
-        const fanCount = artistData.fans >= 1000000 ? (artistData.fans / 1000000).toFixed(1) + 'M' :
-            artistData.fans >= 1000 ? (artistData.fans / 1000).toFixed(0) + 'K' :
-                artistData.fans;
-        fanBadge.textContent = fanCount;
-        fanBadge.title = `${artistData.fans.toLocaleString()} fans`;
-        bubble.appendChild(fanBadge);
-    }
-
     // Starte immer rechts außerhalb (100%)
     bubble.style.left = '100%';
-
+    
     container.appendChild(bubble);
     activeBubbles++;
 
@@ -3165,18 +3179,30 @@ function displayAnswers() {
             }
         }
 
-        // Baue finalen Antwortsatz und mische
+        // Baue finalen Antwortsatz und entferne Duplikate per Normalisierung
         answers = answers.concat(wrongAnswers.slice(0, 3));
-        answers = [...new Set(answers)];
 
-        // Sicherheit: falls nach Deduplizierung weniger als 4 übrig sind, mit Fallbacks auffüllen
+        const uniqueAnswers = [];
+        const seenNormalized = new Set();
+        for (const ans of answers) {
+            if (!ans) continue;
+            const norm = normalizeSongTitle(ans);
+            if (seenNormalized.has(norm)) continue;
+            seenNormalized.add(norm);
+            uniqueAnswers.push(ans);
+        }
+        answers = uniqueAnswers;
+
+        // Sicherheit: falls nach Deduplizierung weniger als 4 übrig sind, mit Fallbacks auffüllen (auch dedupliziert)
         const fallbackTitles = ['Neon Nights', 'Golden Sky', 'Silent Echo', 'Velvet Road', 'Midnight Drive'];
         for (const t of fallbackTitles) {
             if (answers.length >= 4) break;
-            if (!answers.includes(t)) answers.push(t);
+            const norm = normalizeSongTitle(t);
+            const already = answers.some(a => normalizeSongTitle(a) === norm);
+            if (!already) answers.push(t);
         }
 
-        answers = shuffleArray(answers);
+        answers = shuffleArray(answers).slice(0, 4);
 
         const answersContainer = document.getElementById('answersContainer');
         if (!answersContainer) {
@@ -4563,10 +4589,13 @@ async function openBubbleCategoryModal() {
     // Build category options from genres.json
     const categories = [];
 
-    // Add genre categories
+    // Add genre categories (excluding specialized genres from bubble selector)
     if (genresData.genres && genresData.genres.length > 0) {
+        const excludedGenres = ['Movie Soundtrack', 'Disney', 'Volksmusik'];
         genresData.genres.forEach(genre => {
-            categories.push({ name: genre, type: 'genre' });
+            if (!excludedGenres.includes(genre)) {
+                categories.push({ name: genre, type: 'genre' });
+            }
         });
     }
 
