@@ -2081,6 +2081,30 @@ async function loadSongsForWork(workName, workType, limit, area = '', allWorksIn
 }
 
 // Lade Songs aus songs.json basierend auf Genre
+async function fetchSongsJsonWithFallback() {
+    const cacheBuster = Date.now();
+    const urls = [
+        `json/songs.json?v=${cacheBuster}`,
+        `/api/songs?v=${cacheBuster}`
+    ];
+
+    let lastError = null;
+    for (const url of urls) {
+        try {
+            const response = await fetch(url, { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} for ${url}`);
+            }
+            return await response.json();
+        } catch (err) {
+            console.warn('Songs fetch failed:', url, err);
+            lastError = err;
+        }
+    }
+
+    throw lastError || new Error('Error loading songs.json');
+}
+
 async function loadSongsFromGenre(genre, limit) {
     try {
         // Handle Classical genre (subcategory selection like Classical:Oper, Classical:Komponist, etc.)
@@ -2201,13 +2225,7 @@ async function loadSongsFromGenre(genre, limit) {
         }
 
         // Lade songs.json for regular genres
-        const cacheBuster = Date.now();
-        const response = await fetch(`json/songs.json?v=${cacheBuster}`, { cache: 'no-store' });
-        if (!response.ok) {
-            throw new Error('Error loading songs.json');
-        }
-
-        const allSongs = await response.json();
+        const allSongs = await fetchSongsJsonWithFallback();
         let filteredSongs = [];
 
         if (genre === 'Alle') {
