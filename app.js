@@ -371,6 +371,11 @@ function updateSubcategoryDropdown() {
     console.log(`✅ Subcategory dropdown updated: ${subcategorySelect.options.length} options`);
 }
 
+// Change bubble visualization style
+function changeBubbleStyle() {
+    // Only spheres style available - function kept for compatibility
+}
+
 // Populate dedicated classical area dropdown (new mode)
 function populateClassicalAreaDropdown() {
     const areaSelect = document.getElementById('classicalAreaSelect');
@@ -782,6 +787,9 @@ if (document.readyState === 'loading') {
         setTimeout(() => {
             const freieWahlBtn = document.querySelector('[data-mode="search"]');
             if (freieWahlBtn) freieWahlBtn.click();
+            // Set default graphics style to spheres
+            const graphicsSelect = document.getElementById('graphicsSelect');
+            if (graphicsSelect) graphicsSelect.value = 'spheres';
         }, 100);
     });
 } else {
@@ -1049,6 +1057,8 @@ async function createArtistBubble() {
     let artistData = { image: null, fans: 0 };
     const bubble = document.createElement('div');
     bubble.className = 'artist-bubble';
+
+    // Using default sphere style only
 
     // Assign random color gradient to each bubble
     const bubbleColors = [
@@ -3878,7 +3888,14 @@ function playPreview() {
     audio.setAttribute('playsinline', 'true');
     audio.setAttribute('webkit-playsinline', 'true');
     audio.setAttribute('preload', 'none');
-    audio.crossOrigin = 'anonymous';
+    audio.onerror = () => {
+        const mediaError = audio.error ? { code: audio.error.code, message: audio.error.message } : null;
+        console.error('Audio element error:', mediaError, {
+            networkState: audio.networkState,
+            readyState: audio.readyState,
+            src: audio.src
+        });
+    };
 
     // Setze Audio-Quelle (erzwinge https, falls noch http)
     const safeSrc = gameState.currentSong.previewUrl.replace(/^http:/, 'https:');
@@ -3936,7 +3953,12 @@ function playPreview() {
                 updateProgress();
             })
             .catch(error => {
-                console.error('Playback error:', error);
+                const mediaError = audio.error ? { code: audio.error.code, message: audio.error.message } : null;
+                console.error('Playback error:', error, mediaError, {
+                    networkState: audio.networkState,
+                    readyState: audio.readyState,
+                    src: audio.src
+                });
                 // If it's an AbortError, retry once
                 if (error.name === 'AbortError' && !playAttempt.retried) {
                     console.log('Retrying playback after AbortError...');
@@ -4738,7 +4760,10 @@ async function selectBubbleCategory(category) {
             // Load artists from songs.json filtered by decade
             const songsResponse = await fetch('json/songs.json', { cache: 'no-store' });
             const songsData = await songsResponse.json();
-            const decadeSongs = songsData.filter(song => song.genre === category.name);
+            const decadeSongs = songsData.filter(song => {
+                const g = song.genre;
+                return g === category.name || (Array.isArray(g) && g.includes(category.name));
+            });
             const uniqueArtists = [...new Set(decadeSongs.map(song => song.artist))];
             artists = uniqueArtists;
 

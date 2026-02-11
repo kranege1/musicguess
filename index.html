@@ -993,14 +993,15 @@
         }
 
         @keyframes slideLeftChain {
-            from {
-                transform: translateX(0);
+            0% {
+                left: 100%;
             }
-
-            to {
-                transform: translateX(calc(-100vw - 200px));
+            100% {
+                left: -200px;
             }
         }
+
+        /* Removed bubble style variations - keeping only default spheres */
 
         button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -2398,7 +2399,7 @@
         </div>
     </div>
 
-    <audio id="audioPlayer" preload="none" playsinline webkit-playsinline crossOrigin="anonymous"></audio>
+    <audio id="audioPlayer" preload="none" playsinline webkit-playsinline></audio>
 
     <script src="app.js?v=20260114203000"></script>
 </body>
