@@ -1302,27 +1302,42 @@
   {
     "artist": "Taylor Swift",
     "track": "Shake It Off",
-    "genre": "Pop"
+    "genre": [
+      "Pop",
+      "2020s"
+    ]
   },
   {
     "artist": "Taylor Swift",
     "track": "Anti-Hero",
-    "genre": "Pop"
+    "genre": [
+      "Pop",
+      "2020s"
+    ]
   },
   {
     "artist": "Taylor Swift",
     "track": "Blank Space",
-    "genre": "Pop"
+    "genre": [
+      "Pop",
+      "2020s"
+    ]
   },
   {
     "artist": "Dua Lipa",
     "track": "Levitating",
-    "genre": "Pop"
+    "genre": [
+      "Pop",
+      "2020s"
+    ]
   },
   {
     "artist": "Dua Lipa",
     "track": "Don't Start Now",
-    "genre": "Pop"
+    "genre": [
+      "Pop",
+      "2020s"
+    ]
   },
   {
     "artist": "Ed Sheeran",
@@ -1332,7 +1347,10 @@
   {
     "artist": "Ed Sheeran",
     "track": "Bad Habits",
-    "genre": "Pop"
+    "genre": [
+      "Pop",
+      "2020s"
+    ]
   },
   {
     "artist": "Adele",
@@ -1342,32 +1360,50 @@
   {
     "artist": "Adele",
     "track": "Hello",
-    "genre": "Pop"
+    "genre": [
+      "Pop",
+      "2020s"
+    ]
   },
   {
     "artist": "Billie Eilish",
     "track": "bad guy",
-    "genre": "Pop"
+    "genre": [
+      "Pop",
+      "2020s"
+    ]
   },
   {
     "artist": "Billie Eilish",
     "track": "Happier Than Ever",
-    "genre": "Pop"
+    "genre": [
+      "Pop",
+      "2020s"
+    ]
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "drivers license",
-    "genre": "Pop"
+    "genre": [
+      "Pop",
+      "2020s"
+    ]
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "good 4 u",
-    "genre": "Pop"
+    "genre": [
+      "Pop",
+      "2020s"
+    ]
   },
   {
     "artist": "Harry Styles",
     "track": "As It Was",
-    "genre": "Pop"
+    "genre": [
+      "Pop",
+      "2020s"
+    ]
   },
   {
     "artist": "Katy Perry",
@@ -1527,12 +1563,18 @@
   {
     "artist": "Post Malone",
     "track": "Circles",
-    "genre": "Hip-Hop"
+    "genre": [
+      "Hip-Hop",
+      "2020s"
+    ]
   },
   {
     "artist": "Post Malone",
     "track": "Rockstar",
-    "genre": "Hip-Hop"
+    "genre": [
+      "Hip-Hop",
+      "2020s"
+    ]
   },
   {
     "artist": "Cardi B",
@@ -1542,12 +1584,18 @@
   {
     "artist": "Lizzo",
     "track": "Good as Hell",
-    "genre": "Hip-Hop"
+    "genre": [
+      "Hip-Hop",
+      "2020s"
+    ]
   },
   {
     "artist": "Lil Nas X",
     "track": "Old Town Road",
-    "genre": "Hip-Hop"
+    "genre": [
+      "Hip-Hop",
+      "2020s"
+    ]
   },
   {
     "artist": "Nicki Minaj",
@@ -1557,7 +1605,10 @@
   {
     "artist": "Megan Thee Stallion",
     "track": "Savage",
-    "genre": "Hip-Hop"
+    "genre": [
+      "Hip-Hop",
+      "2020s"
+    ]
   },
   {
     "artist": "J. Cole",
@@ -1602,12 +1653,18 @@
   {
     "artist": "The Weeknd",
     "track": "Blinding Lights",
-    "genre": "R&B"
+    "genre": [
+      "R&B",
+      "2020s"
+    ]
   },
   {
     "artist": "The Weeknd",
     "track": "Save Your Tears",
-    "genre": "R&B"
+    "genre": [
+      "R&B",
+      "2020s"
+    ]
   },
   {
     "artist": "Frank Ocean",
@@ -1617,12 +1674,18 @@
   {
     "artist": "SZA",
     "track": "Kill Bill",
-    "genre": "R&B"
+    "genre": [
+      "R&B",
+      "2020s"
+    ]
   },
   {
     "artist": "SZA",
     "track": "Good Days",
-    "genre": "R&B"
+    "genre": [
+      "R&B",
+      "2020s"
+    ]
   },
   {
     "artist": "Khalid",
@@ -1737,12 +1800,18 @@
   {
     "artist": "Bad Bunny",
     "track": "Dákiti",
-    "genre": "Latin"
+    "genre": [
+      "Latin",
+      "2020s"
+    ]
   },
   {
     "artist": "Bad Bunny",
     "track": "Tití Me Preguntó",
-    "genre": "Latin"
+    "genre": [
+      "Latin",
+      "2020s"
+    ]
   },
   {
     "artist": "Rosalía",
@@ -2108,7 +2177,10 @@
   {
     "artist": "Taylor Swift",
     "track": "Cruel Summer",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/96/61/ff/9661ff73-0d57-582a-5e57-5687abb33313/mzaf_15246628164161261055.plus.aac.p.m4a"
   },
   {
@@ -2204,7 +2276,10 @@
   {
     "artist": "Bad Bunny",
     "track": "NUEVAYoL",
-    "genre": "Latin",
+    "genre": [
+      "Latin",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/2e/97/55/2e97555a-1ed3-9e07-de57-07e1213186c9/mzaf_7594924455925081680.plus.aac.p.m4a"
   },
   {
@@ -2222,7 +2297,10 @@
   {
     "artist": "Bad Bunny",
     "track": "MIA (feat. Drake)",
-    "genre": "Latin",
+    "genre": [
+      "Latin",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/50/eb/25/50eb2545-e400-fb43-6ff7-101f9bd429f2/mzaf_7089771968275109381.plus.aac.p.m4a"
   },
   {
@@ -2240,7 +2318,10 @@
   {
     "artist": "Bad Bunny",
     "track": "Si Veo a Tu Mamá",
-    "genre": "Urbano latino",
+    "genre": [
+      "Urbano latino",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b3/cd/a2/b3cda27f-382a-ed21-b6b9-2d6d1d4c5bbe/mzaf_15368178672903748165.plus.aac.p.m4a"
   },
   {
@@ -2252,7 +2333,10 @@
   {
     "artist": "Bad Bunny",
     "track": "Después de la Playa",
-    "genre": "Latin",
+    "genre": [
+      "Latin",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f6/c6/a0/f6c6a092-1690-3328-907d-280a8ba6adac/mzaf_4195200870757777362.plus.aac.p.m4a"
   },
   {
@@ -2264,7 +2348,10 @@
   {
     "artist": "Bad Bunny",
     "track": "Neverita",
-    "genre": "Latin",
+    "genre": [
+      "Latin",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/23/26/dd/2326dd0b-f117-306c-8454-be8934ffb402/mzaf_18297346266039659444.plus.aac.p.m4a"
   },
   {
@@ -2288,7 +2375,10 @@
   {
     "artist": "Bad Bunny",
     "track": "MÍA (feat. Drake)",
-    "genre": "Urbano latino",
+    "genre": [
+      "Urbano latino",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/30/8a/c7/308ac778-a28a-0176-67ea-411ce76e1603/mzaf_8999784435382592939.plus.aac.p.m4a"
   },
   {
@@ -2312,7 +2402,10 @@
   {
     "artist": "Bad Bunny",
     "track": "Un Verano Sin Ti",
-    "genre": "Latin",
+    "genre": [
+      "Latin",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/29/21/aa/2921aa77-0a9b-4771-a6e9-2db85f177444/mzaf_11940520242658716528.plus.aac.p.m4a"
   },
   {
@@ -2948,13 +3041,19 @@
   {
     "artist": "The Weeknd",
     "track": "Call Out My Name",
-    "genre": "R&B/Soul",
+    "genre": [
+      "R&B/Soul",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b7/0d/1d/b70d1d10-fafb-877e-9ab4-61dcf60197df/mzaf_23229338162046637.plus.aac.p.m4a"
   },
   {
     "artist": "The Weeknd",
     "track": "Die For You",
-    "genre": "R&B/Soul",
+    "genre": [
+      "R&B/Soul",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/02/24/b2/0224b209-df06-fd41-b0a4-568c155a1d5f/mzaf_4602401127946019832.plus.aac.p.m4a"
   },
   {
@@ -2966,25 +3065,37 @@
   {
     "artist": "The Weeknd",
     "track": "Can't Feel My Face",
-    "genre": "R&B/Soul",
+    "genre": [
+      "R&B/Soul",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/1e/cd/50/1ecd50b2-343b-c570-d976-7e089e56e0a5/mzaf_7391966967236748397.plus.aac.p.m4a"
   },
   {
     "artist": "The Weeknd",
     "track": "I Feel It Coming (feat. Daft Punk)",
-    "genre": "R&B/Soul",
+    "genre": [
+      "R&B/Soul",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/92/71/f5/9271f520-7386-92ec-e149-ea929ccb692e/mzaf_3000184026241900741.plus.aac.p.m4a"
   },
   {
     "artist": "The Weeknd",
     "track": "What You Need",
-    "genre": "R&B/Soul",
+    "genre": [
+      "R&B/Soul",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b7/f4/c0/b7f4c09c-d20c-d3a7-3a35-0acd3cc0ce1b/mzaf_1248819328861407392.plus.aac.p.m4a"
   },
   {
     "artist": "The Weeknd",
     "track": "Coming Down",
-    "genre": "R&B/Soul",
+    "genre": [
+      "R&B/Soul",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d3/19/4a/d3194ac4-730a-b12b-b04f-e95bab0416a4/mzaf_4133956479160019549.plus.aac.p.m4a"
   },
   {
@@ -2996,7 +3107,10 @@
   {
     "artist": "The Weeknd",
     "track": "Try Me",
-    "genre": "R&B/Soul",
+    "genre": [
+      "R&B/Soul",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/20/20/e9/2020e95d-30d0-e332-3580-d9f303f0e282/mzaf_14044068381155205848.plus.aac.p.m4a"
   },
   {
@@ -3026,19 +3140,28 @@
   {
     "artist": "The Weeknd",
     "track": "After Hours",
-    "genre": "R&B/Soul",
+    "genre": [
+      "R&B/Soul",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d6/2f/6f/d62f6fd0-380e-5feb-281a-e2256221c38a/mzaf_8663452601346088400.plus.aac.p.m4a"
   },
   {
     "artist": "The Weeknd",
     "track": "Stargirl Interlude (feat. Lana Del Rey)",
-    "genre": "R&B/Soul",
+    "genre": [
+      "R&B/Soul",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/2d/07/f5/2d07f531-0d05-2358-2fc0-97b2eaeb8d7d/mzaf_10744529694351470989.plus.aac.p.m4a"
   },
   {
     "artist": "The Weeknd",
     "track": "Earned It",
-    "genre": "Soundtrack",
+    "genre": [
+      "Soundtrack",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b3/61/63/b36163c3-27ed-65e7-1b4d-15557fe8582b/mzaf_16981657221352789023.plus.aac.p.m4a"
   },
   {
@@ -3050,7 +3173,10 @@
   {
     "artist": "The Weeknd",
     "track": "Secrets",
-    "genre": "R&B/Soul",
+    "genre": [
+      "R&B/Soul",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/17/c1/0d/17c10d1d-9d9e-e5cb-c75d-82ae75988950/mzaf_11998536464438269747.plus.aac.p.m4a"
   },
   {
@@ -3194,7 +3320,10 @@
   {
     "artist": "Ed Sheeran",
     "track": "Shivers",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a8/9f/a5/a89fa5e9-8a3b-77bb-e081-866067d3f213/mzaf_13889707114574366771.plus.aac.p.m4a"
   },
   {
@@ -3284,25 +3413,37 @@
   {
     "artist": "Ed Sheeran",
     "track": "Eyes Closed",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/45/d7/48/45d7481e-8ecb-2156-6de7-fbf9f03d3cfd/mzaf_15555494921995384938.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "WILDFLOWER",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/de/c3/e8/dec3e884-7237-9622-718a-12c5f48c5ca2/mzaf_3134455671785145822.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "BIRDS OF A FEATHER",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/34/31/d3/3431d34e-847f-5d66-df83-0bce688d997e/mzaf_18106743962423782018.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "ocean eyes",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/66/1f/6f/661f6fbf-cae2-5209-c12c-b9ae9bde9f56/mzaf_9388830456300374759.plus.aac.p.m4a"
   },
   {
@@ -3314,55 +3455,82 @@
   {
     "artist": "Billie Eilish",
     "track": "What Was I Made For? (From The Motion Picture \"Barbie\")",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4e/89/79/4e8979d0-31cc-d2c7-751d-9c5368f53885/mzaf_8166853517153482173.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "when the party's over",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/2a/ba/44/2aba4410-ba71-89ce-e075-10120409c31c/mzaf_16887001963655152332.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "everything i wanted",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/23/f3/6b/23f36bc0-9edc-8d55-df7f-7b806310d4b4/mzaf_15718469078111904528.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "The 30th",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/7b/c3/d5/7bc3d59c-be76-0a7a-aca5-69dc8d3665a2/mzaf_6145733791519602558.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "CHIHIRO",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/30/41/6b/30416b6a-a895-a8e5-0b92-6206fff0bb0a/mzaf_12575392156288065852.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "idontwannabeyouanymore",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/53/0c/3c/530c3caa-0f9c-24b6-efff-7aeb44e1632b/mzaf_13824949394815091842.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "THE GREATEST",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/c5/0c/fb/c50cfb87-edea-6dc2-3c10-7dcfe197cb79/mzaf_14709844062419179914.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "i love you",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/1f/a2/e7/1fa2e763-7c23-cbf6-406a-77e7e913202e/mzaf_7765778446202975172.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "you should see me in a crown",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b0/d8/c1/b0d8c169-049e-cbb6-91f3-f8283f5fde4e/mzaf_9036068545424949999.plus.aac.p.m4a"
   },
   {
@@ -3374,31 +3542,46 @@
   {
     "artist": "Billie Eilish",
     "track": "TV",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/11/27/03/11270372-08f6-fb4d-007f-6fef24922ed4/mzaf_4309652475900024701.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "bellyache",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/c9/31/16/c93116b0-42c9-bb50-6ce1-23aff3d38ad5/mzaf_179718431651293170.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "bury a friend",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/54/ce/e9/54cee98c-c05a-d2a7-83cd-7533f86258f3/mzaf_8983523903256286530.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "listen before i go",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/a6/cd/86/a6cd86a3-362a-889f-1d33-763d588a2700/mzaf_6535812884196621852.plus.aac.p.m4a"
   },
   {
     "artist": "Billie Eilish",
     "track": "BLUE",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/29/55/12/29551211-8ee4-c75f-3cbe-95c1a7eaa6fe/mzaf_15864137434256663479.plus.aac.p.m4a"
   },
   {
@@ -3488,7 +3671,10 @@
   {
     "artist": "Ariana Grande",
     "track": "7 rings",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/c8/1d/7c/c81d7ce6-7b9a-20b9-b491-9c9bca1d4d5b/mzaf_18199883097582560855.plus.aac.p.m4a"
   },
   {
@@ -3500,7 +3686,10 @@
   {
     "artist": "Ariana Grande",
     "track": "ghostin",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e7/d6/6e/e7d66ee5-2ca5-7615-569a-cae0d2a34d99/mzaf_1473701202633846564.plus.aac.p.m4a"
   },
   {
@@ -3638,7 +3827,10 @@
   {
     "artist": "Adele",
     "track": "Easy On Me",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/75/28/56/75285676-dbce-d91d-7b36-070084a3546b/mzaf_5286200244455841527.plus.aac.p.m4a"
   },
   {
@@ -3794,7 +3986,10 @@
   {
     "artist": "Justin Bieber",
     "track": "Ghost",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/d9/79/54/d9795413-f334-81e2-5782-99981cd05370/mzaf_1178943107324861277.plus.aac.p.m4a"
   },
   {
@@ -3908,7 +4103,10 @@
   {
     "artist": "Lizzo",
     "track": "Coldplay",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/6e/c5/3f/6ec53fa0-f76b-9441-26c5-516bb34520ce/mzaf_12829217202046882771.plus.aac.p.m4a"
   },
   {
@@ -11396,7 +11594,10 @@
   {
     "artist": "Dua Lipa",
     "track": "Genesis",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/5f/44/5d/5f445dd6-8b39-e560-069c-64d3f91f23b2/mzaf_14658591685153728247.plus.aac.p.m4a"
   },
   {
@@ -12956,157 +13157,235 @@
   {
     "artist": "BTS",
     "track": "Boy With Luv (feat. Halsey)",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/55/87/26/55872681-73c5-f66c-b399-6d039ccb8b4c/mzaf_14909065013738849832.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "FAKE LOVE",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d8/c8/eb/d8c8eba9-bce6-a95d-af76-146b2d083d43/mzaf_13737443125396473105.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "Dynamite",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/3b/f2/5c/3bf25cc9-a395-6858-1ef8-5c29956afaf6/mzaf_6007556042949037280.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "Butter",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e4/02/64/e402646d-4028-7c49-8d56-4442a5bda685/mzaf_13104906049249347549.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "Blood Sweat & Tears",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/99/7c/3c/997c3c6f-7644-0153-752e-9454bb73428b/mzaf_15295778061705568451.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "Pied Piper",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/bc/99/37/bc99370e-5f24-4f8e-64a0-4fe0fc0eb5f2/mzaf_8290758730123153964.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "MIC Drop (Steve Aoki Remix) [Full Length Edition]",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/6f/59/92/6f5992e2-8bb0-70f4-bd36-f6b9817b119d/mzaf_11450553513893481603.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "IDOL",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b1/37/53/b1375312-71f9-d10b-63e6-eafca99c4dfa/mzaf_11406803283003618823.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "DNA",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/4a/ec/73/4aec737c-a11b-5c5d-0e87-e77046e714ee/mzaf_7636580936403996943.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "Black Swan",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/bd/fb/e5/bdfbe5db-dc69-b162-1391-9ca54cbeab67/mzaf_16962188115154166520.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "Save ME",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/06/7f/2a/067f2abd-5aa3-1df0-41c1-12deb3c3410d/mzaf_1042966720851769010.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "Anpanman",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/3c/4e/15/3c4e153c-49c5-ced8-6e60-f3875b54f146/mzaf_6284533139996866017.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "Life Goes On",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/3b/44/99/3b449951-78df-acc9-ffe5-aa2f99711b78/mzaf_3450759232532661275.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "Dope",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d6/9c/76/d69c76ae-c679-a7ed-d000-14507966c842/mzaf_3041150769493606770.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "Silver Spoon",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/58/f3/59/58f3590a-1c36-4ba6-cd7e-01917da1637b/mzaf_12365647592536700354.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "Run BTS",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/f5/74/0c/f5740c53-ba9c-12c9-97c9-69cd8b2145a2/mzaf_13800483833936957646.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "Spring Day",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/18/d7/18/18d718e6-efb8-2241-47b8-44f8951b7afb/mzaf_9900867605041120176.plus.aac.p.m4a"
   },
   {
     "artist": "Lil Nas X",
     "track": "Old Town Road (feat. RM of BTS) [Seoul Town Road Remix]",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/0e/5c/c1/0e5cc189-f545-1dbc-25b3-225dabd74587/mzaf_5638593319015717883.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "I NEED U",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/01/20/5e/01205e41-9017-ea53-f724-01f1aad4825c/mzaf_10650989239734623989.plus.aac.p.m4a"
   },
   {
     "artist": "BTS",
     "track": "HOME",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ba/b9/d7/bab9d71e-cb8c-0042-2994-21c0435c6a05/mzaf_9672078138802453045.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "JUMP",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/cb/b3/6b/cbb36b26-061d-af60-2cdf-353f3afa8463/mzaf_6164418099715201202.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "How You Like That",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/16/6f/31/166f31f0-255e-6ab4-a4bb-7b94116c238b/mzaf_10977079639410315979.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "DDU-DU DDU-DU",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/1f/19/0b/1f190b1d-4279-9eb9-8485-0f4342b84090/mzaf_5657825060835883930.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "Pink Venom",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b5/17/54/b51754e6-8bd1-9d97-8934-e713b68f82a0/mzaf_605229577143140327.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "BOOMBAYAH",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/a0/3b/89/a03b89a2-1820-96d9-8616-7aa42f79abba/mzaf_14904791120408388190.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "Kill This Love",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/37/10/8b/37108b15-6634-df07-dadf-f20f6525dceb/mzaf_3091360070584533991.plus.aac.p.m4a"
   },
   {
@@ -13118,43 +13397,64 @@
   {
     "artist": "BLACKPINK",
     "track": "Shut Down",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/eb/5f/d9/eb5fd958-d797-3d95-912f-18770da58c69/mzaf_10202928076217579718.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "Pretty Savage",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a7/67/76/a76776d0-65a4-d256-655b-f3caa0a3aab5/mzaf_15879004046514107743.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "Lovesick Girls",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ac/cc/ca/acccca17-b907-71ab-4742-c085b0cec879/mzaf_950006393882865014.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "As If It's Your Last",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/97/44/12/974412d8-624e-7a85-25b5-a4a0ac135299/mzaf_10160984043858145771.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "WHISTLE",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/66/cb/46/66cb4653-32cb-7459-fa3f-be0856958c55/mzaf_15640984397179131172.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "PLAYING WITH FIRE",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/0c/67/aa/0c67aa79-38de-8f7b-4d3d-74ece17c912c/mzaf_10581937183195367059.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "Forever Young",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/17/20/9a/17209a19-79c9-ce93-6419-d03ceb2f895a/mzaf_2198006393721854225.plus.aac.p.m4a"
   },
   {
@@ -13172,19 +13472,28 @@
   {
     "artist": "BLACKPINK",
     "track": "Don't Know What To Do",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/b5/58/3e/b5583e36-9b79-8b24-04ac-43178585600c/mzaf_8326370349182995071.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "Love To Hate Me",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b9/30/68/b9306824-be2c-0f6a-548e-ef16a1cdca54/mzaf_5554404346131259195.plus.aac.p.m4a"
   },
   {
     "artist": "BLACKPINK",
     "track": "THE GIRLS (BLACKPINK THE GAME OST)",
-    "genre": "K-Pop",
+    "genre": [
+      "K-Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/53/e0/51/53e051fc-ef76-3ac2-07de-cd19b3fbed2f/mzaf_6643641762713119046.plus.aac.p.m4a"
   },
   {
@@ -14090,91 +14399,136 @@
   {
     "artist": "Olivia Rodrigo",
     "track": "traitor",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d5/f1/6f/d5f16f3c-2e7a-843b-b6e8-8888a8815831/mzaf_9649976824704974490.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "favorite crime",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/77/8a/04/778a04fc-8c9b-bc8f-8cc2-832da06bf289/mzaf_7515993700798339425.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "All I Want",
-    "genre": "Soundtrack",
+    "genre": [
+      "Soundtrack",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/00/88/f8/0088f801-4039-2325-4ecb-680b2173b6c4/mzaf_7668302000503856616.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "jealousy, jealousy",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/3c/32/4d/3c324da9-8155-9d42-9c17-c3dad4d56a28/mzaf_4684856614573124364.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "lacy",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ca/65/38/ca65383b-13a0-275f-765c-3ed6d30d5ad2/mzaf_12951340815745498485.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "Can’t Catch Me Now (from The Hunger Games: The Ballad of Songbirds & Snakes)",
-    "genre": "Soundtrack",
+    "genre": [
+      "Soundtrack",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/98/4d/47/984d47cd-8bcc-bf96-2342-bb45e28c0f88/mzaf_11329946151963468044.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "enough for you",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/88/82/01/88820182-ea17-b63e-2b99-0f2f289270e7/mzaf_13532320031509566458.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "making the bed",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/21/c1/19/21c11962-ccac-6bdb-b3bf-d557ae1f7926/mzaf_8871295202761550925.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "hope ur ok",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/46/4c/ea/464cea0b-62fd-edfe-c753-89b31eabfca0/mzaf_14814963394890317196.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "scared of my guitar",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/0a/26/c5/0a26c5af-6acc-ca79-0e2e-aa0f87a9a621/mzaf_9766271437424046593.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "vampire",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/15/b7/e5/15b7e544-1383-c670-e16a-a2d58c92d9ba/mzaf_16105998655577890260.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "ballad of a homeschooled girl",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/bf/05/fa/bf05fa31-f7e1-9d8e-348f-6e7fedff2358/mzaf_17621267818553057506.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "deja vu",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview122/v4/30/f2/40/30f240e8-ce97-dc9e-bddc-c61d97f1eab7/mzaf_12980311751924521040.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "happier",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview112/v4/eb/07/1b/eb071b34-d296-16b5-025a-b76852625cac/mzaf_18307908725570214027.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "teenage dream",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ef/99/f4/ef99f40f-96ae-1a88-e463-c77bbf39a5a2/mzaf_10042099862284550566.plus.aac.p.m4a"
   },
   {
@@ -14186,37 +14540,55 @@
   {
     "artist": "Olivia Rodrigo",
     "track": "logical",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f2/3d/16/f23d164e-45c2-eebc-5179-1283a25395a3/mzaf_7914720097848739216.plus.aac.p.m4a"
   },
   {
     "artist": "Olivia Rodrigo",
     "track": "stranger",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/8b/ab/8e/8bab8ea1-2d11-5b9b-b51f-c0ce762cdaa4/mzaf_9909983893037197949.plus.aac.p.m4a"
   },
   {
     "artist": "Dua Lipa",
     "track": "New Rules",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/6e/19/d9/6e19d9ca-1321-1eea-e797-51d7ab5b56c2/mzaf_5898999508314966855.plus.aac.p.m4a"
   },
   {
     "artist": "Dua Lipa",
     "track": "Dance The Night",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/9d/9f/56/9d9f566f-abf6-5f10-bcdb-09e14dcace42/mzaf_10277018989080903908.plus.aac.p.m4a"
   },
   {
     "artist": "Dua Lipa",
     "track": "Break My Heart",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/85/14/2e/85142ebb-ed20-bf03-4ff9-5f714d455ebc/mzaf_14831238686541567886.plus.aac.p.m4a"
   },
   {
     "artist": "Dua Lipa",
     "track": "Houdini",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/2a/0c/e0/2a0ce04a-4155-72a3-ba8f-e0344f49536d/mzaf_17581444001185566790.plus.aac.p.m4a"
   },
   {
@@ -14228,37 +14600,55 @@
   {
     "artist": "Dua Lipa",
     "track": "Physical",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/87/45/78/874578c1-d683-d1e6-00e4-08848279fa3a/mzaf_17519393520049027931.plus.aac.p.m4a"
   },
   {
     "artist": "Dua Lipa",
     "track": "Training Season",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/a8/87/16/a88716e2-9474-ec4e-06d6-d3a9a3ba96c8/mzaf_6258558385119267725.plus.aac.p.m4a"
   },
   {
     "artist": "Dua Lipa",
     "track": "Levitating (feat. DaBaby)",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/02/20/e9/0220e9d0-5eea-3492-a9b2-23741a7b638d/mzaf_16375369764658574310.plus.aac.p.m4a"
   },
   {
     "artist": "Dua Lipa",
     "track": "Be the One",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/98/17/84/9817849f-0330-f3dc-c4f0-470a651776fa/mzaf_4538652990273307718.plus.aac.p.m4a"
   },
   {
     "artist": "Dua Lipa",
     "track": "Love Again",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/5f/58/eb/5f58ebeb-033b-8c1d-b5e4-fb5d60b7c346/mzaf_10528257556509168506.plus.aac.p.m4a"
   },
   {
     "artist": "Jack Harlow",
     "track": "Dua Lipa",
-    "genre": "Hip-Hop/Rap",
+    "genre": [
+      "Hip-Hop/Rap",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/8b/d6/85/8bd685c3-9e63-3529-d763-612901e9ff9d/mzaf_903767928813257153.plus.aac.p.m4a"
   },
   {
@@ -14270,13 +14660,19 @@
   {
     "artist": "Dua Lipa",
     "track": "Illusion",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/78/ef/77/78ef7719-91d1-5bfd-f0d9-610002be2ebd/mzaf_3899227728761763455.plus.aac.p.m4a"
   },
   {
     "artist": "Dua Lipa",
     "track": "We're Good",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/8d/98/b5/8d98b50f-f4b2-5a0a-d150-e7db98950197/mzaf_7341247091143834972.plus.aac.p.m4a"
   },
   {
@@ -14294,115 +14690,172 @@
   {
     "artist": "Harry Styles",
     "track": "Sign of the Times",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/19/f7/99/19f799a3-4638-f354-8713-f5ac076f328e/mzaf_2398941441794619302.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Watermelon Sugar",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/16/86/f5/1686f50d-8b77-7e32-85f7-5f0e804d68fe/mzaf_14195633304344507287.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Adore You",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview126/v4/1b/59/1f/1b591fec-7157-f069-02fd-46a77c8638af/mzaf_2481090751237982049.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Falling",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/e2/82/28/e28228b8-4440-b6a8-d82d-4e9eba8fc882/mzaf_10293739487732546000.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Late Night Talking",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e3/a2/04/e3a204b5-c3f6-f49d-a97c-4472f8b045d7/mzaf_18322387550227682410.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Golden",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/50/8f/f7/508ff714-12ac-6b8b-9e48-871ec5da8ed1/mzaf_782156429997343495.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Satellite",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b0/ff/d0/b0ffd005-3f1c-34d6-3123-ae829457a409/mzaf_865652897910996010.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Matilda",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/03/29/7d/03297dd4-5dbe-4ec6-9480-f40846b7181c/mzaf_15378071810157311314.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Music For a Sushi Restaurant",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/db/30/2b/db302b37-7cfd-947d-b168-2288df0594d9/mzaf_4879334278137199118.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Love Of My Life",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/3e/37/ed/3e37edc2-b02e-c3fd-bd1e-6f9548b910c2/mzaf_10631950686010316714.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Daylight",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/0e/d7/aa/0ed7aacf-6c72-39b2-7731-05ad74ac85e2/mzaf_11719631527113093480.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Lights Up",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/37/df/cd/37dfcd4a-3899-32ea-fdc0-382db69a9664/mzaf_15056258762086103644.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Cherry",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/84/31/4a/84314a72-b42a-1bb3-9c43-702f8a585e74/mzaf_12430158979087766363.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Sweet Creature",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/a7/0a/16/a70a16be-199c-7304-85e6-3fc3ef10b509/mzaf_3757036057523441311.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Two Ghosts",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/6e/78/e9/6e78e97a-3546-97ea-1e6c-a0c97a74fa75/mzaf_14542768934141455310.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "She",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/a5/45/cd/a545cd6f-a384-2429-e5c9-8b9018414f60/mzaf_15204786332077756000.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Fine Line",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/ab/cb/ff/abcbff56-dffb-e390-9699-6dd494a0c280/mzaf_3526458013556102441.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Little Freak",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4b/cf/21/4bcf213b-4fad-9304-8752-34ef30e1716a/mzaf_11010657058817410926.plus.aac.p.m4a"
   },
   {
     "artist": "Harry Styles",
     "track": "Kiwi",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/73/cb/1d/73cb1d4e-a4fb-0702-cf7b-3136e6aa8f42/mzaf_3811625892623170721.plus.aac.p.m4a"
   },
   {
@@ -14462,7 +14915,10 @@
   {
     "artist": "SZA",
     "track": "Open Arms (feat. Travis Scott)",
-    "genre": "R&B/Soul",
+    "genre": [
+      "R&B/Soul",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/be/e1/5c/bee15c13-45e4-a4de-a48d-407cc06a0cb6/mzaf_12967475487789835787.plus.aac.p.m4a"
   },
   {
@@ -15188,7 +15644,10 @@
   {
     "artist": "Lil Nas X",
     "track": "Panini",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/f9/9f/51/f99f512d-1afb-810e-715b-ef8c3878aadf/mzaf_3749017260266760309.plus.aac.p.m4a"
   },
   {
@@ -15200,7 +15659,10 @@
   {
     "artist": "Lil Nas X",
     "track": "Old Town Road (feat. Billy Ray Cyrus) [Remix]",
-    "genre": "Country",
+    "genre": [
+      "Country",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/9e/d2/ab/9ed2abc1-37b4-d4ec-9536-3996dcf0f908/mzaf_12104233643471014321.plus.aac.p.m4a"
   },
   {
@@ -15242,7 +15704,10 @@
   {
     "artist": "Lil Nas X",
     "track": "MONTERO (Call Me By Your Name)",
-    "genre": "Pop",
+    "genre": [
+      "Pop",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview124/v4/6e/cd/99/6ecd9966-bbe2-36b5-35f1-cd8ed6406906/mzaf_3486740843482888093.plus.aac.p.m4a"
   },
   {
@@ -15254,7 +15719,10 @@
   {
     "artist": "Lil Nas X",
     "track": "C7osure (You Like)",
-    "genre": "Alternative",
+    "genre": [
+      "Alternative",
+      "2020s"
+    ],
     "previewUrl": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/4f/69/8e/4f698ed2-16d9-d67f-26d5-1728deac69db/mzaf_4239134828557117529.plus.aac.p.m4a"
   },
   {
