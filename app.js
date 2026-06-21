@@ -1388,8 +1388,17 @@ async function checkArtist() {
             return;
         }
 
-        // Filter for exact or close matches
-        const artists = data.results.filter(artist => artist.artistName);
+        // Filter for exact or close matches, deduplicating by artist name to show only one entry per artist
+        const seenArtists = new Set();
+        const artists = data.results.filter(artist => {
+            if (!artist.artistName) return false;
+            const normName = artist.artistName.toLowerCase().trim();
+            if (seenArtists.has(normName)) {
+                return false;
+            }
+            seenArtists.add(normName);
+            return true;
+        });
 
         if (artists.length === 0) {
             showError(`No artist found for "${artistName}". Please try a different name.`);
