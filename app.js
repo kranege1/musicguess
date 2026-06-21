@@ -974,18 +974,24 @@ function updateBubblePhysics() {
     // 1. Update positions and boundary collisions
     for (let i = 0; i < physicsBubbles.length; i++) {
         const b = physicsBubbles[i];
+        const age = nowMs - b.spawnTime;
 
-        // Spawn scaling
-        if (nowMs - b.spawnTime < 500) {
-            b.scale = (nowMs - b.spawnTime) / 500;
+        // Spawn scaling & Shrink scaling
+        if (age < 500) {
+            b.scale = age / 500;
+        } else if (age > 10000) {
+            // Shrink over 2 seconds (from 10s to 12s)
+            b.scale = Math.max(0, 1 - (age - 10000) / 2000);
+            if (b.scale <= 0) {
+                b.element.remove();
+                physicsBubbles.splice(i, 1);
+                i--;
+                continue;
+            }
         } else {
             b.scale = 1;
         }
         b.radius = 45 * b.scale;
-
-        // Check if exiting (e.g. after 15 seconds)
-        const age = nowMs - b.spawnTime;
-        b.exiting = age > 10000;
 
         if (b.isHeld) {
             continue;
@@ -995,51 +1001,33 @@ function updateBubblePhysics() {
         b.vx *= 0.998;
         b.vy *= 0.998;
 
-        // If exiting, gently guide them to exit left
-        if (b.exiting) {
-            if (b.vx > -2.0) {
-                b.vx -= 0.05; // Genty accelerate left
-            }
-        }
-
         // Move
         b.x += b.vx;
         b.y += b.vy;
 
-        // Boundary checks / exits
+        // Bounce off walls (boundary checks) - Always keep inside canvas
         const diameter = b.radius * 2;
-
-        if (b.exiting) {
-            // If completely off-screen, remove
-            if (b.x < -diameter || b.x > containerWidth || b.y < -diameter || b.y > containerHeight) {
-                b.element.remove();
-                physicsBubbles.splice(i, 1);
-                i--;
-                continue;
-            }
-        } else {
-            // Bounce off walls (boundary checks)
-            // Left
-            if (b.x < 0) {
-                b.x = 0;
-                b.vx = -b.vx * 0.9;
-            }
-            // Right
-            else if (b.x > containerWidth - diameter) {
-                b.x = containerWidth - diameter;
-                b.vx = -b.vx * 0.9;
-            }
-
-            // Top
-            if (b.y < 0) {
-                b.y = 0;
-                b.vy = -b.vy * 0.9;
-            }
-            // Bottom
-            else if (b.y > containerHeight - diameter) {
-                b.y = containerHeight - diameter;
-                b.vy = -b.vy * 0.9;
-            }
+        
+        // Left
+        if (b.x < 0) {
+            b.x = 0;
+            b.vx = -b.vx * 0.9;
+        }
+        // Right
+        else if (b.x > containerWidth - diameter) {
+            b.x = containerWidth - diameter;
+            b.vx = -b.vx * 0.9;
+        }
+        
+        // Top
+        if (b.y < 0) {
+            b.y = 0;
+            b.vy = -b.vy * 0.9;
+        }
+        // Bottom
+        else if (b.y > containerHeight - diameter) {
+            b.y = containerHeight - diameter;
+            b.vy = -b.vy * 0.9;
         }
     }
 
@@ -1734,6 +1722,7 @@ async function showArtistSelectionModal(artists) {
     list.innerHTML = '';
 
     let displayedCount = 0;
+    const seenImages = new Set();
 
     // Create radio button options for each artist with images
     for (const [index, artist] of artists.entries()) {
@@ -1748,6 +1737,15 @@ async function showArtistSelectionModal(artists) {
         if (artistData.fans < minFans) {
             console.log(`⏭️ Skipping "${artist.artistName}" - only ${artistData.fans} fans (threshold: ${minFans})`);
             continue;
+        }
+
+        // Deduplicate using resolved artist image from Deezer
+        if (artistData.image && seenImages.has(artistData.image)) {
+            console.log(`⏭️ Skipping duplicate "${artist.artistName}" - image already shown.`);
+            continue;
+        }
+        if (artistData.image) {
+            seenImages.add(artistData.image);
         }
 
         const option = document.createElement('div');
