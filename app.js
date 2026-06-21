@@ -3294,6 +3294,7 @@ function displayAnswers() {
             if (answer && answer.trim()) {
                 const btn = document.createElement('button');
                 btn.className = 'answer-btn';
+                btn.dataset.answer = answer; // Store raw answer
                 btn.textContent = formatSongTitleForDisplay(answer);
                 btn.onclick = () => selectAnswer(answer, index);
                 answersContainer.appendChild(btn);
@@ -3427,7 +3428,7 @@ function selectAnswer(answer, index) {
     // Markiere alle Buttons
     buttons.forEach((btn, i) => {
         btn.disabled = true;
-        if (btn.textContent === gameState.currentSong.track) {
+        if (btn.dataset.answer === gameState.currentSong.track) {
             btn.classList.add('correct');
         } else if (btn === selectedBtn && !isCorrect) {
             btn.classList.add('incorrect');
