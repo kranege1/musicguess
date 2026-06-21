@@ -1943,7 +1943,7 @@ async function startGame() {
     document.getElementById('quizScreen').style.display = 'block';
 
     // Lade Fehler-Message aus
-    document.getElementById('errorMessage').classList.remove('show');
+    hideError();
 
     // Zeige Lade-Zustand
     showLoadingState();
@@ -3305,7 +3305,7 @@ async function nextQuestion() {
     // Verstecke die nächste Frage Button
     document.getElementById('nextBtn').classList.remove('show');
     document.getElementById('resultMessage').textContent = '';
-    document.getElementById('errorMessage').classList.remove('show');
+    hideError();
 }
 
 // Zeige Albumcover an
@@ -4589,10 +4589,30 @@ function updateLoadingProgress(percent, text = null) {
     }
 }
 
+let showErrorTimeout = null;
+
 function showError(message) {
     const errorDiv = document.getElementById('errorMessage');
     errorDiv.textContent = '⚠️ ' + message;
     errorDiv.classList.add('show');
+
+    if (showErrorTimeout) {
+        clearTimeout(showErrorTimeout);
+    }
+    showErrorTimeout = setTimeout(() => {
+        errorDiv.classList.remove('show');
+    }, 15000);
+}
+
+function hideError() {
+    const errorDiv = document.getElementById('errorMessage');
+    if (errorDiv) {
+        errorDiv.classList.remove('show');
+    }
+    if (showErrorTimeout) {
+        clearTimeout(showErrorTimeout);
+        showErrorTimeout = null;
+    }
 }
 
 // Verhindere mehrfaches Abspielen
