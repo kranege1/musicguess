@@ -927,50 +927,63 @@ async function loadAlbumList() {
 }
 
 // Starte Artist Bubbles Animation
+let startArtistBubblesPromise = null;
 async function startArtistBubbles() {
-    const container = document.getElementById('artistBubblesContainer');
-    if (!container) {
-        console.warn('Cannot start bubbles: container exists:', !!container, 'artistNames:', artistNames.length);
-        return;
+    if (startArtistBubblesPromise) {
+        return startArtistBubblesPromise;
     }
 
-    // Ensure artists are loaded
-    if (artistNames.length === 0) {
-        await loadArtistNames();
-    }
-    if (artistNames.length === 0) {
-        console.warn('Cannot start bubbles: artistNames still empty after load');
-        return;
-    }
+    startArtistBubblesPromise = (async () => {
+        const container = document.getElementById('artistBubblesContainer');
+        if (!container) {
+            console.warn('Cannot start bubbles: container exists:', !!container, 'artistNames:', artistNames.length);
+            startArtistBubblesPromise = null;
+            return;
+        }
 
-    console.log(`🫧 Starting bubbles with ${artistNames.length} artists`);
-    container.classList.add('active');
-    activeBubbles = 0;
+        // Ensure artists are loaded
+        if (artistNames.length === 0) {
+            await loadArtistNames();
+        }
+        if (artistNames.length === 0) {
+            console.warn('Cannot start bubbles: artistNames still empty after load');
+            startArtistBubblesPromise = null;
+            return;
+        }
 
-    // Initialize the remaining artists pool (shuffled)
-    artistNamesRemaining = shuffleArray([...artistNames]);
+        console.log(`🫧 Starting bubbles with ${artistNames.length} artists`);
+        container.classList.add('active');
+        activeBubbles = 0;
 
-    // Update subtitle with bubble category
-    setSubtitle(`🫧 Bubbles: ${currentBubbleCategory}`);
+        // Initialize the remaining artists pool (shuffled)
+        artistNamesRemaining = shuffleArray([...artistNames]);
 
-    // Stoppe vorherige Animation
-    if (bubbleInterval) {
-        clearInterval(bubbleInterval);
-    }
-    container.innerHTML = '';
+        // Update subtitle with bubble category
+        setSubtitle(`🫧 Bubbles: ${currentBubbleCategory}`);
 
-    // Erstelle kontinuierlich neue Bubbles
-    // Intervall für größeren Abstand zwischen Bubbles
-    bubbleInterval = setInterval(() => {
-        // Call async function without awaiting (fire and forget)
-        createArtistBubble().catch(err => {
-            console.error('Bubble creation error:', err);
-            // Continue trying even if one fails
-        });
-    }, 2000);
+        // Stoppe vorherige Animation
+        if (bubbleInterval) {
+            clearInterval(bubbleInterval);
+        }
+        container.innerHTML = '';
 
-    // Erstelle erste Bubble sofort
-    createArtistBubble().catch(err => console.error('Bubble creation error:', err));
+        // Erstelle kontinuierlich neue Bubbles
+        // Intervall für größeren Abstand zwischen Bubbles
+        bubbleInterval = setInterval(() => {
+            // Call async function without awaiting (fire and forget)
+            createArtistBubble().catch(err => {
+                console.error('Bubble creation error:', err);
+                // Continue trying even if one fails
+            });
+        }, 2000);
+
+        // Erstelle erste Bubble sofort
+        createArtistBubble().catch(err => console.error('Bubble creation error:', err));
+        
+        startArtistBubblesPromise = null;
+    })();
+
+    return startArtistBubblesPromise;
 }
 
 // Update artist list based on selected decade (loads artists from songs.json)
