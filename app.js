@@ -926,6 +926,182 @@ async function loadAlbumList() {
     }
 }
 
+// Physics states for Snooker-like bubble animation
+let physicsBubbles = [];
+let physicsLoopActive = false;
+let lastCollisionSoundTime = 0;
+
+function playCollisionSound() {
+    try {
+        const audioContext = getSharedAudioContext();
+        if (!audioContext) return;
+        const now = audioContext.currentTime;
+        if (now - lastCollisionSoundTime < 0.05) return;
+        lastCollisionSoundTime = now;
+
+        const osc = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        osc.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        // Crisp snooker ball click: short decaying high-frequency triangle wave
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(1400, now + 0.01);
+
+        gainNode.gain.setValueAtTime(0.2, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
+
+        osc.start(now);
+        osc.stop(now + 0.02);
+    } catch (e) {
+        console.warn('Could not play collision sound:', e);
+    }
+}
+
+function updateBubblePhysics() {
+    const container = document.getElementById('artistBubblesContainer');
+    if (!container || !container.classList.contains('active') || physicsBubbles.length === 0) {
+        physicsLoopActive = false;
+        return;
+    }
+
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    const nowMs = performance.now();
+
+    // 1. Update positions and boundary collisions
+    for (let i = 0; i < physicsBubbles.length; i++) {
+        const b = physicsBubbles[i];
+        
+        // Spawn scaling
+        if (nowMs - b.spawnTime < 500) {
+            b.scale = (nowMs - b.spawnTime) / 500;
+        } else if (nowMs - b.spawnTime > 25000 && !b.isHeld) {
+            b.scale = Math.max(0, 1 - (nowMs - b.spawnTime - 25000) / 5000);
+            if (b.scale <= 0) {
+                b.element.remove();
+                physicsBubbles.splice(i, 1);
+                i--;
+                continue;
+            }
+        }
+        b.radius = 90 * b.scale;
+
+        if (b.isHeld) {
+            continue;
+        }
+
+        // Apply friction
+        b.vx *= 0.998;
+        b.vy *= 0.998;
+
+        // Move
+        b.x += b.vx;
+        b.y += b.vy;
+
+        // Bounce off walls (boundary checks)
+        const diameter = b.radius * 2;
+        
+        // Left
+        if (b.x < 0) {
+            b.x = 0;
+            b.vx = -b.vx * 0.9;
+        }
+        // Right
+        else if (b.x > containerWidth - diameter) {
+            b.x = containerWidth - diameter;
+            b.vx = -b.vx * 0.9;
+        }
+        
+        // Top
+        if (b.y < 0) {
+            b.y = 0;
+            b.vy = -b.vy * 0.9;
+        }
+        // Bottom
+        else if (b.y > containerHeight - diameter) {
+            b.y = containerHeight - diameter;
+            b.vy = -b.vy * 0.9;
+        }
+    }
+
+    // 2. Resolve collisions between bubbles (Snooker-style)
+    let collisionDetected = false;
+    for (let i = 0; i < physicsBubbles.length; i++) {
+        for (let j = i + 1; j < physicsBubbles.length; j++) {
+            const b1 = physicsBubbles[i];
+            const b2 = physicsBubbles[j];
+
+            const c1x = b1.x + b1.radius;
+            const c1y = b1.y + b1.radius;
+            const c2x = b2.x + b2.radius;
+            const c2y = b2.y + b2.radius;
+
+            const dx = c2x - c1x;
+            const dy = c2y - c1y;
+            const distance = Math.hypot(dx, dy);
+            const minDist = b1.radius + b2.radius;
+
+            if (distance < minDist && distance > 0) {
+                collisionDetected = true;
+                
+                // Normal vector
+                const nx = dx / distance;
+                const ny = dy / distance;
+
+                // Resolve overlap
+                const overlap = minDist - distance;
+                if (b1.isHeld && !b2.isHeld) {
+                    b2.x += nx * overlap;
+                    b2.y += ny * overlap;
+                } else if (b2.isHeld && !b1.isHeld) {
+                    b1.x -= nx * overlap;
+                    b1.y -= ny * overlap;
+                } else if (!b1.isHeld && !b2.isHeld) {
+                    b1.x -= nx * (overlap / 2);
+                    b2.x += nx * (overlap / 2);
+                    b1.y -= ny * (overlap / 2);
+                    b2.y += ny * (overlap / 2);
+                }
+
+                // Elastic collision velocities
+                const rvx = b2.vx - b1.vx;
+                const rvy = b2.vy - b1.vy;
+                const velAlongNormal = rvx * nx + rvy * ny;
+
+                // Only resolve if they are moving towards each other
+                if (velAlongNormal < 0) {
+                    const restitution = 0.85; // highly elastic like Snooker
+                    const impulseScalar = -(1 + restitution) * velAlongNormal / 2; // equal mass = 1
+
+                    if (!b1.isHeld) {
+                        b1.vx -= impulseScalar * nx;
+                        b1.vy -= impulseScalar * ny;
+                    }
+                    if (!b2.isHeld) {
+                        b2.vx += impulseScalar * nx;
+                        b2.vy += impulseScalar * ny;
+                    }
+                }
+            }
+        }
+    }
+
+    if (collisionDetected) {
+        playCollisionSound();
+    }
+
+    // Apply transform style (translate + scale)
+    for (let i = 0; i < physicsBubbles.length; i++) {
+        const b = physicsBubbles[i];
+        b.element.style.transform = `translate3d(${b.x}px, ${b.y}px, 0) scale(${b.scale})`;
+    }
+
+    requestAnimationFrame(updateBubblePhysics);
+}
+
 // Starte Artist Bubbles Animation
 let startArtistBubblesPromise = null;
 async function startArtistBubbles() {
@@ -966,20 +1142,23 @@ async function startArtistBubbles() {
             clearInterval(bubbleInterval);
         }
         container.innerHTML = '';
+        physicsBubbles = [];
 
         // Erstelle kontinuierlich neue Bubbles
-        // Intervall für größeren Abstand zwischen Bubbles
         bubbleInterval = setInterval(() => {
-            // Call async function without awaiting (fire and forget)
             createArtistBubble().catch(err => {
                 console.error('Bubble creation error:', err);
-                // Continue trying even if one fails
             });
         }, 2000);
 
         // Erstelle erste Bubble sofort
         createArtistBubble().catch(err => console.error('Bubble creation error:', err));
         
+        if (!physicsLoopActive) {
+            physicsLoopActive = true;
+            requestAnimationFrame(updateBubblePhysics);
+        }
+
         startArtistBubblesPromise = null;
     })();
 
@@ -1088,6 +1267,8 @@ function stopArtistBubbles() {
     }
 
     activeBubbles = 0;
+    physicsBubbles = [];
+    physicsLoopActive = false;
 }
 
 // Reverse Preview (Web Audio)
@@ -1231,19 +1412,40 @@ async function createArtistBubble() {
     textSpan.textContent = bubbleText;
     bubble.appendChild(textSpan);
 
-    // Starte immer rechts außerhalb (100%)
-    bubble.style.left = '100%';
+    // Disable CSS animation and position absolutely for manual physics engine
+    bubble.style.position = 'absolute';
+    bubble.style.left = '0';
+    bubble.style.top = '0';
+    bubble.style.animation = 'none';
     
     container.appendChild(bubble);
     activeBubbles++;
 
-    // Click Handler
-    bubble.onclick = (e) => {
-        e.preventDefault();
+    // Initial physics properties
+    const containerWidth = container.clientWidth || 800;
+    const containerHeight = container.clientHeight || 200;
+    const initialX = containerWidth;
+    const initialY = Math.random() * (containerHeight - 180);
+
+    const bubbleObj = {
+        element: bubble,
+        x: initialX,
+        y: initialY,
+        vx: -1.5 - Math.random() * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        radius: 90,
+        scale: 0.1,
+        spawnTime: performance.now(),
+        isHeld: false
+    };
+
+    physicsBubbles.push(bubbleObj);
+
+    // Handle bubble click action (separated from drag)
+    const handleBubbleClick = () => {
         const searchInput = document.getElementById('searchQuery');
 
         if (mappingActive) {
-            // If mapping is active, treat bubbleText as a work/composer and play one of its recordings
             try {
                 let candidates = [];
                 if (mappingType === 'operetta' && mappingOperettas && mappingOperettas[bubbleText]) candidates = mappingOperettas[bubbleText];
@@ -1251,9 +1453,7 @@ async function createArtistBubble() {
                 else if (mappingType === 'composer' && mappingComposers && mappingComposers[bubbleText]) candidates = mappingComposers[bubbleText];
 
                 if (candidates && candidates.length > 0) {
-                    // pick random recording
                     const rec = candidates[Math.floor(Math.random() * candidates.length)];
-                    // Normalize to expected song object shape
                     const songObj = {
                         artist: rec.artist || 'Unknown',
                         track: rec.track || rec.title || 'Unknown',
@@ -1261,7 +1461,6 @@ async function createArtistBubble() {
                         album: rec.album || null
                     };
                     gameState.currentSong = songObj;
-                    // ensure UI updates that a mapped selection is active
                     currentBubbleCategory = `${currentBubbleCategory} (mapped)`;
                     setSubtitle(`🎼 Prepared: ${bubbleText} - Click START GAME to play`);
                     return;
@@ -1277,13 +1476,11 @@ async function createArtistBubble() {
         }
 
         if (currentSearchType === 'album' && !selectedArtistForAlbums) {
-            // Artist bubble clicked in album mode -> trigger check artist to show album modal
             if (searchInput) {
                 searchInput.value = bubbleText;
             }
-            checkArtist(); // This will show the album selection modal
+            checkArtist();
         } else {
-            // Normal artist/track search mode
             if (searchInput) {
                 searchInput.value = bubbleText;
                 searchInput.focus();
@@ -1291,13 +1488,105 @@ async function createArtistBubble() {
         }
     };
 
-    // Entferne Bubble nach Animation (11 Sekunden = 10s Animation + 1s Buffer)
-    setTimeout(() => {
-        if (bubble.parentElement) {
-            bubble.remove();
-            activeBubbles--;
+    // Drag, Swipe, Stop and Play mechanics (Click and hold stops them)
+    let hasDragged = false;
+    let dragDist = 0;
+    let startX = 0;
+    let startY = 0;
+    let lastX = 0;
+    let lastY = 0;
+    let lastTime = 0;
+
+    const onPointerDown = (e) => {
+        // Unlock sound contexts
+        getSharedAudioContext();
+
+        bubbleObj.isHeld = true;
+        bubbleObj.vx = 0;
+        bubbleObj.vy = 0;
+        hasDragged = false;
+        dragDist = 0;
+
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        startX = clientX;
+        startY = clientY;
+        lastX = clientX;
+        lastY = clientY;
+        lastTime = performance.now();
+
+        window.addEventListener('mousemove', onPointerMove);
+        window.addEventListener('touchmove', onPointerMove, { passive: false });
+        window.addEventListener('mouseup', onPointerUp);
+        window.addEventListener('touchend', onPointerUp);
+    };
+
+    const onPointerMove = (e) => {
+        if (!bubbleObj.isHeld) return;
+        if (e.cancelable) {
+            e.preventDefault();
         }
-    }, 11000);
+
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+        const dx = clientX - lastX;
+        const dy = clientY - lastY;
+        const now = performance.now();
+        const dt = now - lastTime;
+
+        bubbleObj.x += dx;
+        bubbleObj.y += dy;
+
+        // Constraint within container boundary during hold
+        const maxW = container.clientWidth - (bubbleObj.radius * 2);
+        const maxH = container.clientHeight - (bubbleObj.radius * 2);
+        if (bubbleObj.x < 0) bubbleObj.x = 0;
+        if (bubbleObj.x > maxW) bubbleObj.x = maxW;
+        if (bubbleObj.y < 0) bubbleObj.y = 0;
+        if (bubbleObj.y > maxH) bubbleObj.y = maxH;
+
+        if (dt > 0) {
+            // Velocity calculation with damping for smooth throws
+            bubbleObj.vx = bubbleObj.vx * 0.55 + dx * 0.45;
+            bubbleObj.vy = bubbleObj.vy * 0.55 + dy * 0.45;
+        }
+
+        dragDist += Math.hypot(dx, dy);
+        if (dragDist > 8) {
+            hasDragged = true;
+        }
+
+        lastX = clientX;
+        lastY = clientY;
+        lastTime = now;
+    };
+
+    const onPointerUp = () => {
+        if (!bubbleObj.isHeld) return;
+        bubbleObj.isHeld = false;
+
+        window.removeEventListener('mousemove', onPointerMove);
+        window.removeEventListener('touchmove', onPointerMove);
+        window.removeEventListener('mouseup', onPointerUp);
+        window.removeEventListener('touchend', onPointerUp);
+
+        if (!hasDragged) {
+            handleBubbleClick();
+        } else {
+            // Apply speed limits on throw
+            const speed = Math.hypot(bubbleObj.vx, bubbleObj.vy);
+            const maxSpeed = 15;
+            if (speed > maxSpeed) {
+                bubbleObj.vx = (bubbleObj.vx / speed) * maxSpeed;
+                bubbleObj.vy = (bubbleObj.vy / speed) * maxSpeed;
+            }
+        }
+    };
+
+    bubble.addEventListener('mousedown', onPointerDown);
+    bubble.addEventListener('touchstart', onPointerDown, { passive: true });
 }
 
 
