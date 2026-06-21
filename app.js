@@ -991,7 +991,7 @@ function updateBubblePhysics() {
         } else {
             b.scale = 1;
         }
-        b.radius = 45 * b.scale;
+        b.radius = 58.5 * b.scale;
 
         if (b.isHeld) {
             continue;
@@ -1427,7 +1427,7 @@ async function createArtistBubble() {
     const containerWidth = container.clientWidth || 800;
     const containerHeight = container.clientHeight || 200;
     const initialX = containerWidth;
-    const initialY = Math.random() * (containerHeight - 90);
+    const initialY = Math.random() * (containerHeight - 117);
 
     const bubbleObj = {
         element: bubble,
@@ -1435,7 +1435,7 @@ async function createArtistBubble() {
         y: initialY,
         vx: -1.5 - Math.random() * 0.5,
         vy: (Math.random() - 0.5) * 0.5,
-        radius: 45,
+        radius: 58.5,
         scale: 0.1,
         spawnTime: performance.now(),
         isHeld: false
