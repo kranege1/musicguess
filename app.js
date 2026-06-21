@@ -962,13 +962,13 @@ function playCollisionSound() {
 
 function updateBubblePhysics() {
     const container = document.getElementById('artistBubblesContainer');
-    if (!container || !container.classList.contains('active') || physicsBubbles.length === 0) {
+    if (!container || !container.classList.contains('active')) {
         physicsLoopActive = false;
         return;
     }
 
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
+    const containerWidth = container.clientWidth || 800;
+    const containerHeight = container.clientHeight || 200;
     const nowMs = performance.now();
 
     // 1. Update positions and boundary collisions
@@ -1540,8 +1540,10 @@ async function createArtistBubble() {
         bubbleObj.y += dy;
 
         // Constraint within container boundary during hold
-        const maxW = container.clientWidth - (bubbleObj.radius * 2);
-        const maxH = container.clientHeight - (bubbleObj.radius * 2);
+        const containerW = container.clientWidth || 800;
+        const containerH = container.clientHeight || 200;
+        const maxW = containerW - (bubbleObj.radius * 2);
+        const maxH = containerH - (bubbleObj.radius * 2);
         if (bubbleObj.x < 0) bubbleObj.x = 0;
         if (bubbleObj.x > maxW) bubbleObj.x = maxW;
         if (bubbleObj.y < 0) bubbleObj.y = 0;
