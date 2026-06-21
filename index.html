@@ -745,6 +745,7 @@
             height: 180px;
             text-align: center;
             overflow: visible;
+            will-change: transform;
         }
 
         .artist-bubble::before {
@@ -870,6 +871,7 @@
                 8px 12px 30px rgba(0, 0, 0, 0.5),
                 inset -25px -25px 40px rgba(0, 0, 0, 0.3),
                 inset -15px -15px 25px rgba(0, 0, 0, 0.2);
+            will-change: transform;
         }
 
 
@@ -994,10 +996,10 @@
 
         @keyframes slideLeftChain {
             0% {
-                left: 100%;
+                transform: translate3d(0, 0, 0);
             }
             100% {
-                left: -200px;
+                transform: translate3d(calc(-100vw - 200px), 0, 0);
             }
         }
 
