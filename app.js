@@ -54,7 +54,7 @@ function getSharedAudioContext() {
 
 function unlockAudio() {
     console.log('Interacting - attempting to unlock audio');
-    
+
     // Unlock HTML5 Audio element
     const audio = document.getElementById('audioPlayer');
     if (audio) {
@@ -453,35 +453,35 @@ function handleClassicalWorkChange() {
     const workSelect = document.getElementById('classicalWorkSelect');
     const performerGroup = document.getElementById('classicalPerformerGroup');
     const performerSelect = document.getElementById('classicalPerformerSelect');
-    
+
     console.log('🎭 handleClassicalWorkChange called');
     console.log('performerGroup:', performerGroup, 'performerSelect:', performerSelect);
-    
+
     if (!performerGroup || !performerSelect) {
         console.warn('❌ Missing DOM elements for performer dropdown');
         return;
     }
-    
+
     const selectedWork = workSelect ? workSelect.value : '';
     const selectedArea = areaSelect ? areaSelect.value : '';
-    
+
     console.log('Selected work:', selectedWork, 'Selected area:', selectedArea);
-    
+
     // Clear previous selections
     performerSelect.innerHTML = '<option value="">Select an interpreter...</option>';
-    
+
     if (!selectedWork) {
         performerGroup.style.display = 'none';
         console.log('No work selected, hiding performer group');
         return;
     }
-    
+
     // Get composers for the selected work from classical works data
     const areaData = classicalWorks[selectedArea] || {};
     const worksForArea = areaData.works || areaData || [];
-    
+
     console.log('Works for area:', worksForArea.length, 'entries');
-    
+
     let composerName = '';
     let composerAbbrev = '';
     for (const work of worksForArea) {
@@ -493,7 +493,7 @@ function handleClassicalWorkChange() {
             break;
         }
     }
-    
+
     // For operas, try to get performers directly from mapping
     if (selectedArea === 'Oper' && mappingOperas && mappingOperas[selectedWork]) {
         console.log('Checking opera mapping for:', selectedWork);
@@ -520,15 +520,15 @@ function handleClassicalWorkChange() {
             }
         }
     }
-    
+
     // For classical works, search for composer in classicalPerformersMap
     // Try both full name and abbreviated name
     let performersData = null;
     let composerFullName = composerName;
-    
+
     console.log('classicalPerformersMap has', Object.keys(classicalPerformersMap).length, 'entries');
     console.log('Sample keys:', Object.keys(classicalPerformersMap).slice(0, 3));
-    
+
     if (composerName && classicalPerformersMap) {
         // Try exact match first (check both original case and lowercase)
         if (classicalPerformersMap[composerName]) {
@@ -552,11 +552,11 @@ function handleClassicalWorkChange() {
             console.log('❌ No mapping found for:', composerName);
         }
     }
-    
+
     if (performersData) {
         const preferredPerformers = performersData.preferredPerformers || [];
         console.log('Performer data found, performers count:', preferredPerformers.length);
-        
+
         if (preferredPerformers.length > 0) {
             console.log('Adding performers:', preferredPerformers);
             preferredPerformers.forEach(perf => {
@@ -974,20 +974,18 @@ function updateBubblePhysics() {
     // 1. Update positions and boundary collisions
     for (let i = 0; i < physicsBubbles.length; i++) {
         const b = physicsBubbles[i];
-        
+
         // Spawn scaling
         if (nowMs - b.spawnTime < 500) {
             b.scale = (nowMs - b.spawnTime) / 500;
-        } else if (nowMs - b.spawnTime > 25000 && !b.isHeld) {
-            b.scale = Math.max(0, 1 - (nowMs - b.spawnTime - 25000) / 5000);
-            if (b.scale <= 0) {
-                b.element.remove();
-                physicsBubbles.splice(i, 1);
-                i--;
-                continue;
-            }
+        } else {
+            b.scale = 1;
         }
-        b.radius = 90 * b.scale;
+        b.radius = 45 * b.scale;
+
+        // Check if exiting (e.g. after 15 seconds)
+        const age = nowMs - b.spawnTime;
+        b.exiting = age > 10000;
 
         if (b.isHeld) {
             continue;
@@ -997,33 +995,51 @@ function updateBubblePhysics() {
         b.vx *= 0.998;
         b.vy *= 0.998;
 
+        // If exiting, gently guide them to exit left
+        if (b.exiting) {
+            if (b.vx > -2.0) {
+                b.vx -= 0.05; // Genty accelerate left
+            }
+        }
+
         // Move
         b.x += b.vx;
         b.y += b.vy;
 
-        // Bounce off walls (boundary checks)
+        // Boundary checks / exits
         const diameter = b.radius * 2;
-        
-        // Left
-        if (b.x < 0) {
-            b.x = 0;
-            b.vx = -b.vx * 0.9;
-        }
-        // Right
-        else if (b.x > containerWidth - diameter) {
-            b.x = containerWidth - diameter;
-            b.vx = -b.vx * 0.9;
-        }
-        
-        // Top
-        if (b.y < 0) {
-            b.y = 0;
-            b.vy = -b.vy * 0.9;
-        }
-        // Bottom
-        else if (b.y > containerHeight - diameter) {
-            b.y = containerHeight - diameter;
-            b.vy = -b.vy * 0.9;
+
+        if (b.exiting) {
+            // If completely off-screen, remove
+            if (b.x < -diameter || b.x > containerWidth || b.y < -diameter || b.y > containerHeight) {
+                b.element.remove();
+                physicsBubbles.splice(i, 1);
+                i--;
+                continue;
+            }
+        } else {
+            // Bounce off walls (boundary checks)
+            // Left
+            if (b.x < 0) {
+                b.x = 0;
+                b.vx = -b.vx * 0.9;
+            }
+            // Right
+            else if (b.x > containerWidth - diameter) {
+                b.x = containerWidth - diameter;
+                b.vx = -b.vx * 0.9;
+            }
+
+            // Top
+            if (b.y < 0) {
+                b.y = 0;
+                b.vy = -b.vy * 0.9;
+            }
+            // Bottom
+            else if (b.y > containerHeight - diameter) {
+                b.y = containerHeight - diameter;
+                b.vy = -b.vy * 0.9;
+            }
         }
     }
 
@@ -1046,7 +1062,7 @@ function updateBubblePhysics() {
 
             if (distance < minDist && distance > 0) {
                 collisionDetected = true;
-                
+
                 // Normal vector
                 const nx = dx / distance;
                 const ny = dy / distance;
@@ -1089,9 +1105,7 @@ function updateBubblePhysics() {
         }
     }
 
-    if (collisionDetected) {
-        playCollisionSound();
-    }
+
 
     // Apply transform style (translate + scale)
     for (let i = 0; i < physicsBubbles.length; i++) {
@@ -1153,7 +1167,7 @@ async function startArtistBubbles() {
 
         // Erstelle erste Bubble sofort
         createArtistBubble().catch(err => console.error('Bubble creation error:', err));
-        
+
         if (!physicsLoopActive) {
             physicsLoopActive = true;
             requestAnimationFrame(updateBubblePhysics);
@@ -1368,7 +1382,7 @@ async function createArtistBubble() {
                 fetchArtistImageFromDeezer(bubbleText),
                 timeoutPromise
             ]);
-            
+
             // Skip artists with less than 100 fans (only if we got valid data)
             if (artistData.fans > 0 && artistData.fans < 100) {
                 console.log(`⏭️ Skipping "${bubbleText}" - only ${artistData.fans} fans (less than 100)`);
@@ -1388,10 +1402,10 @@ async function createArtistBubble() {
             img.alt = bubbleText;
             img.className = 'bubble-image';
             bubble.appendChild(img);
-            
+
             // Also use image as sphere texture background
-            const beforeElement = bubble.querySelector('::before') || 
-                                  window.getComputedStyle(bubble, '::before');
+            const beforeElement = bubble.querySelector('::before') ||
+                window.getComputedStyle(bubble, '::before');
             bubble.style.setProperty('--image-url', `url('${artistData.image}')`);
         }
         // Add fan badge if available
@@ -1417,7 +1431,7 @@ async function createArtistBubble() {
     bubble.style.left = '0';
     bubble.style.top = '0';
     bubble.style.animation = 'none';
-    
+
     container.appendChild(bubble);
     activeBubbles++;
 
@@ -1425,7 +1439,7 @@ async function createArtistBubble() {
     const containerWidth = container.clientWidth || 800;
     const containerHeight = container.clientHeight || 200;
     const initialX = containerWidth;
-    const initialY = Math.random() * (containerHeight - 180);
+    const initialY = Math.random() * (containerHeight - 90);
 
     const bubbleObj = {
         element: bubble,
@@ -1433,7 +1447,7 @@ async function createArtistBubble() {
         y: initialY,
         vx: -1.5 - Math.random() * 0.5,
         vy: (Math.random() - 0.5) * 0.5,
-        radius: 90,
+        radius: 45,
         scale: 0.1,
         spawnTime: performance.now(),
         isHeld: false
@@ -2161,7 +2175,7 @@ async function deduplicateAndPadSongs(limit) {
 
     // 3. Otherwise, we need to pad the song list with other songs that fit the genre
     console.log(`⚠️ Too few songs (${gameState.songs.length}/${limit}). Padding with songs from other artists in the same genre.`);
-    
+
     // Determine the genre to search for
     let targetGenre = 'Pop'; // default fallback
     for (const s of gameState.songs) {
@@ -2177,7 +2191,7 @@ async function deduplicateAndPadSongs(limit) {
         const response = await fetch(`json/songs.json?v=${cacheBuster}`, { cache: 'no-store' });
         if (response.ok) {
             const allSongs = await response.json();
-            
+
             // Filter songs in songs.json that match targetGenre
             let candidateSongs = allSongs.filter(s => {
                 const g = s.genre;
@@ -2213,7 +2227,7 @@ async function deduplicateAndPadSongs(limit) {
                     if (match) {
                         const originalCover = match.artworkUrl600 || match.artworkUrl100 || match.artworkUrl60 || '';
                         const highResCover = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : '';
-                        
+
                         seenKeys.add(key);
                         gameState.songs.push({
                             id: match.trackId,
@@ -3563,7 +3577,7 @@ async function nextQuestion() {
                 loadingShown = true;
                 showLoadingState(`Preparing question ${idx + 1}...`);
                 updateLoadingProgress(20, `Loading "${candidate.track}" by ${candidate.artist}...`);
-                
+
                 // Lade alles live von iTunes API (kein Cache)
                 const fullSongData = await loadSongDataLive(candidate.artist, candidate.track);
                 updateLoadingProgress(60);
@@ -3575,7 +3589,7 @@ async function nextQuestion() {
                 }
 
                 updateLoadingProgress(80, 'Fetching album details...');
-                
+
                 // Check if album changed - if so, fetch new album's fan count
                 if (fullSongData.album !== candidate.album) {
                     console.log(`⚠️ Album changed from "${candidate.album}" to "${fullSongData.album}" - fetching new fan count`);
@@ -5521,7 +5535,7 @@ async function openLeaderboardModal(gameMode, playerFilter = null) {
 
     let scores = await loadLeaderboard(gameMode);
     let allGlobalScores = null;
-    
+
     // If filtering by player or gameMode, load all global scores for ranking calculation
     if (playerFilter || gameMode !== 'Global') {
         allGlobalScores = await loadLeaderboard('Global');
@@ -5529,7 +5543,7 @@ async function openLeaderboardModal(gameMode, playerFilter = null) {
             scores = scores.filter(score => score.username === playerFilter);
         }
     }
-    
+
     if (titleEl) {
         const scoreCount = scores ? scores.length : 0;
         const backBtn = (gameMode !== 'Global' || playerFilter) ? `<button onclick="openLeaderboardModal('Global')" style="margin-left: 10px; padding: 4px 10px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.7em;">← Show All</button>` : '';
@@ -5557,13 +5571,13 @@ async function openLeaderboardModal(gameMode, playerFilter = null) {
                 if (difficultyMeta) metaParts.push(difficultyMeta);
                 if (date) metaParts.push(date);
                 const metaText = metaParts.join(' • ');
-                
+
                 // Calculate global rank if filtering (by player or gameMode)
                 let rank = idx + 1;
                 if (allGlobalScores) {
                     rank = allGlobalScores.filter(s => (s.points ?? s.totalPoints ?? 0) > points).length + 1;
                 }
-                
+
                 // Make item clickable to filter by game mode (only in Global view without player filter)
                 const clickHandler = gameMode === 'Global' && !playerFilter && score.gameMode ? `onclick="openLeaderboardModal('${score.gameMode.replace(/'/g, "\\'")}')" style="cursor: pointer;" title="Click to filter by: ${score.gameMode}"` : '';
                 return `
