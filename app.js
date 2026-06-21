@@ -3047,6 +3047,12 @@ async function nextQuestion() {
     // Stop previous audio
     stopPreview();
 
+    // Close song info popup if open
+    const songInfo = document.getElementById('songInfo');
+    if (songInfo) {
+        songInfo.classList.remove('show');
+    }
+
     if (gameState.currentQuestion >= gameState.songs.length) {
         endGame();
         return;
@@ -3418,8 +3424,8 @@ function selectAnswer(answer, index) {
     document.getElementById('playBtn').disabled = true;
     document.getElementById('reverseBtn').disabled = true;
 
-    // Fade out audio over 3 seconds instead of stopping abruptly
-    fadeOutAndStop(3000);
+    // Do not fade out audio on guess completion, let it keep playing
+    // fadeOutAndStop(3000);
 
     const isCorrect = answer === gameState.currentSong.track;
     const buttons = document.querySelectorAll('.answer-btn');
@@ -3512,22 +3518,19 @@ function selectAnswer(answer, index) {
     // Zeige Song-Infos
     showSongInfo();
 
-    // Zeige nächste Frage Button (deaktiviert während 3s Wartezeit)
+    // Zeige nächste Frage Button
     const nextBtn = document.getElementById('nextBtn');
-    nextBtn.classList.add('show');
-    nextBtn.disabled = true;
+    if (nextBtn) {
+        nextBtn.classList.add('show');
+        nextBtn.disabled = false;
+    }
     updateStats();
 
-    // Automatisch zur nächsten Frage nach 1 Sekunde (was 3 Sekunden)
-    setTimeout(() => {
-        // Verstecke Punkte-Countdown Box bevor nächste Frage geladen wird
-        const container = document.getElementById('pointsCountdown');
-        if (container) {
-            container.classList.remove('show');
-        }
-        nextBtn.disabled = false;
-        nextQuestion();
-    }, 1000);
+    // Verstecke Punkte-Countdown Box
+    const container = document.getElementById('pointsCountdown');
+    if (container) {
+        container.classList.remove('show');
+    }
 }
 
 // Zeige Song-Informationen
@@ -3630,11 +3633,13 @@ function showSongInfo() {
     songInfoEl.onclick = function (e) {
         if (e.target.tagName === 'BUTTON') return;
         this.classList.remove('show');
+        stopPreview();
     };
 }
 
 function closeSongInfo() {
     document.getElementById('songInfo').classList.remove('show');
+    stopPreview();
 }
 
 // Fetch a short summary from Wikipedia (single search + summary fetch to avoid noisy 404s)
