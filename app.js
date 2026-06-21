@@ -3634,12 +3634,14 @@ function showSongInfo() {
         if (e.target.tagName === 'BUTTON') return;
         this.classList.remove('show');
         stopPreview();
+        nextQuestion();
     };
 }
 
 function closeSongInfo() {
     document.getElementById('songInfo').classList.remove('show');
     stopPreview();
+    nextQuestion();
 }
 
 // Fetch a short summary from Wikipedia (single search + summary fetch to avoid noisy 404s)
