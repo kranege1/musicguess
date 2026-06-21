@@ -1,4 +1,4 @@
-﻿const APP_VERSION = '17.01.2026 07:15';
+const APP_VERSION = '17.01.2026 07:15';
 window.APP_VERSION = APP_VERSION;
 
 // English strings (no more translation system)
@@ -36,11 +36,62 @@ function t(key) {
     return strings[key] || key;
 }
 
+let sharedAudioCtx = null;
+function getSharedAudioContext() {
+    try {
+        if (!sharedAudioCtx) {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            sharedAudioCtx = new Ctx();
+        }
+        if (sharedAudioCtx.state === 'suspended') {
+            sharedAudioCtx.resume().catch(err => console.warn('Failed to resume AudioContext:', err));
+        }
+    } catch (e) {
+        console.warn('Web Audio API not supported or context creation failed:', e);
+    }
+    return sharedAudioCtx;
+}
+
+function unlockAudio() {
+    console.log('Interacting - attempting to unlock audio');
+    
+    // Unlock HTML5 Audio element
+    const audio = document.getElementById('audioPlayer');
+    if (audio) {
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                audio.pause();
+                console.log('HTML5 Audio unlocked successfully');
+            }).catch(err => {
+                console.log('HTML5 Audio unlock info:', err);
+            });
+        }
+    }
+
+    // Unlock Web Audio API context
+    const ctx = getSharedAudioContext();
+    if (ctx && ctx.state === 'suspended') {
+        ctx.resume().then(() => {
+            console.log('Web Audio Context unlocked successfully');
+        }).catch(err => {
+            console.log('Web Audio Context unlock info:', err);
+        });
+    }
+
+    // Remove event listeners once unlock action is triggered
+    window.removeEventListener('click', unlockAudio);
+    window.removeEventListener('touchstart', unlockAudio);
+}
+window.addEventListener('click', unlockAudio);
+window.addEventListener('touchstart', unlockAudio);
+
 // Play winning sound effect
 function playWinSound() {
     // Create a simple winning chime using Web Audio API
     try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioContext = getSharedAudioContext();
+        if (!audioContext) return;
         const notes = [
             { freq: 523.25, duration: 0.1 }, // C5
             { freq: 659.25, duration: 0.1 }, // E5
@@ -1016,10 +1067,7 @@ function stopReversePlayback() {
         }
         reverseSource = null;
     }
-    if (reverseCtx && reverseCtx.state !== 'closed') {
-        reverseCtx.close();
-        reverseCtx = null;
-    }
+    // Do not close the shared AudioContext (reverseCtx is sharedAudioCtx)
     reversePlaying = false;
 }
 
@@ -3760,7 +3808,8 @@ function stopPointsCountdown(hide = true) {
 // Spiele "Katching" Sound ab
 function playKatchingSound() {
     try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioContext = getSharedAudioContext();
+        if (!audioContext) return;
 
         // Erzeuge einen einfachen "Cash Register" / "Katching" Sound
         const oscillator = audioContext.createOscillator();
@@ -3787,7 +3836,8 @@ function playKatchingSound() {
 // Spiele "Richtig" Sound ab
 function playCorrectSound() {
     try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioContext = getSharedAudioContext();
+        if (!audioContext) return;
 
         // Aufsteigender fröhlicher Akkord - LAUTER und LÄNGER
         const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5
@@ -3817,7 +3867,8 @@ function playCorrectSound() {
 // Spiele "Falsch" Sound ab
 function playWrongSound() {
     try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioContext = getSharedAudioContext();
+        if (!audioContext) return;
 
         // Zwei absteigendi Buzzer für mehr Deutlichkeit
         // Erster Buzzer
@@ -3905,7 +3956,7 @@ function playPreview() {
     // iOS-Sicherheit: Stelle sicher, dass das Element korrekt vorbereitet ist
     audio.setAttribute('playsinline', 'true');
     audio.setAttribute('webkit-playsinline', 'true');
-    audio.setAttribute('preload', 'none');
+    audio.setAttribute('preload', 'auto');
     audio.onerror = () => {
         const mediaError = audio.error ? { code: audio.error.code, message: audio.error.message } : null;
         console.error('Audio element error:', mediaError, {
@@ -4092,9 +4143,9 @@ async function playPreviewReverse() {
     stopBtn.classList.add('active');
 
     try {
-        if (!reverseCtx || reverseCtx.state === 'closed') {
-            const Ctx = window.AudioContext || window.webkitAudioContext;
-            reverseCtx = new Ctx();
+        reverseCtx = getSharedAudioContext();
+        if (reverseCtx && reverseCtx.state === 'suspended') {
+            await reverseCtx.resume();
         }
 
         const resp = await fetch(safeSrc, { cache: 'no-store' });
