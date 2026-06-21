@@ -143,6 +143,7 @@ function debugLog(message, errorCode = null) {
 let currentSearchType = 'track'; // 'track' oder 'album'
 let gameState = {
     songs: [],
+    genreSongsPool: [],
     currentQuestion: 0,
     correctAnswers: 0,
     wrongAnswers: 0,
@@ -1798,6 +1799,109 @@ function toggleSearchType() {
     }
 }
 
+async function deduplicateAndPadSongs(limit) {
+    if (!gameState.songs || gameState.songs.length === 0) return;
+
+    // 1. Deduplicate existing songs in gameState.songs
+    const uniqueSongs = [];
+    const seenKeys = new Set();
+    for (const song of gameState.songs) {
+        if (!song || !song.track) continue;
+        const normTitle = normalizeSongTitle(song.track);
+        const normArtist = (song.artist || '').toLowerCase().trim();
+        const key = `${normTitle} - ${normArtist}`;
+        if (seenKeys.has(key)) continue;
+        seenKeys.add(key);
+        uniqueSongs.push(song);
+    }
+    gameState.songs = uniqueSongs;
+
+    // 2. If we have enough unique songs, slice to limit and we are done
+    if (gameState.songs.length >= limit) {
+        gameState.songs = gameState.songs.slice(0, limit);
+        return;
+    }
+
+    // 3. Otherwise, we need to pad the song list with other songs that fit the genre
+    console.log(`⚠️ Too few songs (${gameState.songs.length}/${limit}). Padding with songs from other artists in the same genre.`);
+    
+    // Determine the genre to search for
+    let targetGenre = 'Pop'; // default fallback
+    for (const s of gameState.songs) {
+        if (s.genre) {
+            targetGenre = s.genre;
+            break;
+        }
+    }
+
+    try {
+        // Fetch songs.json
+        const cacheBuster = Date.now();
+        const response = await fetch(`json/songs.json?v=${cacheBuster}`, { cache: 'no-store' });
+        if (response.ok) {
+            const allSongs = await response.json();
+            
+            // Filter songs in songs.json that match targetGenre
+            let candidateSongs = allSongs.filter(s => {
+                const g = s.genre;
+                if (!g) return false;
+                if (Array.isArray(g)) {
+                    return g.some(val => val.toLowerCase().includes(targetGenre.toLowerCase()));
+                }
+                return g.toLowerCase().includes(targetGenre.toLowerCase());
+            });
+
+            // If no matching genre, just take any songs
+            if (candidateSongs.length === 0) {
+                candidateSongs = allSongs;
+            }
+
+            // Shuffle candidates
+            candidateSongs = shuffleArray(candidateSongs);
+
+            // Fetch song details from iTunes for candidates until we reach limit
+            for (const candidate of candidateSongs) {
+                if (gameState.songs.length >= limit) break;
+
+                // Check if candidate is already in our list
+                const normTitle = normalizeSongTitle(candidate.track);
+                const normArtist = (candidate.artist || '').toLowerCase().trim();
+                const key = `${normTitle} - ${normArtist}`;
+                if (seenKeys.has(key)) continue;
+
+                // Search iTunes for this candidate song to get previewUrl
+                try {
+                    const searchResults = await fetchItunes(`${candidate.artist} ${candidate.track}`, { limit: 3, country: 'US' });
+                    const match = searchResults.find(item => item.wrapperType === 'track' && item.previewUrl);
+                    if (match) {
+                        const originalCover = match.artworkUrl600 || match.artworkUrl100 || match.artworkUrl60 || '';
+                        const highResCover = originalCover ? originalCover.replace(/\d+x\d+bb(-\d+)?\.(jpg|png)/, '600x600bb.$2') : '';
+                        
+                        seenKeys.add(key);
+                        gameState.songs.push({
+                            id: match.trackId,
+                            track: match.trackName,
+                            artist: match.artistName,
+                            album: match.collectionName || 'Unknown',
+                            previewUrl: (match.previewUrl || '').replace(/^http:/, 'https:'),
+                            image: highResCover,
+                            genre: targetGenre
+                        });
+                        console.log(`Added padding song: "${match.trackName}" by ${match.artistName}`);
+                    }
+                } catch (e) {
+                    console.warn(`Failed to fetch details for padding song ${candidate.artist} - ${candidate.track}:`, e);
+                }
+            }
+        }
+    } catch (err) {
+        console.error('Error during deduplicateAndPadSongs:', err);
+    }
+
+    // Slice to limit as final guard
+    gameState.songs = gameState.songs.slice(0, limit);
+}
+
 // Starte das Spiel
 async function startGame() {
     // Finde den aktiven Mode-Button statt Radio-Button
@@ -1943,6 +2047,9 @@ async function startGame() {
             setSubtitle(subtitleText);
             gameState.currentGameMode = subtitleText;
         }
+
+        // Deduplicate and pad the game songs list with similar artists/songs if there are too few
+        await deduplicateAndPadSongs(songCount);
 
         // Verstecke Loading-Indicator
         hideLoadingState();
@@ -2214,6 +2321,7 @@ async function loadSongsFromGenre(genre, limit) {
             }
 
             gameState.songs = mapped;
+            gameState.genreSongsPool = mapped;
             setDifficultyMeta(Math.min(limit, mapped.length), mapped.length, `Classical:${selectedSubcategory}`);
             return;
         }
@@ -2263,6 +2371,7 @@ async function loadSongsFromGenre(genre, limit) {
                     };
                 });
             gameState.songs = mapped;
+            gameState.genreSongsPool = mapped;
             const candidatePoolCountry = Math.max(mapped.length, artists.length || mapped.length);
             setDifficultyMeta(Math.min(limit, mapped.length), candidatePoolCountry, `Country:${countryCode}`);
 
@@ -2351,6 +2460,9 @@ async function loadSongsFromGenre(genre, limit) {
             }
         }
 
+        // Speichere den gesamten Genre-Pool für vielfältige falsche Antworten
+        gameState.genreSongsPool = filteredSongs;
+
         // Shuffle and limit the number
         const selectedSongs = shuffleArray(filteredSongs).slice(0, Math.min(limit, filteredSongs.length));
 
@@ -2386,6 +2498,13 @@ async function loadSongsFromBillboard(year, limit) {
 
         // Shuffle and limit the number
         const selectedSongs = shuffleArray(filteredSongs).slice(0, Math.min(limit, filteredSongs.length));
+
+        // Speichere alle Billboard Songs dieses Jahres für die falschen Antworten
+        gameState.genreSongsPool = filteredSongs.map(song => ({
+            artist: song.performer,
+            track: song.title,
+            genre: year
+        }));
 
         // Konvertiere Billboard Format zu app Format
         gameState.songs = selectedSongs.map(song => ({
@@ -3002,6 +3121,7 @@ async function loadSongsFromItunes(searchQuery, limit) {
             });
 
         gameState.songs = shuffleArray(songs);
+        gameState.genreSongsPool = songs;
         setDifficultyMeta(gameState.songs.length, results.length, currentSearchType === 'album' ? 'Album search' : 'Artist search');
         console.log(`${gameState.songs.length} songs loaded from: ${currentSearchType === 'album' ? 'Album' : 'Artist/Title'}`);
 
@@ -3238,10 +3358,11 @@ function displayAnswers() {
         }
 
         // Fallback: nimm weitere Tracks aus dem Pool, wenn zu wenige
-        if (wrongAnswers.length < 3 && gameState.songs && gameState.songs.length > 0) {
+        if (wrongAnswers.length < 3) {
+            const wrongPool = (gameState.genreSongsPool && gameState.genreSongsPool.length > 5) ? gameState.genreSongsPool : gameState.songs;
             const pool = shuffleArray(
-                gameState.songs
-                    .map(s => s.track)
+                wrongPool
+                    .map(s => s.trackName || s.track || s.title)
                     .filter(t => t && t !== song.track && !wrongAnswers.includes(t))
             );
             for (const t of pool) {
@@ -3375,14 +3496,21 @@ function getRandomWrongAnswers(count) {
     const usedNormalizedTitles = new Set([normalizeSongTitle(gameState.currentSong.track)]);
 
     let attempts = 0;
-    const maxAttempts = gameState.songs.length * 3;
+    // Use the broader genre pool if it has enough variety, fallback to gameState.songs
+    const pool = (gameState.genreSongsPool && gameState.genreSongsPool.length > 5) ? gameState.genreSongsPool : gameState.songs;
+    const maxAttempts = pool.length * 3;
 
     while (wrongAnswers.length < count && attempts < maxAttempts) {
-        const randomSong = gameState.songs[Math.floor(Math.random() * gameState.songs.length)];
-        const normalizedTitle = normalizeSongTitle(randomSong.track);
+        const randomSong = pool[Math.floor(Math.random() * pool.length)];
+        const trackName = randomSong.trackName || randomSong.track || randomSong.title;
+        if (!trackName) {
+            attempts++;
+            continue;
+        }
+        const normalizedTitle = normalizeSongTitle(trackName);
 
         // Prüfe ob exakter Titel bereits verwendet
-        if (usedTracks.has(randomSong.track)) {
+        if (usedTracks.has(trackName)) {
             attempts++;
             continue;
         }
@@ -3396,16 +3524,16 @@ function getRandomWrongAnswers(count) {
         // Prüfe ob zu ähnlich zu bereits verwendeten Songs
         let tooSimilar = false;
         for (const usedAnswer of wrongAnswers) {
-            if (areSongsTooSimilar(randomSong.track, usedAnswer)) {
+            if (areSongsTooSimilar(trackName, usedAnswer)) {
                 tooSimilar = true;
                 break;
             }
         }
 
         if (!tooSimilar) {
-            usedTracks.add(randomSong.track);
+            usedTracks.add(trackName);
             usedNormalizedTitles.add(normalizedTitle);
-            wrongAnswers.push(randomSong.track);
+            wrongAnswers.push(trackName);
         }
 
         attempts++;
