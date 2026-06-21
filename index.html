@@ -81,8 +81,8 @@
         .container {
             position: relative;
             background: var(--glass-surface);
-            backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
             padding: 20px;
@@ -119,6 +119,7 @@
         .glass-btn {
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter: blur(4px);
             backdrop-filter: blur(4px);
             color: white;
             border-radius: 50px;
@@ -1042,6 +1043,7 @@
             padding: 10px;
             background: rgba(255, 255, 255, 0.55);
             border: 1px solid rgba(255, 255, 255, 0.25);
+            -webkit-backdrop-filter: blur(12px);
             backdrop-filter: blur(12px);
             border-radius: 10px;
         }
@@ -1062,6 +1064,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
+            -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
             color: #2f2f2f;
         }
@@ -1114,6 +1117,7 @@
         .stats-actions .player-name-btn {
             padding: 6px 10px;
             font-size: 0.85em;
+            -webkit-backdrop-filter: blur(6px);
             backdrop-filter: blur(6px);
         }
 
@@ -1282,6 +1286,7 @@
             color: #2f2f2f;
             border: 2px solid rgba(63, 63, 63, 0.55);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.16);
+            -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
         }
 
@@ -1347,6 +1352,7 @@
             border: 2px solid rgba(63, 63, 63, 0.55);
             color: #2f2f2f;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.16);
+            -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
         }
 
@@ -1414,6 +1420,7 @@
             justify-content: center;
             position: relative;
             overflow: visible;
+            -webkit-backdrop-filter: blur(12px);
             backdrop-filter: blur(12px);
         }
 
@@ -1812,6 +1819,7 @@
             transform-origin: center;
             z-index: 20;
             min-width: 220px;
+            -webkit-backdrop-filter: blur(16px);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.24);
         }
@@ -2370,7 +2378,7 @@
 
                 <h3 style="color: #667eea; margin-top: 16px; margin-bottom: 8px;">Apple Terms of Service</h3>
                 <p>By using this application, you agree to comply with <a href="https://www.apple.com/legal/"
-                        target="_blank" style="color: #667eea;">Apple's Terms of Service</a>. Music preview URLs are
+                        target="_blank" rel="noopener" style="color: #667eea;">Apple's Terms of Service</a>. Music preview URLs are
                     cached for up to 24 hours for performance optimization.</p>
 
                 <h3 style="color: #667eea; margin-top: 16px; margin-bottom: 8px;">Disclaimer</h3>

@@ -1167,6 +1167,45 @@ async function startArtistBubbles() {
     return startArtistBubblesPromise;
 }
 
+const DECADE_ARTISTS_FALLBACK = {
+    '1940s': [
+        'Frank Sinatra', 'Bing Crosby', 'Ella Fitzgerald', 'Duke Ellington',
+        'Glenn Miller', 'Billie Holiday', 'Nat King Cole'
+    ],
+    '1950s': [
+        'Elvis Presley', 'Chuck Berry', 'Little Richard', 'Buddy Holly',
+        'Ray Charles', 'Fats Domino', 'The Platters'
+    ],
+    '1960s': [
+        'The Beatles', 'The Rolling Stones', 'The Beach Boys', 'Jimi Hendrix',
+        'Bob Dylan', 'Aretha Franklin', 'The Doors', 'Simon & Garfunkel'
+    ],
+    '1970s': [
+        'Led Zeppelin', 'Pink Floyd', 'Queen', 'ABBA', 'David Bowie',
+        'Fleetwood Mac', 'Elton John', 'Stevie Wonder', 'Bee Gees', 'The Eagles'
+    ],
+    '1980s': [
+        'Michael Jackson', 'Madonna', 'Prince', 'U2', 'Bruce Springsteen',
+        'Queen', 'Bon Jovi', 'Whitney Houston', 'Phil Collins', 'The Police'
+    ],
+    '1990s': [
+        'Nirvana', 'Mariah Carey', 'Britney Spears', 'Backstreet Boys',
+        'Pearl Jam', 'Red Hot Chili Peppers', 'R.E.M.', 'Oasis', 'Alanis Morissette', 'Green Day'
+    ],
+    '2000s': [
+        'Coldplay', 'Eminem', 'Beyoncé', 'Linkin Park', 'Britney Spears',
+        'Outkast', 'Green Day', 'Justin Timberlake', 'Shakira', 'Rihanna'
+    ],
+    '2010s': [
+        'Taylor Swift', 'Adele', 'Drake', 'Bruno Mars', 'Ed Sheeran',
+        'Katy Perry', 'Rihanna', 'Justin Bieber', 'Maroon 5', 'Lady Gaga'
+    ],
+    '2020s': [
+        'Billie Eilish', 'Dua Lipa', 'Olivia Rodrigo', 'The Weeknd', 'Harry Styles',
+        'Bad Bunny', 'Doja Cat', 'SZA', 'Sabrina Carpenter', 'Taylor Swift'
+    ]
+};
+
 // Update artist list based on selected decade (loads artists from songs.json)
 async function updateDecadeArtists(decade) {
     try {
@@ -1187,52 +1226,7 @@ async function updateDecadeArtists(decade) {
         }
         const artists = Array.from(artistsSet);
         if (artists.length === 0) {
-            // Fallback: use a curated list for older decades with sparse data
-            const fallbackMap = {
-                '1940s': [
-                    'Frank Sinatra',
-                    'Bing Crosby',
-                    'Ella Fitzgerald',
-                    'Duke Ellington',
-                    'Glenn Miller',
-                    'Billie Holiday',
-                    'Nat King Cole'
-                ],
-                '1950s': [
-                    'Elvis Presley',
-                    'Chuck Berry',
-                    'Little Richard',
-                    'Buddy Holly',
-                    'Ray Charles',
-                    'Fats Domino',
-                    'The Platters'
-                ],
-                '2010s': [
-                    'Taylor Swift',
-                    'Adele',
-                    'Drake',
-                    'Bruno Mars',
-                    'Ed Sheeran',
-                    'Katy Perry',
-                    'Rihanna',
-                    'Justin Bieber',
-                    'Maroon 5',
-                    'Lady Gaga'
-                ],
-                '2020s': [
-                    'Billie Eilish',
-                    'Dua Lipa',
-                    'Olivia Rodrigo',
-                    'The Weeknd',
-                    'Harry Styles',
-                    'Bad Bunny',
-                    'Doja Cat',
-                    'SZA',
-                    'Sabrina Carpenter',
-                    'Taylor Swift'
-                ]
-            };
-            const fallback = fallbackMap[decade] || [];
+            const fallback = DECADE_ARTISTS_FALLBACK[decade] || [];
             if (fallback.length) {
                 console.warn(`No artists in songs.json for ${decade}; using curated fallback list`);
                 artistNames = fallback;
@@ -5367,51 +5361,7 @@ async function selectBubbleCategory(category) {
 
             // Fallback for decades without artists in songs.json
             if (artists.length === 0) {
-                const fallbackMap = {
-                    '1940s': [
-                        'Frank Sinatra',
-                        'Bing Crosby',
-                        'Ella Fitzgerald',
-                        'Duke Ellington',
-                        'Glenn Miller',
-                        'Billie Holiday',
-                        'Nat King Cole'
-                    ],
-                    '1950s': [
-                        'Elvis Presley',
-                        'Chuck Berry',
-                        'Little Richard',
-                        'Buddy Holly',
-                        'Ray Charles',
-                        'Fats Domino',
-                        'The Platters'
-                    ],
-                    '2010s': [
-                        'Taylor Swift',
-                        'Adele',
-                        'Drake',
-                        'Bruno Mars',
-                        'Ed Sheeran',
-                        'Katy Perry',
-                        'Rihanna',
-                        'Justin Bieber',
-                        'Maroon 5',
-                        'Lady Gaga'
-                    ],
-                    '2020s': [
-                        'Billie Eilish',
-                        'Dua Lipa',
-                        'Olivia Rodrigo',
-                        'The Weeknd',
-                        'Harry Styles',
-                        'Bad Bunny',
-                        'Doja Cat',
-                        'SZA',
-                        'Sabrina Carpenter',
-                        'Taylor Swift'
-                    ]
-                };
-                const fallback = fallbackMap[category.name] || [];
+                const fallback = DECADE_ARTISTS_FALLBACK[category.name] || [];
                 if (fallback.length) {
                     console.warn(`No artists in songs.json for ${category.name}; using curated fallback list`);
                     artists = fallback;
