@@ -2426,6 +2426,30 @@ async function loadSongsFromGenre(genre, limit) {
                     'Ray Charles',
                     'Fats Domino',
                     'The Platters'
+                ],
+                '2010s': [
+                    'Taylor Swift',
+                    'Adele',
+                    'Drake',
+                    'Bruno Mars',
+                    'Ed Sheeran',
+                    'Katy Perry',
+                    'Rihanna',
+                    'Justin Bieber',
+                    'Maroon 5',
+                    'Lady Gaga'
+                ],
+                '2020s': [
+                    'Billie Eilish',
+                    'Dua Lipa',
+                    'Olivia Rodrigo',
+                    'The Weeknd',
+                    'Harry Styles',
+                    'Bad Bunny',
+                    'Doja Cat',
+                    'SZA',
+                    'Sabrina Carpenter',
+                    'Taylor Swift'
                 ]
             };
 
@@ -5005,6 +5029,30 @@ async function selectBubbleCategory(category) {
                         'Ray Charles',
                         'Fats Domino',
                         'The Platters'
+                    ],
+                    '2010s': [
+                        'Taylor Swift',
+                        'Adele',
+                        'Drake',
+                        'Bruno Mars',
+                        'Ed Sheeran',
+                        'Katy Perry',
+                        'Rihanna',
+                        'Justin Bieber',
+                        'Maroon 5',
+                        'Lady Gaga'
+                    ],
+                    '2020s': [
+                        'Billie Eilish',
+                        'Dua Lipa',
+                        'Olivia Rodrigo',
+                        'The Weeknd',
+                        'Harry Styles',
+                        'Bad Bunny',
+                        'Doja Cat',
+                        'SZA',
+                        'Sabrina Carpenter',
+                        'Taylor Swift'
                     ]
                 };
                 const fallback = fallbackMap[category.name] || [];
